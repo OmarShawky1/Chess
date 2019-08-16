@@ -2,7 +2,9 @@ import java.awt.*;
 
 public class Tile {
 
-    int coordinate;
+    String xCoordinate;
+    String yCoordinate; //string as to be concatinated with xCoor
+    String coordinate;
     Piece piece;
     Color color;
     boolean isEmpty;
@@ -12,12 +14,14 @@ public class Tile {
         return isEmpty;
     }
 
-    public int getCoordinate() {
-        return coordinate;
+    public Tile(String coordinate) {
+
+        this.coordinate = coordinate;
+        this.isEmpty = true;
     }
 
-    public void setCoordinate(int coordinate) {
-        this.coordinate = coordinate;
+    public String getCoordinate() {
+        return (xCoordinate + yCoordinate);
     }
 
     public Piece getPiece() {
@@ -36,10 +40,11 @@ public class Tile {
 
     }
 
-    public Tile(int coordinate) {
-
-        this.coordinate = coordinate;
-        this.isEmpty = true;
+    public void setCoordinate(String xCoordinate,
+                              String yCoordinate) {
+        this.xCoordinate = xCoordinate;
+        this.yCoordinate = yCoordinate;
+        this.coordinate = xCoordinate + yCoordinate;
     }
 
 }

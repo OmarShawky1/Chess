@@ -7,29 +7,29 @@ public class Pawn extends Piece {
         setColor(color);
     }
 
+
     @Override
-    public int move(int newCoordinate) {
+    public String move(String newCoordinate) {
 
-        /*
-        Conditions:
-        1. making the Pawn move one/two steps forward
+        int newXCoordinate = (int) newCoordinate.charAt(0);
+        int newYCoordinate = newCoordinate.charAt(1);
+        int oldXCoordinate = getOldCoordinate().charAt(0);
+        int oldYCoordinate = getOldCoordinate().charAt(1);
+        int changeInXCoordinate =
+                Math.abs(newXCoordinate - oldXCoordinate);
+        int changeInYCoordinate = newYCoordinate - oldYCoordinate;
 
-        2. making the Pawn move forward only (it does have a bug
-        that the pawn from the black color for example cannot move
-        his pawn except backward which is not wanted)
+        //all of the below do not check the tile before moving ahead
+        //condition to just move forward
+        if (changeInXCoordinate == 0 && changeInYCoordinate == 1) {
 
-        3. there is no condition to let the Pawn move north east or
-         west in case their is another piece he wants to eat
-         */
-
-        if ((newCoordinate % 8 == 0) &&
-                (newCoordinate <= 16) &&
-                (newCoordinate > getCoordinate())) {
-
-            setCoordinate(newCoordinate);
-
+            return newCoordinate;
         }
-        return getCoordinate(); //this will cause an error,
-        //as if the player plays a wrong play it will count the move
+
+        //condition to move forward and right or left at same time
+        // to eat the enemy's piece
+
+
+        return getOldCoordinate();
     }
 }

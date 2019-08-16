@@ -9,29 +9,27 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public int move(int newCoordinate) {
+    public String move(String newCoordinate) {
 
-        /*
-        Conditions:
-        1. Bishop moves towards the edges so he moves either north east
-        or north west or south east or south west, all the cases are
-        either divisible by 7 (as for left) or 9 for the right
+        //it is telling me here that there is duplicate code!
 
-        2. The Second condition is the limit for the piece not to
-        exceed the number of tiles in the board
+        int newXCoordinate = (int) newCoordinate.charAt(0);
+        int newYCoordinate = newCoordinate.charAt(1);
+        int oldXCoordinate = getOldCoordinate().charAt(0);
+        int oldYCoordinate = getOldCoordinate().charAt(1);
+        int changeInXCoordinate =
+                Math.abs(newXCoordinate - oldXCoordinate);
+        int changeInYCoordinate =
+                Math.abs(newYCoordinate - oldYCoordinate);
+        if (changeInXCoordinate == changeInYCoordinate) {
 
-        3. Third condition is to check that the new place is not
-        the old place
-        */
-        if (((newCoordinate % 9 == 0) ||
-                (newCoordinate % 7 == 0)) &&
-                (newCoordinate <= 63) &&
-                (newCoordinate != getCoordinate())) {
+            //there should be here some conditions mentioned in
+            // piece class
 
-            setCoordinate(newCoordinate);
+            //should i check that his movement in in the board or not?
 
+            return newCoordinate;
         }
-
-        return getCoordinate();
+        return getOldCoordinate();
     }
 }

@@ -9,28 +9,27 @@ public class King extends Piece {
     }
 
     @Override
-    public int move(int newCoordinate) {
+    public String move(String newCoordinate) {
 
-        /*
-        Conditions:
-        1. making the king able to move forward (i.e. 8 tiles) or
-        left (i.e. 7) or right (i.e. 9)
+        int newXCoordinate = (int) newCoordinate.charAt(0);
+        int newYCoordinate = newCoordinate.charAt(1);
+        int oldXCoordinate = getOldCoordinate().charAt(0);
+        int oldYCoordinate = getOldCoordinate().charAt(1);
+        int changeInXCoordinate =
+                Math.abs(newXCoordinate - oldXCoordinate);
+        int changeInYCoordinate =
+                Math.abs(newYCoordinate - oldYCoordinate);
+        if ((changeInXCoordinate == 1 && changeInYCoordinate == 0) ||
+                (changeInXCoordinate == 0 && changeInYCoordinate == 1) ||
+                (changeInXCoordinate == 1 && changeInYCoordinate == 1)) {
 
-        2. The Second condition is the limit for the piece not to
-        exceed the number of tiles in the board
+            //there should be here some conditions mentioned in
+            // piece class
 
-        3. Third condition is to check that the new place is not
-        the old place
-        */
+            //should i check that his movement in in the board or not?
 
-        if (((newCoordinate%8==0)||
-                (newCoordinate%7==0)||
-                (newCoordinate%9==0))&&
-                (newCoordinate<=63)&&
-                (newCoordinate!=getCoordinate())){
-
-            setCoordinate(newCoordinate);
+            return newCoordinate;
         }
-        return getCoordinate();
+        return getOldCoordinate();
     }
 }
