@@ -53,11 +53,21 @@ public class Board {
         return check;
     }
 
-    public void setCheck(boolean check) {
+    public void isCheck(boolean check) {
         this.check = check;
     }
 
     private boolean check = false;
+
+    public boolean isWhiteTurn() {
+        return whiteTurn;
+    }
+
+    public void setWhiteTurn(boolean whiteTurn) {
+        this.whiteTurn = whiteTurn;
+    }
+
+    private boolean whiteTurn = true;
 
     //Creating the board of 64 pile (constructor)
     public Board() {
@@ -139,6 +149,14 @@ public class Board {
 
 
     public static void main(String[] args) {
+
+        Board board = new Board();
+
+        while (true){
+
+            //perhaps i put here the name of the piece and where to
+            // go?
+        }
 
 
     }
