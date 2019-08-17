@@ -8,6 +8,57 @@ public class Board {
 
     private Tile[][] board;
 
+    public boolean canMove(Piece piece,
+                           String newCoordinate) {
+
+        //cannot move to his own same place
+        if ((piece.getOldCoordinate()).equals(newCoordinate)) {
+
+            return false;
+        }
+
+        //cannot move to a place that contains a piece from it's color
+
+        int newXAxis = piece.getOldCoordinate().charAt(0);
+        int newYAxis = piece.getOldCoordinate().charAt(1);
+
+
+        if (piece.getColor() == board[newXAxis][newYAxis]
+                .getPiece().getColor()) {
+
+            return false;
+        }
+
+
+        //cannot move if their is a check on the king unless he
+        // will protect him
+
+        //missing
+
+        if(getCheck()){
+
+            return false;
+        }
+
+
+        //cannot move to a place beyond a piece
+        //i truly do not know how to make this one, probably from
+        // the each piece subclass itself
+
+        return true;
+
+    }
+
+    public boolean getCheck() {
+        return check;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
+    }
+
+    private boolean check = false;
+
     //Creating the board of 64 pile (constructor)
     public Board() {
 
@@ -91,4 +142,6 @@ public class Board {
 
 
     }
+
+
 }
