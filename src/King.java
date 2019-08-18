@@ -11,7 +11,7 @@ public class King extends Piece {
     @Override
     public String move(String newCoordinate) {
 
-        int newXCoordinate = (int) newCoordinate.charAt(0);
+        int newXCoordinate = newCoordinate.charAt(0);
         int newYCoordinate = newCoordinate.charAt(1);
         int oldXCoordinate = getOldCoordinate().charAt(0);
         int oldYCoordinate = getOldCoordinate().charAt(1);
@@ -31,5 +31,10 @@ public class King extends Piece {
             return newCoordinate;
         }
         return getOldCoordinate();
+    }
+
+    public String getName (){
+
+        return "K";
     }
 }

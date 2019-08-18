@@ -13,7 +13,7 @@ public class Bishop extends Piece {
 
         //it is telling me here that there is duplicate code!
 
-        int newXCoordinate = (int) newCoordinate.charAt(0);
+        int newXCoordinate = newCoordinate.charAt(0);
         int newYCoordinate = newCoordinate.charAt(1);
         int oldXCoordinate = getOldCoordinate().charAt(0);
         int oldYCoordinate = getOldCoordinate().charAt(1);
@@ -31,5 +31,10 @@ public class Bishop extends Piece {
             return newCoordinate;
         }
         return getOldCoordinate();
+    }
+
+    public String getName (){
+
+        return "B";
     }
 }

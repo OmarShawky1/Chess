@@ -33,5 +33,6 @@ public abstract class Piece {
 
 
     public abstract String move(String newCoordinate);
+    public abstract String getName();
 
 }
