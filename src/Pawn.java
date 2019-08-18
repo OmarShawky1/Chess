@@ -19,11 +19,18 @@ public class Pawn extends Piece {
                 Math.abs(newXCoordinate - oldXCoordinate);
         int changeInYCoordinate = newYCoordinate - oldYCoordinate;
 
-        //all of the below do not check the tile before moving ahead
         //condition to just move forward
-        if (changeInXCoordinate == 0 && changeInYCoordinate == 1) {
+        if (getColor()==Color.white){
 
-            return newCoordinate;
+            if (changeInXCoordinate == 0 && changeInYCoordinate == 1) {
+
+                return newCoordinate;
+            }
+        }else{
+            if (changeInXCoordinate == 0 && changeInYCoordinate == -1) {
+
+                return newCoordinate;
+            }
         }
 
         //condition to move forward and right or left at same time
