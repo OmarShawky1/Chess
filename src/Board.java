@@ -66,6 +66,16 @@ public class Board {
 
     private boolean whiteTurn = true;
 
+    public static boolean isKingStillAlive() {
+        return kingStillAlive;
+    }
+
+    public void setKingStillAlive(boolean kingStillAlive) {
+        Board.kingStillAlive = kingStillAlive;
+    }
+
+    public static boolean kingStillAlive = true;
+
     private void printBoard() {
 
         Scanner userInput = new Scanner(System.in);
@@ -208,13 +218,25 @@ public class Board {
 
     public static void main(String[] args) {
 
+        Scanner userSelectedPiece = new Scanner(System.in);
+        Scanner userNextMove = new Scanner(System.in);
         Board board = new Board();
         board.printBoard();
 
-        while (true) {
+        while (isKingStillAlive()) {
 
-            //perhaps i put here the name of the piece and where to
-            // go?
+            System.out.println("Enter Pieces' index  you want to " +
+                    "move: \n");
+
+            //board[userSelectedPiece.charAt(0)][userSelectedPiece
+            // .charAt(1)];
+
+            System.out.println("Enter the new Place: \n");
+
+
+            //board[userSelectedPiece.charAt(0)][userSelectedPiece
+            // .charAt(1)].getPiece().move();
+
         }
 
 
