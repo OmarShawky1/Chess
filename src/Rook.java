@@ -33,6 +33,6 @@ public class Rook extends Piece {
 
     public String getName (){
 
-        return "Q";
+        return "R";
     }
 }

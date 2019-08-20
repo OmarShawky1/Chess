@@ -82,8 +82,8 @@ public class Board {
         board[7][2].setPiece(new Bishop(Color.white));
         board[7][5].setPiece(new Bishop(Color.white));
 
-        board[7][3].setPiece(new King(Color.white));
-        board[7][4].setPiece(new Queen(Color.white));
+        board[7][3].setPiece(new Queen(Color.white));
+        board[7][4].setPiece(new King(Color.white));
 
         areKingsAlive = true;
         isBlackKingAlive = true;
