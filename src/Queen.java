@@ -9,12 +9,12 @@ public class Queen extends Piece {
     }
 
     @Override
-    public String move(String newCoordinate) {
+    public String move(String oldCoordinate, String newCoordinate) {
 
         int newXCoordinate = newCoordinate.charAt(0);
         int newYCoordinate = newCoordinate.charAt(1);
-        int oldXCoordinate = getOldCoordinate().charAt(0);
-        int oldYCoordinate = getOldCoordinate().charAt(1);
+        int oldXCoordinate = oldCoordinate.charAt(0);
+        int oldYCoordinate = oldCoordinate.charAt(1);
         int changeInXCoordinate =
                 Math.abs(newXCoordinate - oldXCoordinate);
         int changeInYCoordinate =
@@ -30,7 +30,7 @@ public class Queen extends Piece {
 
             return newCoordinate;
         }
-        return getOldCoordinate();
+        return oldCoordinate;
     }
 
     public String getName (){

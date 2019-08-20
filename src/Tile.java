@@ -2,17 +2,11 @@ import java.awt.*;
 
 public class Tile {
 
-    String xCoordinate;
-    String yCoordinate; //string as to be concatinated with xCoor
-    String coordinate;
-    Piece piece;
-    Color color;
-    boolean isEmpty;
+    private String coordinate;
+    private Piece piece;
+    private Color color;
 
-    public boolean isTileEmpty() {
-
-        return isEmpty;
-    }
+    private boolean isEmpty;
 
     public Tile(String coordinate) {
 
@@ -20,11 +14,13 @@ public class Tile {
         this.isEmpty = true;
     }
 
-    public String getCoordinate() {
-        return (xCoordinate + yCoordinate);
+    public boolean isTileEmpty() {
+
+        return isEmpty;
     }
 
     public Piece getPiece() {
+
         return piece;
     }
 
@@ -34,17 +30,25 @@ public class Tile {
         this.isEmpty = false;
     }
 
-    public void setColor(Color color) {
+    public void setTileColor(Color color) {
 
         this.color = color;
 
     }
 
-    public void setCoordinate(String xCoordinate,
-                              String yCoordinate) {
-        this.xCoordinate = xCoordinate;
-        this.yCoordinate = yCoordinate;
-        this.coordinate = xCoordinate + yCoordinate;
+    public void setEmpty(boolean empty) {
+        isEmpty = empty;
+    }
+
+    public String getCoordinate() {
+
+        return (coordinate);
+    }
+
+    //unused and probably waste of lines
+    public void setCoordinate(String coordinate) {
+
+        this.coordinate = coordinate;
     }
 
 }

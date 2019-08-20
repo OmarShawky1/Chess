@@ -8,16 +8,17 @@ public class Board {
     static final int BOARDlENGTH = 8;
     static final int BOARDWIDTH = 8;
 
-    public static boolean kingStillAlive = true;
-
-    private Tile[][] board;
+    private static boolean areKingsAlive, isWhiteKingAlive, isBlackKingAlive;
     private boolean check = false;
     private boolean whiteTurn = true;
+
+    private Tile[][] board;
+
 
     //Creating the board of 64 pile (constructor)
     public Board() {
 
-        //creating 8X8 Tiles
+        //creating chess board Tiles
         board = new Tile[BOARDlENGTH][BOARDWIDTH];
 
         for (int i = 0; i < BOARDlENGTH; i++) {
@@ -31,16 +32,16 @@ public class Board {
             }
         }
 
-        //setting black and white colors for the board
+        //setting the color of the chess board tiles
         for (int i = 0; i < BOARDlENGTH; i++) {
 
             for (int j = 0; j < BOARDWIDTH; j++) {
 
                 if (i % 2 == 0) {
 
-                    board[i][j].setColor(Color.WHITE);
+                    board[i][j].setTileColor(Color.WHITE);
                 } else {
-                    board[i][j].setColor(Color.BLACK);
+                    board[i][j].setTileColor(Color.BLACK);
                 }
             }
         }
@@ -49,81 +50,86 @@ public class Board {
         /////Placing every piece in its corresponding place in board/////
 
 
-        //create the places for the White & Black Pawns
+        //Creating the Black & White Pawns
         for (int i = 0; i < 8; i++) {
 
-            board[i][1].setPiece(new Pawn(Color.black));
-            board[i][6].setPiece(new Pawn(Color.white));
+            board[1][i].setPiece(new Pawn(Color.black));
+            board[6][i].setPiece(new Pawn(Color.white));
         }
 
 
         //setting the main pieces for the Black
         board[0][0].setPiece(new Rook(Color.black));
-        board[7][0].setPiece(new Rook(Color.black));
+        board[0][7].setPiece(new Rook(Color.black));
 
-        board[1][0].setPiece(new King(Color.black));
-        board[6][0].setPiece(new King(Color.black));
+        board[0][1].setPiece(new Knight(Color.black));
+        board[0][6].setPiece(new Knight(Color.black));
 
-        board[2][0].setPiece(new Bishop(Color.black));
-        board[5][0].setPiece(new Bishop(Color.black));
+        board[0][2].setPiece(new Bishop(Color.black));
+        board[0][5].setPiece(new Bishop(Color.black));
 
-        board[3][0].setPiece(new King(Color.black));
-        board[4][0].setPiece(new Queen(Color.black));
+        board[0][3].setPiece(new King(Color.black));
+        board[0][4].setPiece(new Queen(Color.black));
 
 
         //setting the main pieces for the White
-        board[0][7].setPiece(new Rook(Color.white));
+        board[7][0].setPiece(new Rook(Color.white));
         board[7][7].setPiece(new Rook(Color.white));
 
-        board[1][7].setPiece(new Knight(Color.white));
-        board[6][7].setPiece(new Knight(Color.white));
+        board[7][1].setPiece(new Knight(Color.white));
+        board[7][6].setPiece(new Knight(Color.white));
 
-        board[2][7].setPiece(new Bishop(Color.white));
-        board[5][7].setPiece(new Bishop(Color.white));
+        board[7][2].setPiece(new Bishop(Color.white));
+        board[7][5].setPiece(new Bishop(Color.white));
 
-        board[3][7].setPiece(new King(Color.white));
-        board[4][7].setPiece(new Queen(Color.white));
+        board[7][3].setPiece(new King(Color.white));
+        board[7][4].setPiece(new Queen(Color.white));
+
+        areKingsAlive = true;
+        isBlackKingAlive = true;
+        isWhiteKingAlive = true;
+        check = false;
+        whiteTurn = true;
+
     }
 
     public static void main(String[] args) {
 
         Scanner userInput = new Scanner(System.in);
         Board board = new Board();
-        board.printBoard();
-
         String userSelectedTile, userNextMove;
 
-        while (isKingStillAlive()) {
+        while (isAreKingsAlive()) {
 
-            System.out.println("Enter Pieces' index  you want to " + "move: \n");
+            board.printBoard();
+
+            System.out.println("Enter Pieces' index  you want to move: \n");
 
             userSelectedTile = userInput.next(); //does not differ that much from nextLine() ??
 
-            Piece userSelectedPiece;
-            if (board.getTile(userSelectedTile).isEmpty) {
-
-                userSelectedPiece = board.getTile(userSelectedTile).getPiece();
+            if (!board.getTile(userSelectedTile).isTileEmpty()) {
 
                 System.out.println("Enter the new Place: \n");
 
                 userNextMove = userInput.next();
 
-                userSelectedPiece.move(userNextMove);
+                board.move(userSelectedTile, userNextMove);
+
             } else {
 
-                System.out.println("Please Select a Piece");
+                System.out.println("Please Select a Piece, this tile does not contain any piece");
             }
 
         }
 
     }
 
-    public static boolean isKingStillAlive() {
-        return kingStillAlive;
+    public static boolean isAreKingsAlive() {
+        return areKingsAlive;
     }
 
-    public void setKingStillAlive(boolean kingStillAlive) {
-        Board.kingStillAlive = kingStillAlive;
+    public void setAreKingsAlive(boolean kingStillAlive) {
+        Board.areKingsAlive = kingStillAlive;
     }
 
     public Tile getTile(String index) {
@@ -144,42 +150,86 @@ public class Board {
         this.whiteTurn = whiteTurn;
     }
 
-    public boolean canMove(Piece piece, String newCoordinate) {
+    public void move(String pieceCoordinate, String newCoordinate) {
 
-        //cannot move to his own same place
-        if ((piece.getOldCoordinate()).equals(newCoordinate)) {
+        Piece movingPiece;
 
-            return false;
+        //checks that the input is in the board
+        if ((pieceCoordinate.charAt(0) >= 'a' && pieceCoordinate.charAt(0) <= 'f') &&
+                (pieceCoordinate.charAt(1) >= '1' && pieceCoordinate.charAt(1) <= '8') &&
+                (newCoordinate.charAt(0) >= 'a' && newCoordinate.charAt(1) <= '8')) {
+
+            //checks if the tile itself contains a piece
+            if (!board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].isTileEmpty()) {
+
+                movingPiece = board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].getPiece();
+
+                //cannot move to his own same place
+                if (!pieceCoordinate.equals(newCoordinate)) {
+
+                    //all checks are correct except the is new coordinate empty or not, it gives yes although it is empty
+                    //try a2 as the piece, and a3 as the new place
+                    System.out.println("This is the condition 2 before the moving of the piece");
+                    System.out.println("MovingPiece color is: " + movingPiece.getColor());
+                    System.out.println("newCoordinate empty or not: " + board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '1'].isTileEmpty());
+                    System.out.println("newCoordinate pieces' Color is: " + board[newCoordinate.charAt(0) - 'a']
+                            [newCoordinate.charAt(1) - '1'].getPiece().getColor());
+
+                    //checks if the the newCoordinate (nextMove) is not in an empty tile in order not to get an error while getting the
+                    // piece inside of it
+                    if (!board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '1'].isTileEmpty()) {
+
+                        //cannot move to a place that contains a piece from it's color
+                        if (!(movingPiece.getColor() == board[newCoordinate.charAt(0) - 'a']
+                                [newCoordinate.charAt(1) - '1'].getPiece().getColor())) {
+
+
+                            //cannot move if their is a check on the king unless he
+                            // will protect him
+
+
+                            //cannot move to a place beyond a piece
+
+                            //finally, move piece
+
+                            //holding the moving piece in a temp
+                            movingPiece = board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].getPiece();
+
+                            movingPiece.move(pieceCoordinate, newCoordinate);
+                            board[(newCoordinate.charAt(0) - 'a')][(newCoordinate.charAt(1) - '1')].setEmpty(false);
+
+                            //removing the piece from old tile and setting it empty
+                            board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].setPiece(null);
+                            board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].setEmpty(true);
+
+                            System.out.println("Piece Moved Successfuly");
+                        } else {
+
+                            System.out.println("This Piece did not move, please check why");
+                        }
+                    } else
+
+                        System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
+                } else {
+
+                    System.out.println("Please Enter a Valid Coordinate, the new coordinate is the same as the old");
+                    return;
+                }
+            } else {
+
+                System.out.println("Please select a tile that contains a piece");
+                return;
+            }
+        } else {
+
+            System.out.println("Please enter Coordinates inside the board");
+            return;
         }
-
-        //cannot move to a place that contains a piece from it's color
-
-        int newXAxis = piece.getOldCoordinate().charAt(0);
-        int newYAxis = piece.getOldCoordinate().charAt(1);
-
-
-        if (piece.getColor() == board[newXAxis][newYAxis]
-                .getPiece().getColor()) {
-
-            return false;
-        }
-
-
-        //cannot move if their is a check on the king unless he
-        // will protect him
-
-        //missing
-
-        return !isCheck();
-
-
-        //cannot move to a place beyond a piece
-        //i truly do not know how to make this one, probably from
-        // the each piece subclass itself
 
     }
 
     public boolean isCheck() {
+
         return check;
     }
 
@@ -187,7 +237,7 @@ public class Board {
 
         StringBuilder[][] boardedBoard = new StringBuilder[BOARDlENGTH + 1][BOARDWIDTH + 1];
 
-        //filling the unwanted part in the boardedBoard (0,0)
+        //replacing "NULL" by /0/ at (0,0)
         boardedBoard[0][0] = new StringBuilder("/0/");
 
         //creating the borders of the board (letters horizontally and numbers vertically)
@@ -200,52 +250,55 @@ public class Board {
 
             //creating the number index
             boardedBoard[i][0] = new StringBuilder();
-            (boardedBoard[i][0]).append(i - 1);
+            (boardedBoard[i][0]).append(i);
         }
 
 
         //Printing every Empty space in the board by |*|, or |pieceFirstLetter|
-        for (int i = 1; i < BOARDlENGTH + 1; i++) {
+        for (int j = 1; j <= BOARDlENGTH; j++) {
 
-            for (int j = 1; j < BOARDWIDTH + 1; j++) {
+            for (int i = 1; i <= BOARDWIDTH; i++) {
 
                 //filling all the board with |*|
-                boardedBoard[i][j] = new StringBuilder();
-                boardedBoard[i][j].append("|*|");
+                boardedBoard[j][i] = new StringBuilder();
+                boardedBoard[j][i].append("|*|");
+
+                //Printing the first letter of each piece in it's place in the board
+                int start = 0;
+                int end = 3;
+                if (!this.board[j - 1][i - 1].isTileEmpty()) {
 
 
-                //Printing the first name of each piece in it's place in the board
-                if (!this.board[i - 1][j - 1].isEmpty) {
+                    switch (this.board[j - 1][i - 1].getPiece().getName()) {
 
-                    switch (this.board[i - 1][j - 1].getPiece().getClass().getName()) {
-
+                        //i tried to write start and end here, but it refused....why?
                         case "P":
-                            boardedBoard[i][j].replace(0, 2, "|P|");
+                            boardedBoard[j][i].replace(start, end, "|P|");
                             break;
 
                         case "R":
-                            boardedBoard[i][j].replace(0, 2, "|R|");
+                            boardedBoard[j][i].replace(start, end, "|R|");
                             break;
 
                         case "Kn":
-                            boardedBoard[i][j].replace(0, 2, "|Kn|");
+                            boardedBoard[j][i].replace(start, end, "|Kn|");
                             break;
 
                         case "B":
-                            boardedBoard[i][j].replace(0, 2, "|B|");
+                            boardedBoard[j][i].replace(start, end, "|B|");
                             break;
 
                         case "K":
-                            boardedBoard[i][j].replace(0, 2, "|K|");
+                            boardedBoard[j][i].replace(start, end, "|K|");
                             break;
 
                         case "Q":
-                            boardedBoard[i][j].replace(0, 2, "|Q|");
+                            boardedBoard[j][i].replace(start, end, "|Q|");
                             break;
                     }
                 } else {
 
-                    boardedBoard[i][j].replace(0, 2, "|*|"); //this line causes somehow error, it prints || twice in some lines
+                    boardedBoard[j][i].replace(start, end, "|*|");
                 }
             }
         }
@@ -253,6 +306,7 @@ public class Board {
         //prints the entire 2D array that was just created
         //System.out.println(Arrays.deepToString(boardedBoard));
         System.out.println(Arrays.deepToString(boardedBoard).replace("], ", "]\n"));
+        System.out.println();
     }
 
 }
