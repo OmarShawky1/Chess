@@ -206,10 +206,12 @@ public class Board {
                         } else {
 
                             System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
+                            return;
                         }
                     } else
 
                         System.out.println("This Piece did not move, please check why");
+                    return;
                 } else {
 
                     System.out.println("Please Enter a Valid Coordinate, the new coordinate is the same as the old");
