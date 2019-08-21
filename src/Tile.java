@@ -45,9 +45,7 @@ public class Tile {
         return coordinate;
     }
 
-    //unused and probably waste of lines
     public void setCoordinate(String coordinate) {
-
         this.coordinate = coordinate;
     }
 
