@@ -151,15 +151,15 @@ public class Board {
         this.whiteTurn = whiteTurn;
     }
 
-    public void move(String pieceCurrentCoordinate, String pieceNextCoordinate) {
+    public void move(String pieceCurrentCoordinate, String pieceDestinationCoordinate) {
 
         Piece userSelectedPiece;
-        Tile pieceCurrentTile, pieceNextTile;
+        Tile pieceCurrentTile, pieceDestinationTile;
 
         //checks that the input is in the board
         if ((pieceCurrentCoordinate.charAt(0) >= 'a' && pieceCurrentCoordinate.charAt(0) <= 'f') &&
                 (pieceCurrentCoordinate.charAt(1) >= '1' && pieceCurrentCoordinate.charAt(1) <= '8') &&
-                (pieceNextCoordinate.charAt(0) >= 'a' && pieceNextCoordinate.charAt(1) <= '8')) {
+                (pieceDestinationCoordinate.charAt(0) >= 'a' && pieceDestinationCoordinate.charAt(1) <= '8')) {
 
 
             pieceCurrentTile = getTile(pieceCurrentCoordinate);
@@ -171,21 +171,19 @@ public class Board {
                 userSelectedPiece = pieceCurrentTile.getPiece();
 
                 //cannot move to his own same place
-                if (!pieceCurrentCoordinate.equals(pieceNextCoordinate)) {
+                if (!pieceCurrentCoordinate.equals(pieceDestinationCoordinate)) {
 
-                    Tile destinationTile = board[pieceNextCoordinate.charAt(0) - 'a']
-                            [pieceNextCoordinate.charAt(1) - '1'];
-                    boolean destinationTileContainPiece = !destinationTile.isTileEmpty();
+                    pieceDestinationTile = getTile(pieceDestinationCoordinate);
+                    boolean destinationTileContainPiece = !pieceDestinationTile.isTileEmpty();
                     boolean destinationTileContainPieceFromEnemy = false;
-                    pieceNextTile = getTile(pieceNextCoordinate);
 
                     if (destinationTileContainPiece) {
 
                         //cannot move to a place that contains a piece from it's color
-                        destinationTileContainPieceFromEnemy = !(userSelectedPiece.getColor() == pieceNextTile.getPiece().getColor());
+                        destinationTileContainPieceFromEnemy = !(userSelectedPiece.getColor() == pieceDestinationTile.getPiece().getColor());
                     }
 
-                    boolean destinationIsEmpty = pieceNextTile.isTileEmpty();
+                    boolean destinationIsEmpty = pieceDestinationTile.isTileEmpty();
 
                     //all checks are correct except the is new coordinate empty or not, it gives yes although it is empty
                     //try a2 as the piece, and a3 as the new place
@@ -194,11 +192,11 @@ public class Board {
                     System.out.println("User Selected Piece Index: " + getTile(pieceCurrentCoordinate).getCoordinate());
                     System.out.println("User Selected Piece Name: " + userSelectedPiece.getName());
                     System.out.println("User Selected Piece color is: " + userSelectedPiece.getColor());
-                    System.out.println("Destination from input " + pieceNextCoordinate);
-                    System.out.println("Destination using getCoordinate: " + destinationTile.getCoordinate());
+                    System.out.println("Destination from input " + pieceDestinationCoordinate);
+                    System.out.println("Destination using getCoordinate: " + pieceDestinationTile.getCoordinate());
                     System.out.println("Destination is empty? " + destinationIsEmpty); //this should not give false //note
                     if (destinationTileContainPiece)
-                        System.out.println("Destination pieces' Color is: " + destinationTile.getPiece().getColor());
+                        System.out.println("Destination pieces' Color is: " + pieceDestinationTile.getPiece().getColor());
                     //this should
                     // give null
 
@@ -220,8 +218,8 @@ public class Board {
                         //holding the moving piece in a temp
                         userSelectedPiece = getTile(pieceCurrentCoordinate).getPiece();
 
-                        userSelectedPiece.move(pieceCurrentCoordinate, pieceNextCoordinate);
-                        getTile(pieceNextCoordinate).setEmpty(false);
+                        userSelectedPiece.move(pieceCurrentCoordinate, pieceDestinationCoordinate);
+                        getTile(pieceDestinationCoordinate).setEmpty(false);
 
                         //removing the piece from old tile and setting it empty
                         getTile(pieceCurrentCoordinate).setPiece(null);
