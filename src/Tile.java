@@ -42,7 +42,7 @@ public class Tile {
 
     public String getCoordinate() {
 
-        return (coordinate);
+        return coordinate;
     }
 
     //unused and probably waste of lines

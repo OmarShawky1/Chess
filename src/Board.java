@@ -26,9 +26,10 @@ public class Board {
             for (int j = 0; j < BOARDWIDTH; j++) {
 
                 char horizontalAxis = (char) (i + 97);
-                String Coordinate = horizontalAxis + Integer.toString(j);
-                board[i][j] = new Tile(Coordinate);
+                String Coordinate = horizontalAxis + Integer.toString(j+1); //this was j //note
+                board[i][j] = new Tile(Coordinate); //note // try flipping the i and j
                 //board[i][j] = new Tile(((char) i) + Integer.toString(j));
+                //System.out.println(horizontalAxis);
             }
         }
 
@@ -152,7 +153,7 @@ public class Board {
 
     public void move(String pieceCoordinate, String newCoordinate) {
 
-        Piece movingPiece;
+        Piece userSelectedPiece;
 
         //checks that the input is in the board
         if ((pieceCoordinate.charAt(0) >= 'a' && pieceCoordinate.charAt(0) <= 'f') &&
@@ -163,31 +164,42 @@ public class Board {
             boolean selectedTileContainPiece = !board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].isTileEmpty();
             if (selectedTileContainPiece) {
 
-                movingPiece = board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].getPiece();
+                userSelectedPiece = board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].getPiece();
 
                 //cannot move to his own same place
                 if (!pieceCoordinate.equals(newCoordinate)) {
 
-                    //all checks are correct except the is new coordinate empty or not, it gives yes although it is empty
-                    //try a2 as the piece, and a3 as the new place
-                    System.out.println("This is the condition 2 before the moving of the piece");
-                    System.out.println("MovingPiece color is: " + movingPiece.getColor());
-                    System.out.println("newCoordinate empty or not: " + board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '1'].isTileEmpty());
-                    System.out.println("newCoordinate pieces' Color is: " + board[newCoordinate.charAt(0) - 'a']
-                            [newCoordinate.charAt(1) - '1'].getPiece().getColor());
-
-                    //checks if the the newCoordinate (nextMove) is not in an empty tile in order not to get an error while getting the
-                    // piece inside of it
-                    boolean destinationTileContainPiece = !board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '1'].isTileEmpty();
+                    Tile destinationTile = board[newCoordinate.charAt(0) - 'a']
+                            [newCoordinate.charAt(1) - '1'];
+                    boolean destinationTileContainPiece = !destinationTile.isTileEmpty();
                     boolean destinationTileContainPieceFromEnemy = false;
+
                     if (destinationTileContainPiece) {
 
                         //cannot move to a place that contains a piece from it's color
-                        destinationTileContainPieceFromEnemy = !(movingPiece.getColor() == board[newCoordinate.charAt(0) - 'a']
+                        destinationTileContainPieceFromEnemy = !(userSelectedPiece.getColor() == board[newCoordinate.charAt(0) - 'a']
                                 [newCoordinate.charAt(1) - '1'].getPiece().getColor());
                     }
 
-                    boolean destinationIsEmpty = board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '0'].isTileEmpty();
+                    boolean destinationIsEmpty = board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '1'].isTileEmpty();
+
+                    //all checks are correct except the is new coordinate empty or not, it gives yes although it is empty
+                    //try a2 as the piece, and a3 as the new place
+                    System.out.println("This is the condition 1 before the moving of the piece");
+                    System.out.println("PieceCoordinate: " + (pieceCoordinate.charAt(1)-'1'));
+                    System.out.println("User Selected Piece Index: " + board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].getCoordinate());
+                    System.out.println("User Selected Piece Name: " + userSelectedPiece.getName());
+                    System.out.println("User Selected Piece color is: " + userSelectedPiece.getColor());
+                    System.out.println("Destination from input " + newCoordinate);
+                    System.out.println("Destination using getCoordinate: " + destinationTile.getCoordinate());
+                    System.out.println("Destination is empty? " + destinationIsEmpty); //this should not give false //note
+                    if (destinationTileContainPiece) System.out.println("Destination pieces' Color is: " + destinationTile.getPiece().getColor());
+                    //this should
+                    // give null
+
+                    //checks if the the newCoordinate (nextMove) is not in an empty tile in order not to get an error while getting the
+                    // piece inside of it
+
 
                     if (destinationTileContainPieceFromEnemy || destinationIsEmpty) {
 
@@ -201,9 +213,9 @@ public class Board {
                         //finally, move piece
 
                         //holding the moving piece in a temp
-                        movingPiece = board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].getPiece();
+                        userSelectedPiece = board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].getPiece();
 
-                        movingPiece.move(pieceCoordinate, newCoordinate);
+                        userSelectedPiece.move(pieceCoordinate, newCoordinate);
                         board[(newCoordinate.charAt(0) - 'a')][(newCoordinate.charAt(1) - '1')].setEmpty(false);
 
                         //removing the piece from old tile and setting it empty
