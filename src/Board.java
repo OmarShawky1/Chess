@@ -160,7 +160,8 @@ public class Board {
                 (newCoordinate.charAt(0) >= 'a' && newCoordinate.charAt(1) <= '8')) {
 
             //checks if the tile itself contains a piece
-            if (!board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].isTileEmpty()) {
+            boolean tileContainsPiece = !board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].isTileEmpty();
+            if (tileContainsPiece) {
 
                 movingPiece = board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].getPiece();
 
@@ -177,11 +178,14 @@ public class Board {
 
                     //checks if the the newCoordinate (nextMove) is not in an empty tile in order not to get an error while getting the
                     // piece inside of it
-                    if (!board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '1'].isTileEmpty()) {
+                    boolean doesDestinationTileContainPiece =
+                            !board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '1'].isTileEmpty();
+                    if (doesDestinationTileContainPiece) {
 
                         //cannot move to a place that contains a piece from it's color
-                        if (!(movingPiece.getColor() == board[newCoordinate.charAt(0) - 'a']
-                                [newCoordinate.charAt(1) - '1'].getPiece().getColor())) {
+                        boolean doesDestinationContainPiecefromSameArmy = !(movingPiece.getColor() == board[newCoordinate.charAt(0) - 'a']
+                                [newCoordinate.charAt(1) - '1'].getPiece().getColor());
+                        if (doesDestinationContainPiecefromSameArmy) {
 
 
                             //cannot move if their is a check on the king unless he
