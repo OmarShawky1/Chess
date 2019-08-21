@@ -179,15 +179,17 @@ public class Board {
                     //checks if the the newCoordinate (nextMove) is not in an empty tile in order not to get an error while getting the
                     // piece inside of it
                     boolean destinationTileContainPiece = !board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '1'].isTileEmpty();
+                    boolean destinationTileContainPieceFromEnemy = false;
                     if (destinationTileContainPiece) {
 
                         //cannot move to a place that contains a piece from it's color
-                        boolean destinationTileContainPieceFromEnemy = !(movingPiece.getColor() == board[newCoordinate.charAt(0) - 'a']
+                        destinationTileContainPieceFromEnemy = !(movingPiece.getColor() == board[newCoordinate.charAt(0) - 'a']
                                 [newCoordinate.charAt(1) - '1'].getPiece().getColor());
+                    }
 
-                        boolean destinationIsEmpty = board[newCoordinate.charAt(0)-'a'][newCoordinate.charAt(1)-'0'].isTileEmpty();
+                    boolean destinationIsEmpty = board[newCoordinate.charAt(0) - 'a'][newCoordinate.charAt(1) - '0'].isTileEmpty();
 
-                        if (destinationTileContainPieceFromEnemy || destinationIsEmpty) {
+                    if (destinationTileContainPieceFromEnemy || destinationIsEmpty) {
 
 
                         //cannot move if their is a check on the king unless he
@@ -209,15 +211,15 @@ public class Board {
                         board[(pieceCoordinate.charAt(0) - 'a')][(pieceCoordinate.charAt(1) - '1')].setEmpty(true);
 
                         System.out.println("Piece Moved Successfully");
-                        } else {
+                    } else {
 
-                            System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
-                            return;
-                        }
-                    } else
-
-                        System.out.println("This Piece did not move, please check why");
-                    return;
+                        System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
+                        return;
+                    }
+//                    } else
+//
+//                        System.out.println("This Piece did not move, please check why");
+//                    return;
                 } else {
 
                     System.out.println("Please Enter a Valid Coordinate, the new coordinate is the same as the old");
