@@ -205,11 +205,11 @@ public class Board {
                             System.out.println("Piece Moved Successfuly");
                         } else {
 
-                            System.out.println("This Piece did not move, please check why");
+                            System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
                         }
                     } else
 
-                        System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
+                        System.out.println("This Piece did not move, please check why");
                 } else {
 
                     System.out.println("Please Enter a Valid Coordinate, the new coordinate is the same as the old");
@@ -261,7 +261,6 @@ public class Board {
 
                 //filling all the board with |*|
                 boardedBoard[j][i] = new StringBuilder();
-                boardedBoard[j][i].append("|*|");
 
                 //Printing the first letter of each piece in it's place in the board
                 int start = 0;
