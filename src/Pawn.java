@@ -2,46 +2,34 @@ import java.awt.*;
 
 public class Pawn extends Piece {
 
-    public Pawn(Color color) {
+    private boolean hadMoved;
 
+    public Pawn(Color color) {
+        hadMoved = false;
         setColor(color);
     }
 
-
     @Override
-    public String move(String oldCoordinate, String newCoordinate) {
-
-        int newXCoordinate = newCoordinate.charAt(0);
-        int newYCoordinate = newCoordinate.charAt(1);
-        int oldXCoordinate = oldCoordinate.charAt(0);
-        int oldYCoordinate = oldCoordinate.charAt(1);
-        int changeInXCoordinate =
-                Math.abs(newXCoordinate - oldXCoordinate);
-        int changeInYCoordinate = newYCoordinate - oldYCoordinate;
-
-        //condition to just move forward
-        if (getColor()==Color.white){
-
-            if (changeInXCoordinate == 0 && changeInYCoordinate == 1) {
-
-                return newCoordinate;
-            }
-        }else{
-            if (changeInXCoordinate == 0 && changeInYCoordinate == -1) {
-
-                return newCoordinate;
-            }
+    public void move(Tile destinationTile) {
+        boolean isPawnInAttackMode = false;
+        if (!destinationTile.isEmpty() && color != destinationTile.getPiece().getColor()) {
+            isPawnInAttackMode = true;
         }
 
-        //condition to move forward and right or left at same time
-        // to eat the enemy's piece
+        int maxYSteps = hadMoved || isPawnInAttackMode? 1: 2;
+        int xDiff = tile.xDistanceTo(destinationTile);
+        int yDiff = tile.yDistanceTo(destinationTile);
 
-
-        return oldCoordinate;
+        boolean isValidVerticalMove = (color == Color.BLACK && yDiff <= maxYSteps) ||
+                (color == Color.WHITE && yDiff <= -maxYSteps);
+        boolean isValidHorizontalMove = Math.abs(xDiff) == (isPawnInAttackMode? 1: 0);
+        if (isValidHorizontalMove && isValidVerticalMove) { /* valid move for a pawn */
+            super.move(destinationTile);
+            hadMoved = true;
+        }
     }
 
     public String getName (){
-
         return "P";
     }
 }
