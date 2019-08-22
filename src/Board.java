@@ -14,22 +14,15 @@ public class Board {
         board = new Tile[BOARDlENGTH][BOARDWIDTH];
 
         for (int i = 0; i < BOARDlENGTH; i++) {
-
             for (int j = 0; j < BOARDWIDTH; j++) {
-
-                char horizontalAxis = (char) (i + 'a');
-                String Coordinate = horizontalAxis + Integer.toString(j + 1);
-                board[i][j] = new Tile(Coordinate);
-            }
-        }
-
-        for (int i = 0; i < BOARDlENGTH; i++) {
-            for (int j = 0; j < BOARDWIDTH; j++) {
+                Tile newTile;
+                String Coordinate = (char) (j + 'a') + Integer.toString(i + 1);
                 if ((i + j) % 2 == 0) {
-                    board[i][j].setTileColor(Color.WHITE);
+                    newTile = new Tile(Coordinate, Color.WHITE);
                 } else {
-                    board[i][j].setTileColor(Color.BLACK);
+                    newTile = new Tile(Coordinate, Color.BLACK);
                 }
+                board[i][j] = newTile;
             }
         }
 
@@ -80,7 +73,7 @@ public class Board {
             System.out.println("Enter Pieces' index  you want to move: \n");
             userSelectedTile = userInput.next();
 
-            if (!board.getTile(userSelectedTile).isTileEmpty()) {
+            if (!board.getTile(userSelectedTile).isEmpty()) {
                 System.out.println("Enter the new Place: \n");
                 userNextMove = userInput.next();
                 board.move(userSelectedTile, userNextMove);
@@ -117,7 +110,7 @@ public class Board {
     }
 
     private static boolean isValidCoordinate(String coordinate) {
-        return (coordinate.charAt(0) >= 'a' && coordinate.charAt(0) <= 'f') &&
+        return (coordinate.charAt(0) >= 'a' && coordinate.charAt(0) <= 'h') &&
                 (coordinate.charAt(1) >= '1' && coordinate.charAt(1) <= '8');
     }
 
@@ -133,20 +126,17 @@ public class Board {
 
         Tile sourceTile = getTile(sourceCoordinate);
         Tile destinationTile = getTile(destinationCoordinate);
-        if (sourceTile.isTileEmpty()) {
+        if (sourceTile.isEmpty()) {
             System.out.println("Please select a tile that contains a piece");
             return;
         }
 
         Piece pieceToMove = getTile(sourceCoordinate).getPiece();
-        boolean destinationTileHasFriendlyTroops = !destinationTile.isTileEmpty() &&
+        boolean destinationTileHasFriendlyTroops = !destinationTile.isEmpty() &&
                 destinationTile.getPiece().getColor() == pieceToMove.getColor();
 
         if (!destinationTileHasFriendlyTroops) {
-            pieceToMove.move(sourceCoordinate, destinationCoordinate);
-            destinationTile.setEmpty(false);
-            sourceTile.setPiece(null);
-            sourceTile.setEmpty(true);
+            pieceToMove.move(destinationTile);
             System.out.println("Piece Moved Successfully");
         } else {
             System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
