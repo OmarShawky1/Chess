@@ -8,8 +8,7 @@ public class King extends Piece {
         setColor(color);
     }
 
-    @Override
-    public void move(Tile destinationTile) {
+    public boolean canMove (Tile destinationTile){
 
         String origin = tile.getCoordinates();
         String destination = destinationTile.getCoordinates();
@@ -21,12 +20,14 @@ public class King extends Piece {
 
             if (pathIsEmptyAndDestinationIsFree(destinationTile)){
 
-                super.move(destinationTile);
+                return true;
             }
         }else{
 
             System.out.println("This is not a king Move");
         }
+
+        return false;
     }
 
     public String getName() {

@@ -246,11 +246,16 @@ public abstract class Piece {
         return false;
 
     }
+    public abstract boolean canMove (Tile destinationTile);
 
     public void move(Tile destinationTile) {
-        this.tile.setPiece(null);
-        destinationTile.setPiece(this);
-        board.setWhiteTurn(!board.isWhiteTurn());
+
+        if (canMove(destinationTile)){
+            this.tile.setPiece(null);
+            destinationTile.setPiece(this);
+            board.setWhiteTurn(!board.isWhiteTurn());
+        }
+
     }
 
     public abstract String getName();

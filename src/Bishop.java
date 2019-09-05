@@ -9,23 +9,22 @@ public class Bishop extends Piece {
 
     }
 
-    @Override
-    public void move(Tile destinationTile) {
+    public boolean canMove (Tile destinationTile){
+
 
         String direction = super.getDirection(destinationTile);
         boolean thisIsABishopMove = direction.equals("NE") || direction.equals("SE") ||
                 direction.equals("NW") || direction.equals("SW");
         if (thisIsABishopMove) {
-
             if (super.pathIsEmptyAndDestinationIsFree(destinationTile)) {
 
-                super.move(destinationTile);
-
+                return true;
             }
         } else {
 
             System.out.println("This is Not A Valid Bishop Move");
         }
+        return false;
     }
 
     public String getName() {

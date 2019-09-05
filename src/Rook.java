@@ -7,8 +7,7 @@ public class Rook extends Piece {
         setColor(color);
     }
 
-    @Override
-    public void move(Tile destinationTile) {
+    public boolean canMove(Tile destinationTile) {
 
         String direction = super.getDirection(destinationTile);
         boolean thisIsARookMove = direction.equals("NO") || direction.equals("SO") ||
@@ -16,18 +15,20 @@ public class Rook extends Piece {
 
         System.out.println("Direction:" + direction.equals("SO"));
 
-        if (thisIsARookMove){
+        if (thisIsARookMove) {
 
-            if(super.pathIsEmptyAndDestinationIsFree(destinationTile)){
+            if (super.pathIsEmptyAndDestinationIsFree(destinationTile)) {
 
-                super.move(destinationTile);
+                return true;
             }
-        }else {
+        } else {
             System.out.println("This is not a valid Rook move");
         }
+
+        return false;
     }
 
-    public String getName (){
+    public String getName() {
 
         return "R";
     }

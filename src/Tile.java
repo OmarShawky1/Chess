@@ -39,14 +39,6 @@ public class Tile {
         }
     }
 
-    public int user_X_Step(Tile destinationTile) {
-        return destinationTile.getCoordinates().charAt(0) - coordinates.charAt(0);
-    }
-
-    public int user_Y_Step(Tile destinationTile) {
-        return destinationTile.getCoordinates().charAt(1) - coordinates.charAt(1);
-    }
-
     public String getCoordinates() {
         return coordinates;
     }
