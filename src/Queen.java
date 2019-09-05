@@ -5,32 +5,27 @@ public class Queen extends Piece {
 
         setColor(color);
 
-        //still do not know what function can describe this movement
     }
 
     @Override
     public void move(Tile destinationTile) {
 
-//        int newXCoordinate = newCoordinate.charAt(0);
-//        int newYCoordinate = newCoordinate.charAt(1);
-//        int oldXCoordinate = oldCoordinate.charAt(0);
-//        int oldYCoordinate = oldCoordinate.charAt(1);
-//        int changeInXCoordinate =
-//                Math.abs(newXCoordinate - oldXCoordinate);
-//        int changeInYCoordinate =
-//                Math.abs(newYCoordinate - oldYCoordinate);
-//        if ((changeInXCoordinate == changeInYCoordinate) ||
-//                (changeInXCoordinate == 0 && changeInYCoordinate > 0) ||
-//                (changeInXCoordinate > 0 && changeInYCoordinate == 0)) {
-//
-//            //there should be here some conditions mentioned in
-//            // piece class
-//
-//            //should i check that his movement in in the board or not?
-//
-//            return newCoordinate;
-//        }
-//        return oldCoordinate;
+        //ik that this condition checking is redundant, but i might change things later, so this saves me extra time from debugging issues
+        String direction = super.getDirection(destinationTile);
+        boolean thisIsAQueenMove = direction.equals("NE") ||direction.equals("NW") || direction.equals("SE") ||
+                direction.equals("SW") || direction.equals("NO") ||direction.equals("SO") || direction.equals("EA") ||
+                direction.equals("WE");
+        if (thisIsAQueenMove){
+
+            if (super.pathIsEmptyAndDestinationIsFree(destinationTile)){
+
+                super.move(destinationTile);
+            }
+        }else {
+
+            System.out.println("This is not a valid Queen Move");
+        }
+
     }
 
     public String getName (){

@@ -70,92 +70,14 @@ public class Board {
         isBlackKingAlive = true;
         isWhiteKingAlive = true;
         check = false;
-        whiteTurn = true;
+        setWhiteTurn(true);
 
     }
 
     public static void main(String[] args) {
-        Scanner userInput = new Scanner(System.in);
+
         Board board = new Board();
-        String userSelectedTile, userNextMove;
-
-        while (isAreKingsAlive()) {
-            board.printBoard();
-            System.out.println("Enter Pieces' index  you want to move: \n");
-            userSelectedTile = userInput.next();
-
-            if (!board.getTile(userSelectedTile).isEmpty()) {
-                System.out.println("Enter the new Place: \n");
-                userNextMove = userInput.next();
-                board.move(userSelectedTile, userNextMove);
-            } else {
-                System.out.println("Please Select a Piece, this tile does not contain any piece");
-            }
-        }
-    }
-
-    private static boolean isAreKingsAlive() {
-        return areKingsAlive;
-    }
-
-    public void setAreKingsAlive(boolean kingStillAlive) {
-        Board.areKingsAlive = kingStillAlive;
-    }
-
-    public Tile getTile(String index) {
-        int xAxis = index.charAt(0) - 'a';
-        int yAxis = index.charAt(1) - '1';
-        return board[yAxis][xAxis];
-    }
-
-    public void isCheck(boolean check) {
-        this.check = check;
-    }
-
-    public boolean isWhiteTurn() {
-        return whiteTurn;
-    }
-
-    public void setWhiteTurn(boolean whiteTurn) {
-        this.whiteTurn = whiteTurn;
-    }
-
-    private static boolean isValidCoordinate(String coordinate) {
-        return (coordinate.charAt(0) >= 'a' && coordinate.charAt(0) <= 'h') &&
-                (coordinate.charAt(1) >= '1' && coordinate.charAt(1) <= '8');
-    }
-
-    public void move(String sourceCoordinate, String destinationCoordinate) {
-        if (!isValidCoordinate(sourceCoordinate) || !isValidCoordinate(destinationCoordinate)) {
-            System.out.println("Bad values for coordinates.");
-            return;
-        }
-        if (sourceCoordinate.equals(destinationCoordinate)) {
-            System.out.println("Bad input: Source and destination coordinates are the same.");
-            return;
-        }
-
-        Tile sourceTile = getTile(sourceCoordinate);
-        Tile destinationTile = getTile(destinationCoordinate);
-        if (sourceTile.isEmpty()) {
-            System.out.println("Please select a tile that contains a piece");
-            return;
-        }
-
-        Piece pieceToMove = getTile(sourceCoordinate).getPiece();
-        boolean destinationTileHasFriendlyTroops = !destinationTile.isEmpty() &&
-                destinationTile.getPiece().getColor() == pieceToMove.getColor();
-
-        if (!destinationTileHasFriendlyTroops) {
-            pieceToMove.move(destinationTile);
-            System.out.println("Reached Board Move Function Successfully");
-        } else {
-            System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
-        }
-    }
-
-    public boolean isCheck() {
-        return check;
+        board.play();
     }
 
     private void printBoard() {
@@ -206,5 +128,124 @@ public class Board {
         }
         System.out.println(Arrays.deepToString(boardedBoard).replace("], ", "]\n"));
         System.out.println();
+    }
+
+    private static boolean bothKingsAreAlive() {
+        return areKingsAlive;
+    }
+
+    public void setAreKingsAlive(boolean kingStillAlive) {
+        Board.areKingsAlive = kingStillAlive;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
+    }
+
+    public boolean setCheck() {
+        return check;
+    }
+
+    public Tile getTile(String index) {
+        int xAxis = index.charAt(0) - 'a';
+        int yAxis = index.charAt(1) - '1';
+        return board[yAxis][xAxis];
+    }
+
+    public boolean isWhiteTurn() {
+        return whiteTurn;
+    }
+
+    public void setWhiteTurn(boolean whiteTurn) {
+        this.whiteTurn = whiteTurn;
+    }
+
+    private static boolean isValidCoordinate(String coordinate) {
+
+        if(coordinate.length() ==2){
+
+            return (coordinate.charAt(0) >= 'a' && coordinate.charAt(0) <= 'h') &&
+                    (coordinate.charAt(1) >= '1' && coordinate.charAt(1) <= '8');
+        }else {
+
+            System.out.println("Please Enter a 2 characters String");
+            return false;
+        }
+
+    }
+
+    public void move(String sourceCoordinate, String destinationCoordinate) {
+        if (!isValidCoordinate(sourceCoordinate) || !isValidCoordinate(destinationCoordinate)) {
+            System.out.println("Bad values for coordinates.");
+            return;
+        }
+        if (sourceCoordinate.equals(destinationCoordinate)) {
+            System.out.println("Bad input: Source and destination coordinates are the same.");
+            return;
+        }
+
+        Tile sourceTile = getTile(sourceCoordinate);
+        Tile destinationTile = getTile(destinationCoordinate);
+        if (sourceTile.isEmpty()) {
+            System.out.println("Please select a tile that contains a piece");
+            return;
+        }
+
+        getTile(sourceCoordinate).getPiece().move(destinationTile);
+
+    }
+
+    public String userSelectedCoordinate(){
+
+        Scanner userInput = new Scanner(System.in);
+        String coordinate;
+        do {
+            System.out.print("Enter Pieces' index  you want to move: ");
+            coordinate = userInput.next().toLowerCase();
+        }
+        while (!isValidCoordinate(coordinate));
+        return coordinate;
+
+    }
+
+    public void nextPlayerMove(String userSelectedCoordinate){
+
+        Scanner userNextMoveInput = new Scanner(System.in);
+
+        if (!this.getTile(userSelectedCoordinate).isEmpty()) {
+
+            boolean whitePlaysIfItisItsTurn =
+                    this.isWhiteTurn() && this.getTile(userSelectedCoordinate).getPiece().getColor() ==Color.WHITE;
+            boolean blackPlaysIfItisItsTurn =
+                    !this.isWhiteTurn() && this.getTile(userSelectedCoordinate).getPiece().getColor() ==Color.BLACK;
+            if (whitePlaysIfItisItsTurn || blackPlaysIfItisItsTurn){
+                System.out.println("The Piece you Selected is: " + this.getTile(userSelectedCoordinate).getPiece().getName());
+                System.out.print("Enter the new Place: ");
+                String userNextMove = userNextMoveInput.next();
+                System.out.println();
+                this.move(userSelectedCoordinate, userNextMove);
+            }else {
+                System.out.println("This Color cannt play");
+            }
+        } else {
+            System.out.println("Please Select a Piece, this tile does not contain any piece");
+        }
+
+    }
+
+    public void play(){
+
+        String userSelectedCoordinate;
+
+        while (bothKingsAreAlive())
+        {
+            this.printBoard();
+
+            userSelectedCoordinate = this.userSelectedCoordinate();
+
+            this.nextPlayerMove(userSelectedCoordinate);
+        }
+
+
     }
 }

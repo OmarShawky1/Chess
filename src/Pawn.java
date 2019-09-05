@@ -12,10 +12,11 @@ public class Pawn extends Piece {
 
     @Override
     public void move(Tile destinationTile) {
+
         boolean isPawnInAttackMode = false;
-        boolean destinationIsFull = !destinationTile.isEmpty();
-        boolean destinationContainsEnemyTroops = destinationIsFull && color != destinationTile.getPiece().getColor();
-        if (destinationContainsEnemyTroops) {
+        // this check is for making sure there is an enemy in that tile :)
+        // that's all :) ok... you can go sleep, normally, when do you awake?
+        if (!destinationTile.isEmpty() && color != destinationTile.getPiece().getColor()) {
             isPawnInAttackMode = true;
         }
 
@@ -26,7 +27,8 @@ public class Pawn extends Piece {
         boolean isValidVerticalMove = (color == Color.BLACK && user_Y_Step <= max_Y_Steps) ||
                 (color == Color.WHITE && user_Y_Step >= -max_Y_Steps);
         boolean isValidHorizontalMove = Math.abs(user_X_Step) == (isPawnInAttackMode ? 1 : 0);
-        if (isValidHorizontalMove && isValidVerticalMove) { /* valid move for a pawn */
+
+        if (isValidHorizontalMove && isValidVerticalMove) {
             super.move(destinationTile);
             pieceHadMoved = true;
 
@@ -59,6 +61,9 @@ public class Pawn extends Piece {
                     break;
                 }
             }
+        }else {
+
+            System.out.println("This is not a valid Pawn move");
         }
 
     }
