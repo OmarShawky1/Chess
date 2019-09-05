@@ -13,19 +13,21 @@ public class Board {
     public Board() {
         board = new Tile[BOARDlENGTH][BOARDWIDTH];
 
+        //coloring the board
         for (int i = 0; i < BOARDlENGTH; i++) {
             for (int j = 0; j < BOARDWIDTH; j++) {
                 Tile newTile;
                 String Coordinate = (char) (j + 'a') + Integer.toString(i + 1);
                 if ((i + j) % 2 == 0) {
-                    newTile = new Tile(Coordinate, Color.WHITE);
+                    newTile = new Tile(Coordinate, Color.WHITE, this); // just pass a `this` to the Tile constructor
                 } else {
-                    newTile = new Tile(Coordinate, Color.BLACK);
+                    newTile = new Tile(Coordinate, Color.BLACK, this);
                 }
                 board[i][j] = newTile;
             }
         }
 
+        //Placing Pieces
         for (int i = 0; i < 8; i++) {
             board[1][i].setPiece(new Pawn(Color.black));
             board[6][i].setPiece(new Pawn(Color.white));
@@ -37,11 +39,20 @@ public class Board {
         board[0][1].setPiece(new Knight(Color.black));
         board[0][6].setPiece(new Knight(Color.black));
 
+        // in that line, you call set piece with a new object
+        // the object is about to be created (the Bishop)
+        // so first thing that happens in that line is the call to the Bishop constructor
+        // the Bishop constructor obviously calls the Piece constructor
+        // and the tile has no value yet, because in the code, you set the tile
+        // via setPiece itself
+
         board[0][2].setPiece(new Bishop(Color.black));
         board[0][5].setPiece(new Bishop(Color.black));
 
         board[0][3].setPiece(new King(Color.black));
         board[0][4].setPiece(new Queen(Color.black));
+
+
 
         board[7][0].setPiece(new Rook(Color.white));
         board[7][7].setPiece(new Rook(Color.white));
@@ -91,7 +102,7 @@ public class Board {
         Board.areKingsAlive = kingStillAlive;
     }
 
-    private Tile getTile(String index) {
+    public Tile getTile(String index) {
         int xAxis = index.charAt(0) - 'a';
         int yAxis = index.charAt(1) - '1';
         return board[yAxis][xAxis];
@@ -137,7 +148,7 @@ public class Board {
 
         if (!destinationTileHasFriendlyTroops) {
             pieceToMove.move(destinationTile);
-            System.out.println("Piece Moved Successfully");
+            System.out.println("Reached Board Move Function Successfully");
         } else {
             System.out.println("Please Enter a Valid Coordinate, this tile is occupied by a piece from your own army");
         }
@@ -167,8 +178,8 @@ public class Board {
                 //Printing the first letter of each piece in it's place in the board
                 int start = 0;
                 int end = 3;
-                if (board[j-1][i-1].getPiece() != null) {
-                    switch (board[j-1][i - 1].getPiece().getName()) {
+                if (board[j - 1][i - 1].getPiece() != null) {
+                    switch (board[j - 1][i - 1].getPiece().getName()) {
                         case "P":
                             boardedBoard[j][i].replace(start, end, "|P|");
                             break;
