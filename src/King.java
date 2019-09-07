@@ -18,7 +18,7 @@ public class King extends Piece {
 
         if (changeInX <= 1 && changeInY <= 1){
 
-            if (pathIsEmptyAndDestinationIsFree(destinationTile)){
+            if (destination.isEmpty() || !destinationContainsAlly(destinationTile)){ //this was previosly pathIsEmptyAndDestinationIsFree
 
                 return true;
             }

@@ -19,6 +19,8 @@ public abstract class Piece {
         return board;
     }
 
+    public abstract String getName();
+
     public void setColor(Color color) {
         this.color = color;
     }
@@ -246,18 +248,80 @@ public abstract class Piece {
         return false;
 
     }
-    public abstract boolean canMove (Tile destinationTile);
+
+    public abstract boolean canMove(Tile destinationTile);
 
     public void move(Tile destinationTile) {
 
-        if (canMove(destinationTile)){
+        if (canMove(destinationTile)) {
             this.tile.setPiece(null);
             destinationTile.setPiece(this);
             board.setWhiteTurn(!board.isWhiteTurn());
+
+            switch (this.getName()) {
+
+                case "P":
+
+                    System.out.println("Pawn Moved");
+                    break;
+                case "B":
+
+                    System.out.println("Bishop Moved");
+                    break;
+                case "Kn":
+
+                    System.out.println("Knight Moved");
+                    break;
+                case "R":
+
+                    System.out.println("Rook Moved");
+                    break;
+                case "K":
+
+                    System.out.println("King Moved");
+                    break;
+                case "Q":
+
+                    System.out.println("Queen Moved");
+                    break;
+                default:
+
+            }
+        } else {
+
+            switch (this.getName()) {
+
+                case "P":
+
+                    System.out.println("This is not a valid Pawn Move");
+                    break;
+                case "B":
+
+                    System.out.println("This is not a valid Bishop Move");
+                    break;
+                case "Kn":
+
+                    System.out.println("This is not a valid Knight Move");
+                    break;
+                case "R":
+
+                    System.out.println("This is not a valid Rook Move");
+                    break;
+                case "K":
+
+                    System.out.println("This is not a valid King move");
+                    break;
+                case "Q":
+
+                    System.out.println("This is not a valid Queen Move");
+                    break;
+                default:
+
+                    System.out.println("Something wrong happened in the else statement of the if condition of printing who moved in piece");
+            }
+
         }
 
     }
-
-    public abstract String getName();
 
 }

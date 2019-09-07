@@ -15,7 +15,9 @@ public class Bishop extends Piece {
         String direction = super.getDirection(destinationTile);
         boolean thisIsABishopMove = direction.equals("NE") || direction.equals("SE") ||
                 direction.equals("NW") || direction.equals("SW");
-        if (thisIsABishopMove) {
+
+
+        if (thisIsABishopMove && !destinationContainsAlly(destinationTile)) {
             if (super.pathIsEmptyAndDestinationIsFree(destinationTile)) {
 
                 return true;

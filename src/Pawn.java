@@ -13,7 +13,7 @@ public class Pawn extends Piece {
     public boolean canMove(Tile destinationTile) {
 
         boolean isPawnInAttackMode = false;
-        if (!destinationTile.isEmpty() && color != destinationTile.getPiece().getColor()) {
+        if (!destinationTile.isEmpty() && this.color != destinationTile.getPiece().getColor()) {
             isPawnInAttackMode = true;
         }
 
@@ -27,13 +27,13 @@ public class Pawn extends Piece {
                 (color == Color.WHITE && user_Y_Step >= -max_Y_Steps);
         boolean isValidHorizontalMove = Math.abs(user_X_Step) == (isPawnInAttackMode ? 1 : 0);
 
-        if (isValidHorizontalMove && isValidVerticalMove) {
+        if (isValidHorizontalMove && isValidVerticalMove && !destinationContainsAlly(destinationTile)) {
 
             return true;
-        } else {
+        } /*else {
 
             System.out.println("This is not a valid Pawn move: " + user_X_Step + "" + user_Y_Step);
-        }
+        }*/
         return false;
     }
 

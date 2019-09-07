@@ -6,19 +6,41 @@ public class Board {
     static final int BOARDlENGTH = 8;
     static final int BOARDWIDTH = 8;
     private static boolean areKingsAlive, isWhiteKingAlive, isBlackKingAlive;
-    private boolean check = false;
     private boolean whiteTurn = true;
     private String whiteKingCoordinate;
+    private boolean whiteCheck;
+    private boolean blackCheck;
+
+    public boolean isWhiteCheck() {
+        return whiteCheck;
+    }
+
+    public void setWhiteCheck(boolean whiteCheck) {
+        this.whiteCheck = whiteCheck;
+    }
+
+    public boolean isBlackCheck() {
+        return blackCheck;
+    }
+
+    public void setBlackCheck(boolean blackCheck) {
+        this.blackCheck = blackCheck;
+    }
+
     public String getWhiteKingCoordinate() {
         return whiteKingCoordinate;
     }
+
     public void setWhiteKingCoordinate(String whiteKingCoordinate) {
         this.whiteKingCoordinate = whiteKingCoordinate;
     }
+
     private String blackKingCoordinate;
+
     public String getBlackKingCoordinate() {
         return blackKingCoordinate;
     }
+
     public void setBlackKingCoordinate(String blackKingCoordinate) {
         this.blackKingCoordinate = blackKingCoordinate;
     }
@@ -76,7 +98,8 @@ public class Board {
         areKingsAlive = true;
         isBlackKingAlive = true;
         isWhiteKingAlive = true;
-        check = false;
+        whiteCheck = false;
+        blackCheck = false;
         setWhiteKingCoordinate(board[7][4].getCoordinates());
         setBlackKingCoordinate(board[0][3].getCoordinates());
         setWhiteTurn(true);
@@ -147,12 +170,8 @@ public class Board {
         Board.areKingsAlive = kingStillAlive;
     }
 
-    public boolean isCheck() {
-        return check;
-    }
-
-    public void setCheck(boolean check) {
-        this.check = check;
+    public boolean isAnyKingInCheck() {
+        return whiteCheck || blackCheck;
     }
 
     public void checkForCheck() {
@@ -173,7 +192,7 @@ public class Board {
                 XCoordinate = (char) (i + 'a');
                 YCoordinate = j + '1';
                 String coordinate = XCoordinate + "" + YCoordinate;
-                if (!this.getTile(coordinate).isEmpty()){
+                if (!this.getTile(coordinate).isEmpty()) {
                     Piece piece = this.getTile(coordinate).getPiece();
                     if (piece.getName().length() == 1 && piece.getName().equals("K")) { //this might cause an issue as previously, it matched Kn in
                         // switch case with just K
@@ -185,7 +204,7 @@ public class Board {
                             whiteKingCoordinate = coordinate;
                         }
                     }
-                }else {
+                } else {
                     //this is for me
                 }
 
@@ -200,34 +219,29 @@ public class Board {
                 YCoordinate = j + '1';
                 String coordinate = XCoordinate + "" + YCoordinate;
 
-                if (!this.getTile(coordinate).isEmpty()){
+                if (!this.getTile(coordinate).isEmpty()) {
 
                     Piece piece = this.getTile(coordinate).getPiece();
-//                boolean blackPieceCanKillWhiteKing = piece.canMove(getTile(whiteKingCoordinate)) && piece.getColor() == Color.BLACK;
-//                boolean whitePieceCanKillBlackKing = piece.canMove(getTile(blackKingCoordinate)) && piece.getColor() == Color.WHITE;
-                    boolean blackPieceCanKillWhiteKing =
-                            piece.canMove(getTile(whiteKingCoordinate)) && piece.getColor() != getTile(whiteKingCoordinate).getPiece().getColor(); // this should not be a solution tho, it did solve the issue!
-                    //this is
-                    // causing error
-                    // when i move
-                    // e7-->e5
-//                    System.out.println("whiteKingCoordinate: " + whiteKingCoordinate); //e8
-//                    System.out.println(piece.getName()); //pawn
-//                    System.out.println(piece.getTile().getCoordinates()); //e5
-//                    System.out.println(piece.getColor()); //white
-                    boolean whitePieceCanKillBlackKing =
-                            piece.canMove(getTile(blackKingCoordinate)) && piece.getColor() != getTile(blackKingCoordinate).getPiece().getColor();
 
-//                    System.out.println("piece.getName(): " + piece.getName());
-//                    System.out.println("piece.getTile().getCoordinates(): " + piece.getTile().getCoordinates());
-//                    System.out.println("blackPieceCanKillWhiteKing: " + blackPieceCanKillWhiteKing);
+                    boolean blackPieceCanKillWhiteKing = piece.canMove(getTile(whiteKingCoordinate));
+                    boolean whitePieceCanKillBlackKing = piece.canMove(getTile(blackKingCoordinate));
 
+                    String checkColor;
+                    if (whitePieceCanKillBlackKing || blackPieceCanKillWhiteKing) {
 
-                    if(whitePieceCanKillBlackKing || blackPieceCanKillWhiteKing){
+                        if (whitePieceCanKillBlackKing) {
+                            checkColor = "Black";
+                            this.setBlackCheck(true);
+                        } else {
 
-                        this.setCheck(true);
-                    }else {
-                        this.setCheck(false);
+                            checkColor = "White";
+                            this.setWhiteCheck(true);
+                        }
+
+                        System.out.println("This is a check for the " + checkColor + " Player");
+                    } else {
+                        this.setWhiteCheck(false);
+                        this.setBlackCheck(false);
                     }
                 }
             }
@@ -318,9 +332,10 @@ public class Board {
                 Board oldBoard = this;
                 this.move(userSelectedCoordinate, userNextMove);
                 this.checkForCheck(); //i think this have severe issues, like which player to check for TODO
-                if (this.isCheck()){
+                if (this.isAnyKingInCheck() && ((whiteTurn && isWhiteCheck()) || (!whiteTurn && isBlackCheck()))) {
 
-                    System.out.println("This Move Is Refused Because Of Check, this is " + piece.getColor().toString() + " Color");
+                    String pieceColor = piece.getColor() == Color.WHITE ? "White" : "Black";
+                    System.out.println("This Move Is Refused Because Of Check, this is " + pieceColor + " Color");
                     board = oldBoard.board; //idk what the fuck is this
                 }
             } else {
