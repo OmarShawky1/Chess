@@ -10,41 +10,9 @@ public class Board {
     private String whiteKingCoordinate;
     private boolean whiteCheck;
     private boolean blackCheck;
-
-    public boolean isWhiteCheck() {
-        return whiteCheck;
-    }
-
-    public void setWhiteCheck(boolean whiteCheck) {
-        this.whiteCheck = whiteCheck;
-    }
-
-    public boolean isBlackCheck() {
-        return blackCheck;
-    }
-
-    public void setBlackCheck(boolean blackCheck) {
-        this.blackCheck = blackCheck;
-    }
-
-    public String getWhiteKingCoordinate() {
-        return whiteKingCoordinate;
-    }
-
-    public void setWhiteKingCoordinate(String whiteKingCoordinate) {
-        this.whiteKingCoordinate = whiteKingCoordinate;
-    }
-
+    private boolean whiteKingAlive;
+    private boolean blackKingAlive;
     private String blackKingCoordinate;
-
-    public String getBlackKingCoordinate() {
-        return blackKingCoordinate;
-    }
-
-    public void setBlackKingCoordinate(String blackKingCoordinate) {
-        this.blackKingCoordinate = blackKingCoordinate;
-    }
-
     private Tile[][] board;
 
     public Board() {
@@ -162,7 +130,49 @@ public class Board {
         System.out.println();
     }
 
-    private static boolean bothKingsAreAlive() {
+    public boolean isWhiteCheck() {
+        return whiteCheck;
+    }
+
+    public void setWhiteCheck(boolean whiteCheck) {
+        this.whiteCheck = whiteCheck;
+    }
+
+    public boolean isBlackCheck() {
+        return blackCheck;
+    }
+
+    public void setBlackCheck(boolean blackCheck) {
+        this.blackCheck = blackCheck;
+    }
+
+    public String getWhiteKingCoordinate() {
+        return whiteKingCoordinate;
+    }
+
+    public void setWhiteKingCoordinate(String whiteKingCoordinate) {
+        this.whiteKingCoordinate = whiteKingCoordinate;
+    }
+
+    public String getBlackKingCoordinate() {
+        return blackKingCoordinate;
+    }
+
+    public void setBlackKingCoordinate(String blackKingCoordinate) {
+        this.blackKingCoordinate = blackKingCoordinate;
+    }
+
+    public void setWhiteKingAlive(boolean whiteKingAlive) {
+        this.whiteKingAlive = whiteKingAlive;
+        System.out.println("Black Player Wins");
+    }
+
+    public void setBlackKingAlive(boolean blackKingAlive) {
+        this.blackKingAlive = blackKingAlive;
+        System.out.println("White Player Wins");
+    }
+
+    private boolean areKingsAlive() {
         return areKingsAlive;
     }
 
@@ -170,8 +180,11 @@ public class Board {
         Board.areKingsAlive = kingStillAlive;
     }
 
-    public boolean isAnyKingInCheck() {
-        return whiteCheck || blackCheck;
+    public void endGame() {
+
+        if (!areKingsAlive()) {
+            return;
+        }
     }
 
     public void checkForCheck() {
@@ -250,6 +263,19 @@ public class Board {
         System.out.println("Checking for Check ended");
     }
 
+    public void whatToDoWhenPlayerPutHimselfInCheck(Board oldBoard, String pieceCoordinate) {
+
+        this.checkForCheck();
+        Piece piece = this.getTile(pieceCoordinate).getPiece();
+
+        if ((isWhiteTurn() && isWhiteCheck()) || (!isWhiteTurn() && isBlackCheck())) {
+
+            String pieceColor = piece.getColor() == Color.WHITE ? "White" : "Black";
+            System.out.println("This Move Is Refused Because Of Check, this is " + pieceColor + " Color");
+            board = oldBoard.board;
+        }
+    }
+
     public Tile getTile(String index) {
         int xAxis = index.charAt(0) - 'a';
         int yAxis = index.charAt(1) - '1';
@@ -299,7 +325,7 @@ public class Board {
 
     }
 
-    public String userSelectedCoordinate() {
+    public String userSelectedPiecesCoordinate() {
 
         Scanner userInput = new Scanner(System.in);
         String coordinate;
@@ -312,32 +338,36 @@ public class Board {
 
     }
 
-    public void nextPlayerMove(String userSelectedCoordinate) {
+    public String userDestination() {
 
-        Scanner userNextMoveInput = new Scanner(System.in);
+        Scanner userInput = new Scanner(System.in);
+        String coordinate;
 
-        if (!this.getTile(userSelectedCoordinate).isEmpty()) {
+        do {
+            System.out.print("Enter the new Destination: ");
+            coordinate = userInput.next();
+        } while (!isValidCoordinate(coordinate));
+        return coordinate;
+    }
 
-            Piece piece = this.getTile(userSelectedCoordinate).getPiece();
+    public void nextPlayerMove(String userSelectedPiece) {
 
-            boolean whitePlaysIfItIsItsTurn =
-                    this.isWhiteTurn() && piece.getColor() == Color.WHITE;
-            boolean blackPlaysIfItIsItsTurn =
-                    !this.isWhiteTurn() && piece.getColor() == Color.BLACK;
+        if (!this.getTile(userSelectedPiece).isEmpty()) {
+
+            Piece piece = this.getTile(userSelectedPiece).getPiece();
+            String userNextMove = this.userDestination();
+            Board oldBoard = this;
+            boolean whitePlaysIfItIsItsTurn = this.isWhiteTurn() && piece.getColor() == Color.WHITE;
+            boolean blackPlaysIfItIsItsTurn = !this.isWhiteTurn() && piece.getColor() == Color.BLACK;
             if (whitePlaysIfItIsItsTurn || blackPlaysIfItIsItsTurn) {
-                System.out.println("The Piece you Selected is: " + this.getTile(userSelectedCoordinate).getPiece().getName());
-                System.out.print("Enter the new Place: ");
-                String userNextMove = userNextMoveInput.next();
-                System.out.println();
-                Board oldBoard = this;
-                this.move(userSelectedCoordinate, userNextMove);
-                this.checkForCheck(); //i think this have severe issues, like which player to check for TODO
-                if (this.isAnyKingInCheck() && ((whiteTurn && isWhiteCheck()) || (!whiteTurn && isBlackCheck()))) {
+                do {
+                    System.out.println("The Piece you Selected is: " + piece.getFullName());
+                    this.move(userSelectedPiece, userNextMove);
 
-                    String pieceColor = piece.getColor() == Color.WHITE ? "White" : "Black";
-                    System.out.println("This Move Is Refused Because Of Check, this is " + pieceColor + " Color");
-                    board = oldBoard.board; //idk what the fuck is this
-                }
+                    this.whatToDoWhenPlayerPutHimselfInCheck(oldBoard, userSelectedPiece);
+                } while ((isWhiteTurn() && isWhiteCheck()) || (!isWhiteTurn() && isBlackCheck()));
+                setWhiteTurn(!this.isWhiteTurn());
+
             } else {
                 System.out.println("This Color can not play");
             }
@@ -351,13 +381,15 @@ public class Board {
 
         String userSelectedCoordinate;
 
-        while (bothKingsAreAlive()) {
+        while (areKingsAlive()) {
             this.printBoard();
 
-            userSelectedCoordinate = this.userSelectedCoordinate();
+            userSelectedCoordinate = this.userSelectedPiecesCoordinate();
 
             this.nextPlayerMove(userSelectedCoordinate);
         }
+
+        this.endGame();
 
 
     }

@@ -21,6 +21,35 @@ public abstract class Piece {
 
     public abstract String getName();
 
+    public String getFullName(){
+
+        String pieceInitial = getName();
+        String pieceName = null;
+
+        switch (pieceInitial){
+
+            case "P":
+                pieceName = "Pawn";
+                break;
+            case "R":
+                pieceName = "Rook";
+                break;
+            case "B":
+                pieceName = "Bishop";
+                break;
+            case "Kn":
+                pieceName = "Knight";
+                break;
+            case "K":
+                pieceName = "King";
+                break;
+            case "Q":
+                pieceName = "Queen";
+                break;
+        }
+        return pieceName;
+    }
+
     public void setColor(Color color) {
         this.color = color;
     }
@@ -256,37 +285,7 @@ public abstract class Piece {
         if (canMove(destinationTile)) {
             this.tile.setPiece(null);
             destinationTile.setPiece(this);
-            board.setWhiteTurn(!board.isWhiteTurn());
-
-            switch (this.getName()) {
-
-                case "P":
-
-                    System.out.println("Pawn Moved");
-                    break;
-                case "B":
-
-                    System.out.println("Bishop Moved");
-                    break;
-                case "Kn":
-
-                    System.out.println("Knight Moved");
-                    break;
-                case "R":
-
-                    System.out.println("Rook Moved");
-                    break;
-                case "K":
-
-                    System.out.println("King Moved");
-                    break;
-                case "Q":
-
-                    System.out.println("Queen Moved");
-                    break;
-                default:
-
-            }
+            System.out.println(this.getFullName() + " Moved");
         } else {
 
             switch (this.getName()) {
