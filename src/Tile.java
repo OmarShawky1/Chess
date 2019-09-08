@@ -2,45 +2,61 @@ import java.awt.*;
 
 public class Tile {
 
-    private String coordinates;
+    private Coordinate coordinate;
     private Piece piece;
     private Color color;
     private boolean isEmpty;
     private Board board;
 
-    public Tile(String coordinates, Color color, Board board) {
+    Tile(Coordinate coordinate, Color color, Board board) {
         this.color = color;
-        this.coordinates = coordinates;
+        this.coordinate = coordinate;
         this.isEmpty = true;
         this.board = board;
     }
 
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return isEmpty;
     }
 
-    public Piece getPiece() {
+    Piece getPiece() {
         return piece;
     }
 
-    public Board getBoard() {
+    Board getBoard() {
         return board;
     }
 
+    int xDiffFrom(Tile destinationTile) {
+        return coordinate.getXDifference(destinationTile.getCoordinates());
+    }
+
+    int yDiffFrom(Tile destinationTile) {
+        return coordinate.getYDifference(destinationTile.getCoordinates());
+    }
+
+    Tile getNeighbourTile(int xDiff, int yDiff) {
+        Coordinate tileCoordinate = coordinate.shift(xDiff, yDiff);
+        if (tileCoordinate.isValidCoordinate()) {
+            return board.getTile(tileCoordinate);
+        } else {
+            return null;
+        }
+    }
+
     //setPiece sets the piece and also makes the piece points to the new tile that holds the it (the piece) in it
-    public void setPiece(Piece piece) {
+    void setPiece(Piece piece) {
         this.piece = piece;
         if (piece != null) {
             this.isEmpty = false;
             piece.setTile(this);
-            piece.setBoard(this.getBoard());
         } else {
             this.isEmpty = true;
         }
     }
 
-    public String getCoordinates() {
-        return coordinates;
+    Coordinate getCoordinates() {
+        return coordinate;
     }
 }
 

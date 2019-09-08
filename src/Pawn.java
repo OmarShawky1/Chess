@@ -1,43 +1,37 @@
 import java.awt.*;
-import java.util.Scanner;
 
 public class Pawn extends Piece {
 
-    private boolean pieceHadMoved;
+    private boolean hadMoved;
 
     public Pawn(Color color) {
-        pieceHadMoved = false;
-        setColor(color);
+        super(color);
+        hadMoved = false;
     }
 
     public boolean canMove(Tile destinationTile) {
-
         boolean isPawnInAttackMode = false;
-        if (!destinationTile.isEmpty() && this.color != destinationTile.getPiece().getColor()) {
+        if (!destinationTile.isEmpty() && color != destinationTile.getPiece().getColor()) {
             isPawnInAttackMode = true;
         }
 
-        int max_Y_Steps = pieceHadMoved || isPawnInAttackMode ? 1 : 2;
-        String destinationCoordinates = destinationTile.getCoordinates();
-        String originalCoordinates = getTile().getCoordinates();
-        int user_X_Step = destinationCoordinates.charAt(0) - originalCoordinates.charAt(0);
-        int user_Y_Step = destinationCoordinates.charAt(1) - originalCoordinates.charAt(1);
+        int maxYSteps = hadMoved || isPawnInAttackMode? 1: 2;
+        int xDiff = tile.xDiffFrom(destinationTile);
+        int yDiff = tile.yDiffFrom(destinationTile);
 
-        boolean isValidVerticalMove = (color == Color.BLACK && user_Y_Step <= max_Y_Steps) ||
-                (color == Color.WHITE && user_Y_Step >= -max_Y_Steps);
-        boolean isValidHorizontalMove = Math.abs(user_X_Step) == (isPawnInAttackMode ? 1 : 0);
+        boolean isCorrectVerticalDisplacement = (color == Color.BLACK && yDiff <= maxYSteps) ||
+                (color == Color.WHITE && yDiff >= -maxYSteps);
+        boolean isCorrectHorizontalDisplacement = Math.abs(xDiff) == (isPawnInAttackMode? 1: 0);
 
-        if (isValidHorizontalMove && isValidVerticalMove && !destinationContainsAlly(destinationTile)) {
-
-            return true;
-        } /*else {
-
-            System.out.println("This is not a valid Pawn move: " + user_X_Step + "" + user_Y_Step);
-        }*/
-        return false;
+        if (isCorrectVerticalDisplacement && isCorrectHorizontalDisplacement) { /* valid move for a pawn */
+            hadMoved = true;
+            return super.canMove(destinationTile);
+        } else {
+            return false;
+        }
     }
 
-    public String getName() {
+    public String getShortName() {
         return "P";
     }
 }

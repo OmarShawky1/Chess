@@ -5,322 +5,67 @@ public abstract class Piece {
 
     protected Color color;
     protected Tile tile;
-    protected Board board;
 
-    public Color getColor() {
-        return color;
-    }
-
-    public Tile getTile() {
-        return tile;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public abstract String getName();
-
-    public String getFullName(){
-
-        String pieceInitial = getName();
-        String pieceName = null;
-
-        switch (pieceInitial){
-
-            case "P":
-                pieceName = "Pawn";
-                break;
-            case "R":
-                pieceName = "Rook";
-                break;
-            case "B":
-                pieceName = "Bishop";
-                break;
-            case "Kn":
-                pieceName = "Knight";
-                break;
-            case "K":
-                pieceName = "King";
-                break;
-            case "Q":
-                pieceName = "Queen";
-                break;
-        }
-        return pieceName;
-    }
-
-    public void setColor(Color color) {
+    public Piece(Color color) {
         this.color = color;
     }
 
-    public void setTile(Tile tile) {
+    Color getColor() {
+        return color;
+    }
+
+    public abstract String getShortName();
+
+    void setTile(Tile tile) {
         this.tile = tile;
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
+    public boolean canMove(Tile destinationTile) {
+        boolean destinationContainsAlly = !destinationTile.isEmpty() &&
+                destinationTile.getPiece().getColor() == color;
+
+        Tile originalTile = tile;
+        Piece originalPiece = destinationTile.getPiece();
+
+        move(destinationTile);
+        boolean willOwnPlayerKingBeChecked = tile.getBoard().getKing(color).isBeingChecked();
+
+        /* relocate the pieces back to their original positions */
+        move(originalTile);
+        destinationTile.setPiece(originalPiece);
+
+        return !destinationContainsAlly && !willOwnPlayerKingBeChecked;
     }
 
-    public String getDirection(Tile destinationTile) {
-
-        String origin = this.getTile().getCoordinates();
-        String destination = destinationTile.getCoordinates();
-        String direction = null;
-
-        int changeInX = destination.charAt(0) - origin.charAt(0);
-        int changeInY = -(destination.charAt(1) - origin.charAt(1));
-        //setting the value for direction
-        if (changeInX > 0 && changeInY > 0) {
-
-            direction = "NE";
-        } else if (changeInX > 0 && changeInY < 0) {
-
-            direction = "SE";
-        } else if (changeInX < 0 && changeInY > 0) {
-
-            direction = "NW";
-        } else if (changeInX < 0 && changeInY < 0) {
-
-            direction = "SW";
-        } else if (changeInX == 0 && changeInY != 0) {
-
-            if (changeInY > 0) {
-
-                direction = "NO";
-            } else {
-
-                direction = "SO";
-            }
-        } else if (changeInX != 0 && changeInY == 0) {
-
-            if (changeInX > 0) {
-
-                direction = "EA";
-            } else {
-
-                direction = "WE";
-            }
-        }
-
-        System.out.println("direction from Direction in Piece: " + direction);
-        return direction;
+    void move(Tile destinationTile) {
+        tile.setPiece(null);
+        destinationTile.setPiece(this);
     }
 
-    // i think this and the following should be implemented inside of Board
-    public boolean isPathEmpty(Tile destinationTile) {
+    private boolean isPathClearTowards(Tile destTile) {
+        int xDiff = tile.xDiffFrom(destTile);
+        int yDiff = tile.yDiffFrom(destTile);
+        int xDirection = xDiff == 0? 0: xDiff/ Math.abs(xDiff);
+        int yDirection = yDiff == 0? 0: yDiff/ Math.abs(yDiff);
 
-        String origin = this.getTile().getCoordinates();
-        String direction = this.getDirection(destinationTile);
-
-        //this is a counter used in the following while in order not to change an actual value
-        StringBuilder coordinatesOfTileCounter = new StringBuilder(origin);
-        StringBuilder tmpXCoor = new StringBuilder();
-        StringBuilder tmpYCoor = new StringBuilder();
-        //if we did not reach the destination tile, move one tile and get the the piece on it, to obviously check if the path is empty
-        while (!coordinatesOfTileCounter.toString().equals(destinationTile.getCoordinates())) {
-            switch (direction) {
-
-                case "NE":
-
-                    tmpXCoor.append((char) (coordinatesOfTileCounter.charAt(0) + 1));
-                    tmpYCoor.append((char) (coordinatesOfTileCounter.charAt(1) - 1));
-
-                    coordinatesOfTileCounter.delete(0, coordinatesOfTileCounter.length());
-                    coordinatesOfTileCounter.append(tmpXCoor);
-                    coordinatesOfTileCounter.append(tmpYCoor);
-
-                    tmpXCoor.delete(0, tmpXCoor.length());
-                    tmpYCoor.delete(0, tmpYCoor.length());
-
-                    //System.out.println("coordinatesOfTileCounter NE: " + coordinatesOfTileCounter);
-                    break;
-
-                case "SE":
-
-                    tmpXCoor.append((char) (coordinatesOfTileCounter.charAt(0) + 1));
-                    tmpYCoor.append((char) (coordinatesOfTileCounter.charAt(1) + 1));
-
-                    coordinatesOfTileCounter.delete(0, coordinatesOfTileCounter.length());
-                    coordinatesOfTileCounter.append(tmpXCoor);
-                    coordinatesOfTileCounter.append(tmpYCoor);
-
-                    tmpXCoor.delete(0, tmpXCoor.length());
-                    tmpYCoor.delete(0, tmpYCoor.length());
-
-                    //System.out.println("coordinatesOfTileCounter SE: " + coordinatesOfTileCounter);
-                    break;
-
-                case "NW":
-
-                    tmpXCoor.append((char) (coordinatesOfTileCounter.charAt(0) - 1));
-                    tmpYCoor.append((char) (coordinatesOfTileCounter.charAt(1) - 1));
-
-                    coordinatesOfTileCounter.delete(0, coordinatesOfTileCounter.length());
-                    coordinatesOfTileCounter.append(tmpXCoor);
-                    coordinatesOfTileCounter.append(tmpYCoor);
-
-                    tmpXCoor.delete(0, tmpXCoor.length());
-                    tmpYCoor.delete(0, tmpYCoor.length());
-
-                    //System.out.println("coordinatesOfTileCounter NW: " + coordinatesOfTileCounter);
-                    break;
-
-                case "SW":
-
-                    tmpXCoor.append((char) (coordinatesOfTileCounter.charAt(0) - 1));
-                    tmpYCoor.append((char) (coordinatesOfTileCounter.charAt(1) + 1));
-
-                    coordinatesOfTileCounter.delete(0, coordinatesOfTileCounter.length());
-                    coordinatesOfTileCounter.append(tmpXCoor);
-                    coordinatesOfTileCounter.append(tmpYCoor);
-
-                    tmpXCoor.delete(0, tmpXCoor.length());
-                    tmpYCoor.delete(0, tmpYCoor.length());
-
-                    //System.out.println("coordinatesOfTileCounter SW: " + coordinatesOfTileCounter);
-                    break;
-
-                case "NO":
-
-                    tmpXCoor.append(coordinatesOfTileCounter.charAt(0));
-                    tmpYCoor.append((char) (coordinatesOfTileCounter.charAt(1) - 1));
-
-                    coordinatesOfTileCounter.delete(0, coordinatesOfTileCounter.length());
-                    coordinatesOfTileCounter.append(tmpXCoor);
-                    coordinatesOfTileCounter.append(tmpYCoor);
-
-                    tmpXCoor.delete(0, tmpXCoor.length());
-                    tmpYCoor.delete(0, tmpYCoor.length());
-
-                    //System.out.println("coordinatesOfTileCounter NE: " + coordinatesOfTileCounter);
-                    break;
-
-                case "SO":
-
-                    tmpXCoor.append(coordinatesOfTileCounter.charAt(0));
-                    tmpYCoor.append((char) (coordinatesOfTileCounter.charAt(1) + 1));
-
-                    coordinatesOfTileCounter.delete(0, coordinatesOfTileCounter.length());
-                    coordinatesOfTileCounter.append(tmpXCoor);
-                    coordinatesOfTileCounter.append(tmpYCoor);
-
-                    tmpXCoor.delete(0, tmpXCoor.length());
-                    tmpYCoor.delete(0, tmpYCoor.length());
-
-                    //System.out.println("coordinatesOfTileCounter NE: " + coordinatesOfTileCounter);
-                    break;
-
-                case "EA":
-
-                    tmpXCoor.append((char) (coordinatesOfTileCounter.charAt(0) + 1));
-                    tmpYCoor.append(coordinatesOfTileCounter.charAt(1));
-
-                    coordinatesOfTileCounter.delete(0, coordinatesOfTileCounter.length());
-                    coordinatesOfTileCounter.append(tmpXCoor);
-                    coordinatesOfTileCounter.append(tmpYCoor);
-
-                    tmpXCoor.delete(0, tmpXCoor.length());
-                    tmpYCoor.delete(0, tmpYCoor.length());
-
-                    //System.out.println("coordinatesOfTileCounter NE: " + coordinatesOfTileCounter);
-                    break;
-
-                case "WE":
-
-                    tmpXCoor.append((char) (coordinatesOfTileCounter.charAt(0) - 1));
-                    tmpYCoor.append(coordinatesOfTileCounter.charAt(1));
-
-                    coordinatesOfTileCounter.delete(0, coordinatesOfTileCounter.length());
-                    coordinatesOfTileCounter.append(tmpXCoor);
-                    coordinatesOfTileCounter.append(tmpYCoor);
-
-                    tmpXCoor.delete(0, tmpXCoor.length());
-                    tmpYCoor.delete(0, tmpYCoor.length());
-
-                    //System.out.println("coordinatesOfTileCounter NE: " + coordinatesOfTileCounter);
-                    break;
-
-                default:
-                    System.out.println("Something went wrong in the switch statement of the Bishop");
-
-            }
-
-            boolean isTileFull = !board.getTile(coordinatesOfTileCounter.toString()).isEmpty();
-            if (isTileFull) {
-
+        Tile tileToCheck = tile.getNeighbourTile(xDirection, yDirection);
+        while (tileToCheck != destTile) {
+            if (!tileToCheck.isEmpty())
                 return false;
-            }
-
+            tileToCheck = tileToCheck.getNeighbourTile(xDirection, yDirection);
         }
-
         return true;
-
     }
 
-    public boolean destinationContainsAlly(Tile destinationTile) {
-        return !destinationTile.isEmpty() &&
-                destinationTile.getPiece().getColor() == getColor();
+    boolean isCorrectCornerMoveTowards(Tile destTile) {
+        int xDist = Math.abs(tile.xDiffFrom(destTile));
+        int yDist = Math.abs(tile.yDiffFrom(destTile));
+
+        return xDist == yDist && isPathClearTowards(destTile);
     }
 
-    public boolean pathIsEmptyAndDestinationIsFree(Tile destinationTile) {
-
-        boolean destinationContainsAlly = destinationContainsAlly(destinationTile);
-        boolean isPathEmpty = isPathEmpty(destinationTile);
-
-        if (isPathEmpty && !destinationContainsAlly) {
-
-            return true;
-        }
-
-        System.out.println("The Destination Path Contains a Piece");
-        return false;
-
+    boolean isCorrectStraightMoveTowards(Tile destTile) {
+        return (tile.xDiffFrom(destTile) == 0 || tile.xDiffFrom(destTile) == 0) &&
+                    isPathClearTowards(destTile);
     }
-
-    public abstract boolean canMove(Tile destinationTile);
-
-    public void move(Tile destinationTile) {
-
-        if (canMove(destinationTile)) {
-            this.tile.setPiece(null);
-            destinationTile.setPiece(this);
-            System.out.println(this.getFullName() + " Moved");
-        } else {
-
-            switch (this.getName()) {
-
-                case "P":
-
-                    System.out.println("This is not a valid Pawn Move");
-                    break;
-                case "B":
-
-                    System.out.println("This is not a valid Bishop Move");
-                    break;
-                case "Kn":
-
-                    System.out.println("This is not a valid Knight Move");
-                    break;
-                case "R":
-
-                    System.out.println("This is not a valid Rook Move");
-                    break;
-                case "K":
-
-                    System.out.println("This is not a valid King move");
-                    break;
-                case "Q":
-
-                    System.out.println("This is not a valid Queen Move");
-                    break;
-                default:
-
-                    System.out.println("Something wrong happened in the else statement of the if condition of printing who moved in piece");
-            }
-
-        }
-
-    }
-
 }

@@ -1,37 +1,49 @@
 import java.awt.*;
+import java.util.LinkedList;
 
 public class King extends Piece {
 
-
-    public King(Color color) {
-
-        setColor(color);
+    King(Color color) {
+        super(color);
     }
 
-    public boolean canMove (Tile destinationTile){
+    boolean isBeingChecked() {
+        Color enemyColor = color == Color.WHITE? Color.BLACK: Color.WHITE;
+        LinkedList<Piece> enemyPieces = tile.getBoard().getAllPiecesWithColor(enemyColor);
 
-        String origin = tile.getCoordinates();
-        String destination = destinationTile.getCoordinates();
-
-        int changeInX = Math.abs(destination.charAt(0) - origin.charAt(0));
-        int changeInY = Math.abs(destination.charAt(1) - origin.charAt(1));
-
-        if (changeInX <= 1 && changeInY <= 1){
-
-            if (destination.isEmpty() || !destinationContainsAlly(destinationTile)){ //this was previosly pathIsEmptyAndDestinationIsFree
-
+        for (Piece piece : enemyPieces) {
+            if (piece.canMove(tile)) {
                 return true;
             }
-        }else{
-
-            System.out.println("This is not a king Move");
         }
-
         return false;
     }
 
-    public String getName() {
+    boolean isAlive() {
+        if (isBeingChecked()) {
+            /* Check if the king can move anywhere to avoid the check mate */
+            // TODO: check if any other piece can protect the king
+            for (int i =-1; i <= 1; i++) {
+                for (int j=-1; j <= 1; j++) {
+                    Tile neighbourTile = tile.getNeighbourTile(i, j);
+                    if (neighbourTile != null && canMove(neighbourTile))
+                        return true;
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
 
+    public boolean canMove (Tile destinationTile){
+        int xDist = Math.abs(tile.xDiffFrom(destinationTile));
+        int yDist = Math.abs(tile.yDiffFrom(destinationTile));
+
+        return xDist <= 1 && yDist <= 1 && super.canMove(destinationTile);
+    }
+
+    public String getShortName() {
         return "K";
     }
 }
