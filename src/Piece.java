@@ -65,7 +65,7 @@ public abstract class Piece {
     }
 
     boolean isCorrectStraightMoveTowards(Tile destTile) {
-        return (tile.xDiffFrom(destTile) == 0 || tile.xDiffFrom(destTile) == 0) &&
+        return (tile.xDiffFrom(destTile) == 0 || tile.yDiffFrom(destTile) == 0) &&
                     isPathClearTowards(destTile);
     }
 }
