@@ -20,20 +20,22 @@ public class King extends Piece {
     }
 
     boolean isAlive() {
-        if (isBeingChecked()) {
-            /* Check if the king can move anywhere to avoid the check mate */
-            // TODO: check if any other piece can protect the king
-            for (int i =-1; i <= 1; i++) {
-                for (int j=-1; j <= 1; j++) {
-                    Tile neighbourTile = tile.getNeighbourTile(i, j);
-                    if (neighbourTile != null && canMove(neighbourTile))
+
+
+        LinkedList<Piece> army = tile.getBoard().getAllPiecesWithColor(color);
+
+        /*For Each piece, move it to each place; then check if it the enemy's king can be unchecked, if it is unchecked return true*/
+        for (Piece piece : army) {
+            for (int i = 0; i < tile.getBoard().BOARD_WIDTH; i++) {
+                for (int j = 0; j < tile.getBoard().BOARD_LENGTH; j++) {
+                    Coordinate coordinates = new Coordinate(i, j);
+                    if (piece.canMove(tile.getBoard().getTile(coordinates))) {
                         return true;
+                    }
                 }
             }
-            return false;
-        } else {
-            return true;
         }
+        return false;
     }
 
     public boolean canMove (Tile destinationTile){

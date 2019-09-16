@@ -28,13 +28,11 @@ public abstract class Piece {
         Piece originalPiece = destinationTile.getPiece();
 
         move(destinationTile);
-        boolean willOwnPlayerKingBeChecked = tile.getBoard().getKing(color).isBeingChecked();
-
-        /* relocate the pieces back to their original positions */
+        boolean willPlayerCheckHimself = tile.getBoard().getKing(color).isBeingChecked();
         move(originalTile);
         destinationTile.setPiece(originalPiece);
 
-        return !destinationContainsAlly && !willOwnPlayerKingBeChecked;
+        return !destinationContainsAlly && !willPlayerCheckHimself;
     }
 
     void move(Tile destinationTile) {

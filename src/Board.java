@@ -8,7 +8,6 @@ public class Board {
     private boolean whiteTurn;
     private King whiteKing;
     private King blackKing;
-
     private Tile[][] board;
 
     private Board() {
@@ -18,7 +17,7 @@ public class Board {
         for (int i = 0; i < BOARD_LENGTH; i++) {
             for (int j = 0; j < BOARD_WIDTH; j++) {
                 Coordinate coordinate = new Coordinate(j, i);
-                Color color = ((i + j) % 2 == 0)? Color.WHITE: Color.BLACK;
+                Color color = ((i + j) % 2 == 0) ? Color.WHITE : Color.BLACK;
                 board[i][j] = new Tile(coordinate, color, this);
             }
         }
@@ -45,12 +44,12 @@ public class Board {
         board[7][5].setPiece(new Bishop(Color.white));
 
         board[0][4].setPiece(new Queen(Color.black));
-        board[7][3].setPiece(new Queen(Color.white));
+        board[7][4].setPiece(new Queen(Color.white));
 
         blackKing = new King(Color.black);
         whiteKing = new King(Color.white);
         board[0][3].setPiece(blackKing);
-        board[7][4].setPiece(whiteKing);
+        board[7][3].setPiece(whiteKing);
 
         whiteTurn = true;
     }
@@ -104,7 +103,6 @@ public class Board {
         System.out.println(Arrays.deepToString(boardedBoard).replace("], ", "]\n"));
         System.out.println();
     }
-
     LinkedList<Piece> getAllPiecesWithColor(Color color) {
         LinkedList<Piece> listOfPieces = new LinkedList<Piece>();
         for (int i = 0; i < BOARD_WIDTH; i++) {
@@ -117,12 +115,22 @@ public class Board {
 
         return listOfPieces;
     }
-
     public King getKing(Color color) {
-        return color == Color.WHITE? whiteKing: blackKing;
+        return color == Color.WHITE ? whiteKing : blackKing;
     }
     Tile getTile(Coordinate coordinate) {
         return board[coordinate.getY()][coordinate.getX()];
+    }
+    private void checkIfEnemyGotChecked(Color enemyColor) {
+
+        Color currentPlayerColor = enemyColor == Color.WHITE ? Color.black : Color.white;
+        LinkedList<Piece> currentPlayerArmy = getAllPiecesWithColor(currentPlayerColor);
+        Piece enemyKing = getKing(enemyColor);
+        for (Piece piece : currentPlayerArmy) {
+            if (piece.canMove(enemyKing.tile)) {
+                System.out.println("The " + (enemyColor == Color.WHITE ? "White" : "Black") + " king's is in check");
+            }
+        }
     }
 
     /* Driver function for the chess game */
@@ -132,10 +140,20 @@ public class Board {
 
         /* Main loop of game */
         while (whiteKing.isAlive() && blackKing.isAlive()) {
+
             /* Obtain the source coordinate from user input */
             System.out.print("Enter the coordinates of the tile you wish to move its piece: ");
             Coordinate sourceCoordinate = new Coordinate(sc.next().toLowerCase());
             if (!sourceCoordinate.isValidCoordinate() || getTile(sourceCoordinate).isEmpty()) {
+                continue;
+            }
+
+            /* Ensure correct player turn */
+            Piece pieceToMove = getTile(sourceCoordinate).getPiece();
+            System.out.println("You Selected: " + pieceToMove.getClass().getName());
+            if ((whiteTurn && pieceToMove.getColor() == Color.BLACK) ||
+                    (!whiteTurn && pieceToMove.getColor() == Color.WHITE)) {
+                System.out.println("Oops, It is " + (whiteTurn ? "white" : "black") + "'s turn!");
                 continue;
             }
 
@@ -146,16 +164,9 @@ public class Board {
                     sourceCoordinate.equals(destinationCoordinate)) {
                 continue;
             }
-
-            Piece pieceToMove = getTile(sourceCoordinate).getPiece();
             Tile destinationTile = getTile(destinationCoordinate);
 
-            /* Ensure correct player turn */
-            if ((whiteTurn && pieceToMove.getColor() == Color.BLACK) ||
-                    (!whiteTurn && pieceToMove.getColor() == Color.WHITE)) {
-                System.out.println("Oops, It is " + (whiteTurn? "white": "black") + "'s turn!");
-                continue;
-            }
+
             // TODO: force the player to resolve a check for his king if at a situation.
 
             if (pieceToMove.canMove(destinationTile)) {
@@ -165,12 +176,14 @@ public class Board {
                 System.out.println("Invalid move for piece: " + pieceToMove.getClass().getSimpleName());
             }
 
+            //this cannot be created from whiteTurn because whiteTurn is changed before we perform this check
+            Color enemyColor = pieceToMove.color == Color.white ? Color.BLACK : Color.WHITE;
+            this.checkIfEnemyGotChecked(enemyColor);
             printBoard();
         }
 
         System.out.println("Game is over.");
     }
-
     public static void main(String[] args) {
         Board board = new Board();
         board.play();

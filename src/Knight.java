@@ -9,29 +9,13 @@ public class Knight extends Piece {
 
     @Override
     public boolean canMove(Tile destinationTile) {
-        return false;
+
+        int xDist = Math.abs(tile.xDiffFrom(destinationTile));
+        int yDist = Math.abs(tile.yDiffFrom(destinationTile));
+        boolean validKnightMove = (xDist == 2 && yDist == 1) || (xDist == 1 && yDist == 2);
+
+        return validKnightMove && super.canMove(destinationTile);
     }
-//    public boolean canMove(Tile destinationTile) {
-//
-//        String origin = tile.getCoordinates();
-//        String destination = destinationTile.getCoordinates();
-//
-//        int changeInX = Math.abs(destination.charAt(0) - origin.charAt(0));
-//        int changeInY = Math.abs(destination.charAt(1) - origin.charAt(1));
-//
-//        if ((changeInX <= 2 && changeInY <= 1) || (changeInX <= 1 && changeInY <= 2)) {
-//
-//            if (destinationTile.isEmpty() && !destinationContainsAlly(destinationTile)) {
-//
-//                return true;
-//            }
-//        } else {
-//
-//            System.out.println("This is not a Knight Move");
-//        }
-//
-//        return false;
-//    }
 
     public String getShortName() {
 
