@@ -42,6 +42,24 @@ public class Pawn extends Piece {
         }
     }
 
+    boolean checkIfPawnIsNotAtTheCorner (Coordinate coordinate){
+        Board board = tile.getBoard();
+        if (coordinate.isValidCoordinate()) {
+            Tile cornerTile = board.getTile(coordinate);
+            Pawn cornerPawn = null;
+            boolean thereIsACornerPawn = false;
+            if (!cornerTile.isEmpty() && cornerTile.getPiece().getShortName().equals("P")) {
+
+                thereIsACornerPawn = this.color != cornerTile.getPiece().getColor() ? true : false;
+                cornerPawn = (Pawn) cornerTile.getPiece();
+            }
+            boolean canEatRightPawn = (thereIsACornerPawn && cornerPawn != null && cornerPawn.getCanEatMe()) ? true : false;
+            if (canEatRightPawn) {
+                return true;
+            }
+        }
+    }
+
     public boolean getCanEatMe() {
         return canEatMe;
     }
@@ -92,10 +110,9 @@ public class Pawn extends Piece {
             Tile rightDownCornerTile = board.getTile(rightDownCorner);
             Pawn rightPawn = null;
             boolean thereIsARightPawn = false;
-            if (!rightDownCornerTile.isEmpty()) {
+            if (!rightDownCornerTile.isEmpty() && rightDownCornerTile.getPiece().getShortName().equals("P")) {
 
-                thereIsARightPawn = (rightDownCornerTile.getPiece().getShortName().equals("P") &&
-                        this.color != rightDownCornerTile.getPiece().getColor()) ? true : false;
+                thereIsARightPawn = this.color != rightDownCornerTile.getPiece().getColor() ? true : false;
                 rightPawn = (Pawn) rightDownCornerTile.getPiece();
             }
             boolean canEatRightPawn = (thereIsARightPawn && rightPawn != null && rightPawn.getCanEatMe()) ? true : false;
@@ -107,9 +124,8 @@ public class Pawn extends Piece {
             Tile leftDownCornerTile = board.getTile(leftDownCorner);
             Pawn leftPawn = null;
             boolean thereIsALeftPawn = false;
-            if (!leftDownCornerTile.isEmpty()) {
-                thereIsALeftPawn = (leftDownCornerTile.getPiece().getShortName().equals("P") &&
-                        this.color != leftDownCornerTile.getPiece().getColor()) ? true : false;
+            if (!leftDownCornerTile.isEmpty() && leftDownCornerTile.getPiece().getShortName().equals("P")) {
+                thereIsALeftPawn = this.color != leftDownCornerTile.getPiece().getColor() ? true : false;
                 leftPawn = (Pawn) leftDownCornerTile.getPiece();
             }
             boolean canEatLeftPawn = (thereIsALeftPawn && leftPawn != null && leftPawn.getCanEatMe()) ? true : false;
