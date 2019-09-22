@@ -11,7 +11,7 @@ public class Bishop extends Piece {
                 super.canMove(destinationTile);
     }
 
-    public String getShortName() {
+    public String getInitial() {
         return "B";
     }
 }

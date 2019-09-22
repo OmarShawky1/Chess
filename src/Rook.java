@@ -12,7 +12,7 @@ public class Rook extends Piece {
     }
 
 
-    public String getShortName() {
+    public String getInitial() {
         return "R";
     }
 }

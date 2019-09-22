@@ -75,7 +75,7 @@ public class Board {
                 int start = 0;
                 int end = 3;
                 if (board[j - 1][i - 1].getPiece() != null) {
-                    switch (board[j - 1][i - 1].getPiece().getShortName()) {
+                    switch (board[j - 1][i - 1].getPiece().getInitial()) {
                         case "P":
                             boardedBoard[j][i].replace(start, end, "|P|");
                             break;
@@ -133,7 +133,6 @@ public class Board {
         }
     }
 
-    /* Driver function for the chess game */
     private void play() {
         printBoard();
         Scanner sc = new Scanner(System.in);
@@ -166,8 +165,6 @@ public class Board {
             }
             Tile destinationTile = getTile(destinationCoordinate);
 
-
-            // TODO: force the player to resolve a check for his king if at a situation.
 
             if (pieceToMove.canMove(destinationTile)) {
                 pieceToMove.move(destinationTile);

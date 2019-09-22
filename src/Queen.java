@@ -12,7 +12,7 @@ public class Queen extends Piece {
         return isValidQueenMove && super.canMove(destinationTile);
     }
 
-    public String getShortName() {
+    public String getInitial() {
         return "Q";
     }
 }
