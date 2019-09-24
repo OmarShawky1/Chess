@@ -10,9 +10,4 @@ public class Rook extends Piece {
     public boolean canMove(Tile destinationTile) {
         return isCorrectStraightMoveTowards(destinationTile) && super.canMove(destinationTile);
     }
-
-
-    public String getInitial() {
-        return "R";
-    }
 }

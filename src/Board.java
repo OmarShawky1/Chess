@@ -9,7 +9,6 @@ public class Board {
     private King whiteKing;
     private King blackKing;
     private Tile[][] board;
-    private int movementCounts;
 
     public Board() {
         board = new Tile[BOARD_LENGTH][BOARD_WIDTH];
@@ -53,7 +52,6 @@ public class Board {
         board[7][3].setPiece(whiteKing);
 
         whiteTurn = true;
-        movementCounts = 0;
     }
 
     private void printBoard() { /* Fancy method for movement visualization - shall be removed soon */
@@ -77,23 +75,23 @@ public class Board {
                 int start = 0;
                 int end = 3;
                 if (board[j - 1][i - 1].getPiece() != null) {
-                    switch (board[j - 1][i - 1].getPiece().getInitial()) {
-                        case "P":
+                    switch (board[j - 1][i - 1].getPiece().getClass().getSimpleName()) {
+                        case "Pawn":
                             boardedBoard[j][i].replace(start, end, "|P|");
                             break;
-                        case "R":
+                        case "Rook":
                             boardedBoard[j][i].replace(start, end, "|R|");
                             break;
-                        case "Kn":
+                        case "Knight":
                             boardedBoard[j][i].replace(start, end, "|Kn|");
                             break;
-                        case "B":
+                        case "Bishop":
                             boardedBoard[j][i].replace(start, end, "|B|");
                             break;
-                        case "K":
+                        case "King":
                             boardedBoard[j][i].replace(start, end, "|K|");
                             break;
-                        case "Q":
+                        case "Queen":
                             boardedBoard[j][i].replace(start, end, "|Q|");
                             break;
                     }
@@ -105,9 +103,7 @@ public class Board {
         System.out.println(Arrays.deepToString(boardedBoard).replace("], ", "]\n"));
         System.out.println();
     }
-    public int getMovementCounts(){
-        return movementCounts;
-    }
+
     LinkedList<Piece> getAllPiecesWithColor(Color color) {
         LinkedList<Piece> listOfPieces = new LinkedList<Piece>();
         for (int i = 0; i < BOARD_WIDTH; i++) {
@@ -120,14 +116,16 @@ public class Board {
 
         return listOfPieces;
     }
+
     public King getKing(Color color) {
         return color == Color.WHITE ? whiteKing : blackKing;
     }
+
     Tile getTile(Coordinate coordinate) {
         return board[coordinate.getY()][coordinate.getX()];
     }
-    private void checkIfEnemyGotChecked(Color enemyColor) {
 
+    private void checkIfEnemyGotChecked(Color enemyColor) {
         Color currentPlayerColor = enemyColor == Color.WHITE ? Color.black : Color.white;
         LinkedList<Piece> currentPlayerArmy = getAllPiecesWithColor(currentPlayerColor);
         Piece enemyKing = getKing(enemyColor);
@@ -182,7 +180,6 @@ public class Board {
             Color enemyColor = pieceToMove.color == Color.white ? Color.BLACK : Color.WHITE;
             this.checkIfEnemyGotChecked(enemyColor);
             printBoard();
-            movementCounts++;
         }
 
         System.out.println("Game is over.");

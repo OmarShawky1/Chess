@@ -16,9 +16,4 @@ public class Knight extends Piece {
 
         return validKnightMove && super.canMove(destinationTile);
     }
-
-    public String getInitial() {
-
-        return "Kn";
-    }
 }
