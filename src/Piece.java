@@ -14,43 +14,27 @@ public abstract class Piece {
         return color;
     }
 
-    public abstract String getInitial();
-
     void setTile(Tile tile) {
         this.tile = tile;
     }
 
     public boolean canMove(Tile destinationTile) {
-
-        boolean destinationContainsAlly = !destinationTile.isEmpty() && destinationTile.getPiece().getColor() == color;
+        boolean destinationContainsAlly = !destinationTile.isEmpty() &&
+                destinationTile.getPiece().getColor() == color;
 
         Tile originalTile = tile;
-        Piece destinationTilePiece = destinationTile.getPiece();
-        Tile enpassantOriginalTile;
-        boolean willPlayerCheckHimself = false;
-        if (!destinationTile.isEmpty() && originalTile.getPiece().getInitial().equalsIgnoreCase("P")){
-            int x = destinationTile.getCoordinates().getX();
-            int y = tile.getCoordinates().getY();
-            Coordinate coordinate = new Coordinate(x,y);
-            enpassantOriginalTile = tile.getBoard().getTile(coordinate);
-            if (!enpassantOriginalTile.isEmpty() && enpassantOriginalTile.getPiece().getInitial().equalsIgnoreCase("P")){
-                Piece pawn = enpassantOriginalTile.getPiece();
-                move(destinationTile);
-                willPlayerCheckHimself = tile.getBoard().getKing(color).isBeingChecked();
-                move(originalTile);
-                destinationTile.setPiece(destinationTilePiece);
-                enpassantOriginalTile.setPiece(pawn);
-            }
-        }else {
-            move(destinationTile);
-            willPlayerCheckHimself = tile.getBoard().getKing(color).isBeingChecked();
-            move(originalTile);
-            destinationTile.setPiece(destinationTilePiece);
-        }
+        King playerOwnKing = tile.getBoard().getKing(color);
 
+        /* Check if the player's own king will be checked if this piece were moved out of the way. */
+        tile.setPiece(null);
+        tile = null;
 
+        boolean willOwnPlayerKingBeChecked = playerOwnKing.isBeingChecked();
 
-        return !destinationContainsAlly && !willPlayerCheckHimself;
+        tile = originalTile;
+        tile.setPiece(this);
+
+        return !destinationContainsAlly && !willOwnPlayerKingBeChecked;
     }
 
     void move(Tile destinationTile) {

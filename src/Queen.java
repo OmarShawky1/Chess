@@ -11,8 +11,4 @@ public class Queen extends Piece {
 
         return isValidQueenMove && super.canMove(destinationTile);
     }
-
-    public String getInitial() {
-        return "Q";
-    }
 }

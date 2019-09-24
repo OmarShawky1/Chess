@@ -2,105 +2,65 @@ import java.awt.*;
 
 public class Pawn extends Piece {
 
-    private boolean hadMoved;
-    private boolean canEnPassantMe = false;
-    private int canEnPassantMeAt;
+    private int numOfMovements;
+    private int eatEnPassingDirection;
 
     public Pawn(Color color) {
         super(color);
-        hadMoved = false;
+        eatEnPassingDirection = 0;
+        numOfMovements = 0;
     }
 
     public boolean canMove(Tile destinationTile) {
-
+        /* Check if trying to attack an enemy */
         boolean isPawnInAttackMode = false;
         if (!destinationTile.isEmpty() && color != destinationTile.getPiece().getColor()) {
             isPawnInAttackMode = true;
         }
 
-        int movementCounts = tile.getBoard().getMovementCounts();
-        boolean canMakeEnPassant = canMakeEnPassant(destinationTile, movementCounts);
-        int maxYSteps = hadMoved || isPawnInAttackMode || canMakeEnPassant ? 1 : 2;
+        /* Determine if trying to eat an enemy on the passing */
         int xDiff = tile.xDiffFrom(destinationTile);
+        int xDirection = xDiff == 0? 0: xDiff/ Math.abs(xDiff);
+
+        Tile tilePassingBy = tile.getNeighbourTile(xDirection, 0);
+        Piece piecePassingBy = tilePassingBy != null? tilePassingBy.getPiece(): null;
+
+        if (piecePassingBy instanceof Pawn && piecePassingBy.getColor() != color &&
+                ((Pawn) piecePassingBy).numOfMovements == 1) {
+            eatEnPassingDirection = xDirection;
+            isPawnInAttackMode = true;
+        } else {
+            eatEnPassingDirection = 0;
+        }
+
+        /* Check correct movement for the Pawn */
         int yDiff = tile.yDiffFrom(destinationTile);
+        int maxYSteps = (numOfMovements > 0 || isPawnInAttackMode)? 1: 2;
 
-        boolean isCorrectVerticalBlackPawnMove = (color == Color.BLACK && yDiff <= maxYSteps && yDiff > 0);
-        boolean isCorrectVerticalWhitePawnMove = (color == Color.WHITE && yDiff >= -maxYSteps && yDiff < 0);
-        boolean isCorrectVerticalMove = isCorrectVerticalBlackPawnMove || isCorrectVerticalWhitePawnMove;
-        boolean isCorrectHorizontalMove = Math.abs(xDiff) == (isPawnInAttackMode || canMakeEnPassant ? 1 : 0);
+        boolean isCorrectVerticalMove = (color == Color.BLACK && yDiff <= maxYSteps && yDiff > 0) ||
+                (color == Color.WHITE && yDiff >= -maxYSteps && yDiff < 0);
+        boolean isCorrectHorizontalMove = Math.abs(xDiff) == (isPawnInAttackMode? 1 : 0);
 
-        if (isCorrectVerticalMove && isCorrectHorizontalMove && super.canMove(destinationTile)) { /* valid move for a pawn */
-            hadMoved = true;
-            setCanEnPassantMe(destinationTile, tile.getBoard().getMovementCounts());
-//            return super.canMove(destinationTile);
-            return true;
-
-        }
-        return false;
+        return isCorrectVerticalMove &&
+                isCorrectHorizontalMove &&
+                super.canMove(destinationTile);
     }
 
-    public boolean canMakeEnPassant(Tile destinationTile, int counter) {
-//        System.out.println("I Reached canMakeEnPassant");
-        int x = destinationTile.getCoordinates().getX();
-        int y = tile.getCoordinates().getY();
-        Coordinate coor = new Coordinate(x, y);
-        Tile enpassantTile = tile.getBoard().getTile(coor);
-        System.out.println("Coordinates of enpassantTile: " + enpassantTile.getCoordinates());
-        boolean ifThereIsNearEnemyPawn =
-                !enpassantTile.isEmpty() && enpassantTile.getPiece().getInitial().equalsIgnoreCase("P") && enpassantTile.getPiece().getColor() != color;
-        Pawn nearEnemyPawn;
-        System.out.println("ifThereIsNearEnemyPawn: " + ifThereIsNearEnemyPawn);
-        if (ifThereIsNearEnemyPawn) {
-            nearEnemyPawn = (Pawn) enpassantTile.getPiece();
-            System.out.println("nearEnemyPawn: " + nearEnemyPawn.getClass().getName() + " and it's color: " + nearEnemyPawn.getColor());
-            System.out.println("getCanEnPassantMe(): " + nearEnemyPawn.getCanEnPassantMe() + " board counter: " + tile.getBoard().getMovementCounts()+
-                    " and counter: " + counter);
-            if (nearEnemyPawn.getCanEnPassantMe() && getCanEnPassantMeCounter() == counter) {
-                return true;
+    void move(Tile destinationTile) {
+        if (eatEnPassingDirection != 0) {
+            Tile tilePassedBy = tile.getNeighbourTile(eatEnPassingDirection, 0);
+            Piece piecePassedBy = tilePassedBy.getPiece();
+
+            if (piecePassedBy != null) {
+                piecePassedBy.setTile(null);
+                tilePassedBy.setPiece(null);
             }
         }
-        return false;
-    }
+        eatEnPassingDirection = 0;
 
-    public void setCanEnPassantMe(Tile destinationTile, int counter) {
+        tile.setPiece(null);
+        destinationTile.setPiece(this);
 
-        boolean myFirstTwoStepMovement = Math.abs(destinationTile.getCoordinates().getY() - tile.getCoordinates().getY()) == 2;
-        if (myFirstTwoStepMovement) {
-            int right = destinationTile.getCoordinates().getX() + 1;
-            int left = destinationTile.getCoordinates().getX() - 1;
-            int y = destinationTile.getCoordinates().getY();
-            Coordinate rightCoor = new Coordinate(right, y);
-            Coordinate leftCoor = new Coordinate(left, y);
-            Tile rightTile = null;
-            Tile leftTile = null;
-            if (rightCoor.isValidCoordinate()){
-                rightTile = tile.getBoard().getTile(rightCoor);
-            }
-            if (leftCoor.isValidCoordinate()){
-                    leftTile = tile.getBoard().getTile(leftCoor);
-            }
-
-            boolean thereIsEnemyPawnOnMyRight =
-                    rightTile != null && !rightTile.isEmpty() && rightTile.getPiece().getInitial().equalsIgnoreCase("P");
-            boolean thereIsEnemyPawnOnMyLeft =
-                    leftTile != null && !leftTile.isEmpty() && leftTile.getPiece().getInitial().equalsIgnoreCase("P");
-
-            if ((thereIsEnemyPawnOnMyRight || thereIsEnemyPawnOnMyLeft)) {
-                canEnPassantMe = true;
-                canEnPassantMeAt = counter + 1;
-            }
-        }
-    }
-
-    public boolean getCanEnPassantMe() {
-        return canEnPassantMe;
-    }
-
-    public int getCanEnPassantMeCounter() {
-        return canEnPassantMeAt;
-    }
-
-    public String getInitial() {
-        return "P";
+        numOfMovements++;
     }
 }

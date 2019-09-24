@@ -19,21 +19,21 @@ public class King extends Piece {
         return false;
     }
 
-    /*isAlive works by moving every piece in each place possible, and after moving them we check if the king is unchecked, hence we know
-    that he is Alive, else....if we cannot move any piece because the king will get in check or will not get unchecked, the king is dead*/
     boolean isAlive() {
-        LinkedList<Piece> army = tile.getBoard().getAllPiecesWithColor(color);
-        for (Piece piece : army) {
-            for (int i = 0; i < tile.getBoard().BOARD_WIDTH; i++) {
-                for (int j = 0; j < tile.getBoard().BOARD_LENGTH; j++) {
-                    Coordinate coordinates = new Coordinate(i, j);
-                    if (piece.canMove(tile.getBoard().getTile(coordinates))) {
+        if (isBeingChecked()) {
+            /* Check if the king can move anywhere to avoid the check mate */
+            // TODO: check if any other piece can protect the king
+            for (int i =-1; i <= 1; i++) {
+                for (int j=-1; j <= 1; j++) {
+                    Tile neighbourTile = tile.getNeighbourTile(i, j);
+                    if (neighbourTile != null && canMove(neighbourTile))
                         return true;
-                    }
                 }
             }
+            return false;
+        } else {
+            return true;
         }
-        return false;
     }
 
     public boolean canMove(Tile destinationTile) {
@@ -41,9 +41,5 @@ public class King extends Piece {
         int yDist = Math.abs(tile.yDiffFrom(destinationTile));
 
         return xDist <= 1 && yDist <= 1 && super.canMove(destinationTile);
-    }
-
-    public String getInitial() {
-        return "K";
     }
 }

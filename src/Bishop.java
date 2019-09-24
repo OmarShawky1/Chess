@@ -10,9 +10,5 @@ public class Bishop extends Piece {
         return isCorrectCornerMoveTowards(destinationTile) &&
                 super.canMove(destinationTile);
     }
-
-    public String getInitial() {
-        return "B";
-    }
 }
 
