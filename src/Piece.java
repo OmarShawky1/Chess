@@ -21,50 +21,34 @@ public abstract class Piece {
     }
 
     public boolean canMove(Tile destinationTile) {
-        //old technique for canMove that uses moving each peace and then return it back, causes issue with en passant
-
-//        boolean destinationContainsAlly = !destinationTile.isEmpty() && destinationTile.getPiece().getColor() == color;
-//
-//        Tile originalTile = tile;
-//        Piece originalPiece = destinationTile.getPiece();
-//
-//        move(destinationTile);
-//        boolean willPlayerCheckHimself = tile.getBoard().getKing(color).isBeingChecked();
-//        move(originalTile);
-//        destinationTile.setPiece(originalPiece);
-//
-//        return !destinationContainsAlly && !willPlayerCheckHimself;
-
-        //this is my first try and i do not know why it is not working and I MUST KNOW WHY TODO
-
-//        System.out.println("counter " + counter);
-//        counter++;
-//
-//        System.out.println("I'm " + getClass().getName() + " at " + tile.getCoordinates() + " and i moved to " + destinationTile.getCoordinates());
-//
-//
-//        Tile[][] oldBoard = tile.getBoard().getBoard();
-//
-//        boolean destinationContainsAlly = !destinationTile.isEmpty() && destinationTile.getPiece().getColor() == color;
-//
-//        move(destinationTile);
-//        boolean willPlayerCheckHimself = tile.getBoard().getKing(color).isBeingChecked();
-//
-//        tile.getBoard().setBoard(oldBoard);
-//
-//        return !destinationContainsAlly && !willPlayerCheckHimself;
-
-
-        /*This also gives an extremely big error although  i'm playing and moving in a temporary board*/
-
-//        testBoard = tile.getBoard();
-
-        Board testBoard = tile.getBoard();
 
         boolean destinationContainsAlly = !destinationTile.isEmpty() && destinationTile.getPiece().getColor() == color;
 
-        testBoard.getTile(tile.getCoordinates()).getPiece().move(destinationTile);
-        boolean willPlayerCheckHimself = testBoard.getTile(tile.getCoordinates()).getBoard().getKing(color).isBeingChecked();
+        Tile originalTile = tile;
+        Piece destinationTilePiece = destinationTile.getPiece();
+        Tile enpassantOriginalTile;
+        boolean willPlayerCheckHimself = false;
+        if (!destinationTile.isEmpty() && originalTile.getPiece().getInitial().equalsIgnoreCase("P")){
+            int x = destinationTile.getCoordinates().getX();
+            int y = tile.getCoordinates().getY();
+            Coordinate coordinate = new Coordinate(x,y);
+            enpassantOriginalTile = tile.getBoard().getTile(coordinate);
+            if (!enpassantOriginalTile.isEmpty() && enpassantOriginalTile.getPiece().getInitial().equalsIgnoreCase("P")){
+                Piece pawn = enpassantOriginalTile.getPiece();
+                move(destinationTile);
+                willPlayerCheckHimself = tile.getBoard().getKing(color).isBeingChecked();
+                move(originalTile);
+                destinationTile.setPiece(destinationTilePiece);
+                enpassantOriginalTile.setPiece(pawn);
+            }
+        }else {
+            move(destinationTile);
+            willPlayerCheckHimself = tile.getBoard().getKing(color).isBeingChecked();
+            move(originalTile);
+            destinationTile.setPiece(destinationTilePiece);
+        }
+
+
 
         return !destinationContainsAlly && !willPlayerCheckHimself;
     }

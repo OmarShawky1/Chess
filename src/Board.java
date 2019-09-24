@@ -9,8 +9,9 @@ public class Board {
     private King whiteKing;
     private King blackKing;
     private Tile[][] board;
+    private int movementCounts;
 
-    private Board() {
+    public Board() {
         board = new Tile[BOARD_LENGTH][BOARD_WIDTH];
 
         /* Filling the board with Tile objects */
@@ -52,6 +53,7 @@ public class Board {
         board[7][3].setPiece(whiteKing);
 
         whiteTurn = true;
+        movementCounts = 0;
     }
 
     private void printBoard() { /* Fancy method for movement visualization - shall be removed soon */
@@ -103,6 +105,9 @@ public class Board {
         System.out.println(Arrays.deepToString(boardedBoard).replace("], ", "]\n"));
         System.out.println();
     }
+    public int getMovementCounts(){
+        return movementCounts;
+    }
     LinkedList<Piece> getAllPiecesWithColor(Color color) {
         LinkedList<Piece> listOfPieces = new LinkedList<Piece>();
         for (int i = 0; i < BOARD_WIDTH; i++) {
@@ -141,7 +146,7 @@ public class Board {
         while (whiteKing.isAlive() && blackKing.isAlive()) {
 
             /* Obtain the source coordinate from user input */
-            System.out.print("Enter the coordinates of the tile you wish to move its piece: ");
+            System.out.print("Enter the coordinates of the piece: ");
             Coordinate sourceCoordinate = new Coordinate(sc.next().toLowerCase());
             if (!sourceCoordinate.isValidCoordinate() || getTile(sourceCoordinate).isEmpty()) {
                 continue;
@@ -177,6 +182,7 @@ public class Board {
             Color enemyColor = pieceToMove.color == Color.white ? Color.BLACK : Color.WHITE;
             this.checkIfEnemyGotChecked(enemyColor);
             printBoard();
+            movementCounts++;
         }
 
         System.out.println("Game is over.");
