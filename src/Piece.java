@@ -1,16 +1,17 @@
-import java.awt.*;
-
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public abstract class Piece {
 
     protected Color color;
     protected Tile tile;
+    public Image image;
 
     public Piece(Color color) {
         this.color = color;
     }
 
-    Color getColor() {
+    public Color getColor() {
         return color;
     }
 

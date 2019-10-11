@@ -1,17 +1,20 @@
-import java.awt.*;
+import javafx.scene.paint.Color;
 
 public class Pawn extends Piece {
 
-    private int numOfMovements;
+    private boolean firstTwoStepMovement;
     private int eatEnPassingDirection;
 
     public Pawn(Color color) {
         super(color);
         eatEnPassingDirection = 0;
-        numOfMovements = 0;
+        firstTwoStepMovement = false;
     }
 
     public boolean canMove(Tile destinationTile) {
+        //TODO el 3askry maybetra2ash
+        //TODO pawn can move forward although if there is anything in frond of him
+
         /* Check if trying to attack an enemy */
         boolean isPawnInAttackMode = false;
         if (!destinationTile.isEmpty() && color != destinationTile.getPiece().getColor()) {
@@ -20,13 +23,13 @@ public class Pawn extends Piece {
 
         /* Determine if trying to eat an enemy on the passing */
         int xDiff = tile.xDiffFrom(destinationTile);
-        int xDirection = xDiff == 0? 0: xDiff/ Math.abs(xDiff);
+        int xDirection = xDiff == 0 ? 0 : xDiff / Math.abs(xDiff);
 
         Tile tilePassingBy = tile.getNeighbourTile(xDirection, 0);
-        Piece piecePassingBy = tilePassingBy != null? tilePassingBy.getPiece(): null;
+        Piece piecePassingBy = tilePassingBy != null ? tilePassingBy.getPiece() : null;
 
         if (piecePassingBy instanceof Pawn && piecePassingBy.getColor() != color &&
-                ((Pawn) piecePassingBy).numOfMovements == 1) {
+                ((Pawn) piecePassingBy).firstTwoStepMovement == true) {
             eatEnPassingDirection = xDirection;
             isPawnInAttackMode = true;
         } else {
@@ -35,11 +38,11 @@ public class Pawn extends Piece {
 
         /* Check correct movement for the Pawn */
         int yDiff = tile.yDiffFrom(destinationTile);
-        int maxYSteps = (numOfMovements > 0 || isPawnInAttackMode)? 1: 2;
+        int maxYSteps = (firstTwoStepMovement == true || isPawnInAttackMode) ? 1 : 2;
 
         boolean isCorrectVerticalMove = (color == Color.BLACK && yDiff <= maxYSteps && yDiff > 0) ||
                 (color == Color.WHITE && yDiff >= -maxYSteps && yDiff < 0);
-        boolean isCorrectHorizontalMove = Math.abs(xDiff) == (isPawnInAttackMode? 1 : 0);
+        boolean isCorrectHorizontalMove = Math.abs(xDiff) == (isPawnInAttackMode ? 1 : 0);
 
         return isCorrectVerticalMove &&
                 isCorrectHorizontalMove &&
@@ -61,6 +64,14 @@ public class Pawn extends Piece {
         tile.setPiece(null);
         destinationTile.setPiece(this);
 
-        numOfMovements++;
+//        boolean moved = Math.abs(destinationTile.getCoordinates().getY() - tile.getCoordinates().getY()) == 2;
+//        System.out.println("moved: " + moved);
+//        if (moved){
+//            firstTwoStepMovement = true;
+//        }
+        System.out.println("Here");
+        firstTwoStepMovement = true;
+
+
     }
 }

@@ -1,4 +1,4 @@
-import java.awt.*;
+import javafx.scene.paint.Color;
 import java.util.*;
 
 public class Board {
@@ -17,37 +17,37 @@ public class Board {
         for (int i = 0; i < BOARD_LENGTH; i++) {
             for (int j = 0; j < BOARD_WIDTH; j++) {
                 Coordinate coordinate = new Coordinate(j, i);
-                Color color = ((i + j) % 2 == 0) ? Color.WHITE : Color.BLACK;
+                String color = ((i + j) % 2 == 0) ? "yellow" : "brown";
                 board[i][j] = new Tile(coordinate, color, this);
             }
         }
 
         /* Initializing the Tiles with pieces */
         for (int i = 0; i < 8; i++) {
-            board[1][i].setPiece(new Pawn(Color.black));
-            board[6][i].setPiece(new Pawn(Color.white));
+            board[1][i].setPiece(new Pawn(Color.BLACK));
+            board[6][i].setPiece(new Pawn(Color.WHITE));
         }
 
-        board[0][0].setPiece(new Rook(Color.black));
-        board[0][7].setPiece(new Rook(Color.black));
-        board[7][0].setPiece(new Rook(Color.white));
-        board[7][7].setPiece(new Rook(Color.white));
+        board[0][0].setPiece(new Rook(Color.BLACK));
+        board[0][7].setPiece(new Rook(Color.BLACK));
+        board[7][0].setPiece(new Rook(Color.WHITE));
+        board[7][7].setPiece(new Rook(Color.WHITE));
 
-        board[0][1].setPiece(new Knight(Color.black));
-        board[0][6].setPiece(new Knight(Color.black));
-        board[7][1].setPiece(new Knight(Color.white));
-        board[7][6].setPiece(new Knight(Color.white));
+        board[0][1].setPiece(new Knight(Color.BLACK));
+        board[0][6].setPiece(new Knight(Color.BLACK));
+        board[7][1].setPiece(new Knight(Color.WHITE));
+        board[7][6].setPiece(new Knight(Color.WHITE));
 
-        board[0][2].setPiece(new Bishop(Color.black));
-        board[0][5].setPiece(new Bishop(Color.black));
-        board[7][2].setPiece(new Bishop(Color.white));
-        board[7][5].setPiece(new Bishop(Color.white));
+        board[0][2].setPiece(new Bishop(Color.BLACK));
+        board[0][5].setPiece(new Bishop(Color.BLACK));
+        board[7][2].setPiece(new Bishop(Color.WHITE));
+        board[7][5].setPiece(new Bishop(Color.WHITE));
 
-        board[0][4].setPiece(new Queen(Color.black));
-        board[7][4].setPiece(new Queen(Color.white));
+        board[0][4].setPiece(new Queen(Color.BLACK));
+        board[7][4].setPiece(new Queen(Color.WHITE));
 
-        blackKing = new King(Color.black);
-        whiteKing = new King(Color.white);
+        blackKing = new King(Color.BLACK);
+        whiteKing = new King(Color.WHITE);
         board[0][3].setPiece(blackKing);
         board[7][3].setPiece(whiteKing);
 
@@ -126,7 +126,7 @@ public class Board {
     }
 
     private void checkIfEnemyGotChecked(Color enemyColor) {
-        Color currentPlayerColor = enemyColor == Color.WHITE ? Color.black : Color.white;
+        Color currentPlayerColor = enemyColor == Color.WHITE ? Color.BLACK: Color.WHITE;
         LinkedList<Piece> currentPlayerArmy = getAllPiecesWithColor(currentPlayerColor);
         Piece enemyKing = getKing(enemyColor);
         for (Piece piece : currentPlayerArmy) {
@@ -177,7 +177,7 @@ public class Board {
             }
 
             //this cannot be created from whiteTurn because whiteTurn is changed before we perform this check
-            Color enemyColor = pieceToMove.color == Color.white ? Color.BLACK : Color.WHITE;
+            Color enemyColor = pieceToMove.color == Color.WHITE ? Color.BLACK : Color.WHITE;
             this.checkIfEnemyGotChecked(enemyColor);
             printBoard();
         }

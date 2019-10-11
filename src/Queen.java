@@ -1,4 +1,4 @@
-import java.awt.*;
+import javafx.scene.paint.Color;
 
 public class Queen extends Piece {
     public Queen(Color color) {

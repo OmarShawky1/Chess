@@ -1,4 +1,4 @@
-import java.awt.*;
+import javafx.scene.paint.Color;
 import java.util.LinkedList;
 
 public class King extends Piece {
@@ -22,7 +22,6 @@ public class King extends Piece {
     boolean isAlive() {
         if (isBeingChecked()) {
             /* Check if the king can move anywhere to avoid the check mate */
-            // TODO: check if any other piece can protect the king
             for (int i =-1; i <= 1; i++) {
                 for (int j=-1; j <= 1; j++) {
                     Tile neighbourTile = tile.getNeighbourTile(i, j);
@@ -30,10 +29,22 @@ public class King extends Piece {
                         return true;
                 }
             }
+            // TODO: check if any other piece can protect the king
+
+            for (Piece piece: tile.getBoard().getAllPiecesWithColor(color)){
+             for (int i=0; i<tile.getBoard().BOARD_LENGTH; i++){
+                 for (int j=0; j<tile.getBoard().BOARD_WIDTH; j++){
+                     Coordinate coordinate = new Coordinate(i,j);
+                     if(piece.canMove(tile.getBoard().getTile(coordinate))){
+                         return true;
+                     }
+                 }
+             }
+            }
+
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     public boolean canMove(Tile destinationTile) {

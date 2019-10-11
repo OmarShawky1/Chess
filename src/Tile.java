@@ -4,11 +4,11 @@ public class Tile {
 
     private Coordinate coordinate;
     private Piece piece;
-    private Color color;
+    private String color;
     private boolean isEmpty;
     private Board board;
 
-    Tile(Coordinate coordinate, Color color, Board board) {
+    Tile(Coordinate coordinate, String color, Board board) {
         this.color = color;
         this.coordinate = coordinate;
         this.isEmpty = true;
@@ -57,6 +57,14 @@ public class Tile {
 
     Coordinate getCoordinates() {
         return coordinate;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }
 
