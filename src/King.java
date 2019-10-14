@@ -1,3 +1,4 @@
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import java.util.LinkedList;
 
@@ -5,6 +6,12 @@ public class King extends Piece {
 
     King(Color color) {
         super(color);
+
+        if (color == Color.WHITE){
+            this.image = new Image("White_King.png");
+        }else {
+            this.image = new Image("Black_King.png");
+        }
     }
 
     boolean isBeingChecked() {

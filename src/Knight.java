@@ -1,3 +1,4 @@
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Knight extends Piece {
@@ -5,6 +6,12 @@ public class Knight extends Piece {
 
     public Knight(Color color) {
         super(color);
+
+        if (color == Color.WHITE){
+            this.image = new Image("White_Knight.png");
+        }else {
+            this.image = new Image("Black_Knight.png");
+        }
     }
 
     @Override

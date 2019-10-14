@@ -5,7 +5,8 @@ public abstract class Piece {
 
     protected Color color;
     protected Tile tile;
-    public Image image;
+
+    protected Image image;
 
     public Piece(Color color) {
         this.color = color;
@@ -68,5 +69,9 @@ public abstract class Piece {
     boolean isCorrectStraightMoveTowards(Tile destTile) {
         return (tile.xDiffFrom(destTile) == 0 || tile.yDiffFrom(destTile) == 0) &&
                 isPathClearTowards(destTile);
+    }
+
+    public Image getImage() {
+        return image;
     }
 }

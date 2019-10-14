@@ -1,3 +1,4 @@
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Pawn extends Piece {
@@ -7,6 +8,12 @@ public class Pawn extends Piece {
 
     public Pawn(Color color) {
         super(color);
+
+        if (color == Color.WHITE){
+            this.image = new Image("White_Pawn.png");
+        }else {
+            this.image = new Image("Black_Pawn.png");
+        }
         eatEnPassingDirection = 0;
         firstTwoStepMovement = false;
     }
