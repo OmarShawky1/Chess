@@ -2,7 +2,7 @@ import javafx.application.Application;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Control;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,16 +13,30 @@ public class GUI extends Application {
 
     private Stage window;
     private GridPane root;
-    private HBox upperMenu;
+    private GridPane upperGridPane;
     private BorderPane borderPane;
-    private int WINDOWSIZE = 600;
-    private Board board = new Board();
+    private static Board board = new Board();
+    private Button[][] button = new Button[8][8];
+    private final int WINDOWSIZE = 500;
+    private final int square = WINDOWSIZE / 8;
     private final int size = 8;
 
-    private HBox createUpperMenu() {
+
+    @Override
+    public void start(Stage primaryStage) {
+
+        window = primaryStage;
+        createBlankBoard();
+    }
+
+    public static void main() {
+        launch();
+    }
+
+    private void createUpperMenu() {
         //setting the upper menu for (Player's turn, time, check)
-        GridPane upperGridPane = new GridPane();
-        upperGridPane.setHgap(20);
+        upperGridPane = new GridPane();
+        upperGridPane.setHgap(200);
         upperGridPane.setVgap(20);
         Label whiteLabel = new Label("White Player Info");
         Label blackLabel = new Label("Black Player Info");
@@ -30,47 +44,45 @@ public class GUI extends Application {
         whiteLabel.setStyle("-fx-font-weight: bold");
         blackLabel.setStyle("-fx-font-weight: bold");
 
-        GridPane.setHalignment(whiteLabel, HPos.LEFT);
-        GridPane.setHalignment(blackLabel, HPos.RIGHT);
+        GridPane.setHalignment(whiteLabel, HPos.CENTER);
+        GridPane.setHalignment(blackLabel, HPos.CENTER);
 
         GridPane.setHgrow(whiteLabel, Priority.ALWAYS);
         GridPane.setHgrow(blackLabel, Priority.ALWAYS);
+
 
         upperGridPane.add(whiteLabel, 0, 0);
         upperGridPane.add(blackLabel, 1, 0);
 
         upperGridPane.setGridLinesVisible(true);
-        upperMenu = new HBox();
-        upperMenu.getChildren().add(upperGridPane);
-
-        return upperMenu;
+        int upperMenuInstes = 10;
+        BorderPane.setMargin(upperGridPane, new Insets(upperMenuInstes));
     }
 
-    private void createMainWindow(Stage primaryStage) {
+    private void createMainWindow() {
 
         //initial window conditions
-        window = primaryStage;
         window.setTitle("Chess Game");
         window.centerOnScreen();
-        window.setMinWidth(60);
-        window.setMinHeight(60);
-        window.setResizable(false);
-
+        window.setMinWidth(WINDOWSIZE);
+        window.setMinHeight(WINDOWSIZE + upperGridPane.getScaleY() * 100);
     }
 
-    private GridPane coloringTiles() {
+    private void coloringTiles() {
         root = new GridPane();
         final int size = 8;
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                StackPane square = new StackPane();
                 Coordinate coordinate = new Coordinate(col, row);
-                String tileColor = board.getTile(coordinate).getColor().toString();
-                square.setStyle("-fx-background-color: " + tileColor + ";");
-                root.add(square, col, row);
+                button[col][row] = new Button(coordinate.toString());
+                button[col][row].setBackground(Background.EMPTY);
+                button[col][row].setOnAction(e -> play(coordinate));
+                button[col][row].setPrefSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                String tileColor = board.getTile(coordinate).getColor();
+                button[col][row].setStyle("-fx-background-color: " + tileColor + ";");
+                root.add(button[col][row], col, row);
             }
         }
-        return root;
     }
 
     private void putPieces() {
@@ -84,28 +96,29 @@ public class GUI extends Application {
                     Image image = piece.getImage();
                     ImageView imageView = new ImageView();
                     imageView.setImage(image);
-                    root.add(imageView, col, row);
+                    button[col][row].setGraphic(imageView);
+                    button[col][row].setAlignment(Pos.CENTER);
                 }
             }
         }
     }
 
-    private void constraintsAligning(){
-        final int square = 60;
+    private void constraintsAligning() {
         //setting the constraints to align the columns and rows (make them appear in the GUI)
         for (int i = 0; i < size; i++) {
             root.getColumnConstraints().add(
                     new ColumnConstraints(
-                            square, Control.USE_COMPUTED_SIZE, Double.POSITIVE_INFINITY, Priority.ALWAYS, HPos.CENTER, true));
+                            square, square, Double.POSITIVE_INFINITY, Priority.ALWAYS, HPos.CENTER, true));
             root.getRowConstraints().add(
                     new RowConstraints(
-                            square, Control.USE_COMPUTED_SIZE, Double.POSITIVE_INFINITY, Priority.ALWAYS, VPos.CENTER, true));
+                            square, square, Double.POSITIVE_INFINITY, Priority.ALWAYS, VPos.CENTER, true));
         }
     }
 
-    private void createBlankBoard(Stage primaryStage) {
+    private void createBlankBoard() {
 
-        createMainWindow(primaryStage);
+        //this causes an error if i'm using a value from border pane before it is created (null pointer exception)
+//        createMainWindow(primaryStage);
         createUpperMenu();
         coloringTiles();
         putPieces();
@@ -113,24 +126,23 @@ public class GUI extends Application {
 
         //creating the main board that contains the center and the upper menu
         borderPane = new BorderPane();
-        borderPane.setTop(upperMenu);
-        BorderPane.setMargin(upperMenu, new Insets(10, 10, 40, 10));
+        borderPane.setTop(upperGridPane);
         borderPane.setCenter(root);
+
 
         //putting the border menu in the main scene and the main scene in the main stage
         window.setScene(new Scene(borderPane, WINDOWSIZE, WINDOWSIZE));
+        createMainWindow();
         window.show();
     }
 
-    @Override
-    public void start(Stage primaryStage) {
+    private void play(Coordinate coordinate) {
 
-        window = primaryStage;
-        createBlankBoard(window);
+        if (!board.getTile(coordinate).isEmpty()) {
+            System.out.println(board.getTile(coordinate).getPiece().getClass());
+        }
+        System.out.println("You reached Play");
 
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

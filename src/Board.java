@@ -136,36 +136,37 @@ public class Board {
         }
     }
 
-    private void play() {
+    public void play(Coordinate sourceCoordinate, Coordinate destinationCoordinate) {
         printBoard();
-        Scanner sc = new Scanner(System.in);
+//        Scanner sc = new Scanner(System.in);
 
         /* Main loop of game */
         while (whiteKing.isAlive() && blackKing.isAlive()) {
 
-            /* Obtain the source coordinate from user input */
-            System.out.print("Enter the coordinates of the piece: ");
-            Coordinate sourceCoordinate = new Coordinate(sc.next().toLowerCase());
-            if (!sourceCoordinate.isValidCoordinate() || getTile(sourceCoordinate).isEmpty()) {
-                continue;
-            }
-
-            /* Ensure correct player turn */
+//            /* Obtain the source coordinate from user input */
+//            System.out.print("Enter the coordinates of the piece: ");
+//            Coordinate sourceCoordinate = new Coordinate(sc.next().toLowerCase());
+//            if (!sourceCoordinate.isValidCoordinate() || getTile(sourceCoordinate).isEmpty()) {
+//                continue;
+//            }
+//
+//            /* Ensure correct player turn */
+//            Piece pieceToMove = getTile(sourceCoordinate).getPiece();
+//            System.out.println("You Selected: " + pieceToMove.getClass().getName());
+//            if ((whiteTurn && pieceToMove.getColor() == Color.BLACK) ||
+//                    (!whiteTurn && pieceToMove.getColor() == Color.WHITE)) {
+//                System.out.println("Oops, It is " + (whiteTurn ? "white" : "black") + "'s turn!");
+//                continue;
+//            }
+//
+//            /* Obtain the destination coordinate from user input */
+//            System.out.print("Enter the new Destination: ");
+//            Coordinate destinationCoordinate = new Coordinate(sc.next().toLowerCase());
+//            if (!destinationCoordinate.isValidCoordinate() ||
+//                    sourceCoordinate.equals(destinationCoordinate)) {
+//                continue;
+//            }
             Piece pieceToMove = getTile(sourceCoordinate).getPiece();
-            System.out.println("You Selected: " + pieceToMove.getClass().getName());
-            if ((whiteTurn && pieceToMove.getColor() == Color.BLACK) ||
-                    (!whiteTurn && pieceToMove.getColor() == Color.WHITE)) {
-                System.out.println("Oops, It is " + (whiteTurn ? "white" : "black") + "'s turn!");
-                continue;
-            }
-
-            /* Obtain the destination coordinate from user input */
-            System.out.print("Enter the new Destination: ");
-            Coordinate destinationCoordinate = new Coordinate(sc.next().toLowerCase());
-            if (!destinationCoordinate.isValidCoordinate() ||
-                    sourceCoordinate.equals(destinationCoordinate)) {
-                continue;
-            }
             Tile destinationTile = getTile(destinationCoordinate);
 
 
@@ -184,8 +185,8 @@ public class Board {
 
         System.out.println("Game is over.");
     }
-    public static void main(String[] args) {
-        Board board = new Board();
-        board.play();
-    }
+//    public static void main() {
+//        Board board = new Board();
+//        board.play();
+//    }
 }
