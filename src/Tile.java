@@ -1,6 +1,6 @@
-import java.awt.*;
+import javafx.scene.control.Button;
 
-public class Tile {
+public class Tile extends Button {
 
     private Coordinate coordinate;
     private Piece piece;

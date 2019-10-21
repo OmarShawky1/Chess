@@ -5,7 +5,7 @@ public class Board {
     static final int BOARD_LENGTH = 8;
     static final int BOARD_WIDTH = 8;
 
-    private boolean whiteTurn;
+    public boolean whiteTurn;
     private King whiteKing;
     private King blackKing;
     private Tile[][] board;
@@ -137,7 +137,7 @@ public class Board {
     }
 
     public void play(Coordinate sourceCoordinate, Coordinate destinationCoordinate) {
-        printBoard();
+//        printBoard();
 //        Scanner sc = new Scanner(System.in);
 
         /* Main loop of game */
@@ -169,24 +169,21 @@ public class Board {
             Piece pieceToMove = getTile(sourceCoordinate).getPiece();
             Tile destinationTile = getTile(destinationCoordinate);
 
-
+//            System.out.println(pieceToMove.getClass().getName());
+//            System.out.println("destinationTile from Board: " + destinationCoordinate);
             if (pieceToMove.canMove(destinationTile)) {
                 pieceToMove.move(destinationTile);
                 whiteTurn = !whiteTurn;
             } else {
-                System.out.println("Invalid move for piece: " + pieceToMove.getClass().getSimpleName());
+                System.out.println("Invalid move for piece: " + pieceToMove.getClass().getName());
             }
 
             //this cannot be created from whiteTurn because whiteTurn is changed before we perform this check
             Color enemyColor = pieceToMove.color == Color.WHITE ? Color.BLACK : Color.WHITE;
             this.checkIfEnemyGotChecked(enemyColor);
-            printBoard();
+//            printBoard();
         }
 
         System.out.println("Game is over.");
     }
-//    public static void main() {
-//        Board board = new Board();
-//        board.play();
-//    }
 }

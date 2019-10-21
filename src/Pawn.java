@@ -76,9 +76,6 @@ public class Pawn extends Piece {
 //        if (moved){
 //            firstTwoStepMovement = true;
 //        }
-        System.out.println("Here");
         firstTwoStepMovement = true;
-
-
     }
 }
