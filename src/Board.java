@@ -43,65 +43,15 @@ public class Board {
         board[7][2].setPiece(new Bishop(Color.WHITE));
         board[7][5].setPiece(new Bishop(Color.WHITE));
 
-        board[0][4].setPiece(new Queen(Color.BLACK));
-        board[7][4].setPiece(new Queen(Color.WHITE));
+        board[0][3].setPiece(new Queen(Color.BLACK));
+        board[7][3].setPiece(new Queen(Color.WHITE));
 
         blackKing = new King(Color.BLACK);
         whiteKing = new King(Color.WHITE);
-        board[0][3].setPiece(blackKing);
-        board[7][3].setPiece(whiteKing);
+        board[0][4].setPiece(blackKing);
+        board[7][4].setPiece(whiteKing);
 
         whiteTurn = true;
-    }
-
-    private void printBoard() { /* Fancy method for movement visualization - shall be removed soon */
-        StringBuilder[][] boardedBoard = new StringBuilder[BOARD_LENGTH + 1][BOARD_WIDTH + 1];
-        boardedBoard[0][0] = new StringBuilder("/");
-        for (int i = 1; i <= BOARD_LENGTH; i++) {
-            int letter = 96;
-            boardedBoard[0][i] = new StringBuilder("  ");
-            (boardedBoard[0][i]).append((char) (letter + i));
-
-            //creating the number index
-            boardedBoard[i][0] = new StringBuilder();
-            (boardedBoard[i][0]).append(i);
-        }
-
-        for (int j = 1; j <= BOARD_LENGTH; j++) {
-            for (int i = 1; i <= BOARD_WIDTH; i++) {
-                //filling all the board with |*|
-                boardedBoard[j][i] = new StringBuilder();
-                //Printing the first letter of each piece in it's place in the board
-                int start = 0;
-                int end = 3;
-                if (board[j - 1][i - 1].getPiece() != null) {
-                    switch (board[j - 1][i - 1].getPiece().getClass().getSimpleName()) {
-                        case "Pawn":
-                            boardedBoard[j][i].replace(start, end, "|P|");
-                            break;
-                        case "Rook":
-                            boardedBoard[j][i].replace(start, end, "|R|");
-                            break;
-                        case "Knight":
-                            boardedBoard[j][i].replace(start, end, "|Kn|");
-                            break;
-                        case "Bishop":
-                            boardedBoard[j][i].replace(start, end, "|B|");
-                            break;
-                        case "King":
-                            boardedBoard[j][i].replace(start, end, "|K|");
-                            break;
-                        case "Queen":
-                            boardedBoard[j][i].replace(start, end, "|Q|");
-                            break;
-                    }
-                } else {
-                    boardedBoard[j][i].replace(start, end, "|*|");
-                }
-            }
-        }
-        System.out.println(Arrays.deepToString(boardedBoard).replace("], ", "]\n"));
-        System.out.println();
     }
 
     LinkedList<Piece> getAllPiecesWithColor(Color color) {
@@ -137,40 +87,13 @@ public class Board {
     }
 
     public void play(Coordinate sourceCoordinate, Coordinate destinationCoordinate) {
-//        printBoard();
-//        Scanner sc = new Scanner(System.in);
 
-        /* Main loop of game */
-        while (whiteKing.isAlive() && blackKing.isAlive()) {
+        //just changed from while to if
+        if (whiteKing.isAlive() && blackKing.isAlive()) {
 
-//            /* Obtain the source coordinate from user input */
-//            System.out.print("Enter the coordinates of the piece: ");
-//            Coordinate sourceCoordinate = new Coordinate(sc.next().toLowerCase());
-//            if (!sourceCoordinate.isValidCoordinate() || getTile(sourceCoordinate).isEmpty()) {
-//                continue;
-//            }
-//
-//            /* Ensure correct player turn */
-//            Piece pieceToMove = getTile(sourceCoordinate).getPiece();
-//            System.out.println("You Selected: " + pieceToMove.getClass().getName());
-//            if ((whiteTurn && pieceToMove.getColor() == Color.BLACK) ||
-//                    (!whiteTurn && pieceToMove.getColor() == Color.WHITE)) {
-//                System.out.println("Oops, It is " + (whiteTurn ? "white" : "black") + "'s turn!");
-//                continue;
-//            }
-//
-//            /* Obtain the destination coordinate from user input */
-//            System.out.print("Enter the new Destination: ");
-//            Coordinate destinationCoordinate = new Coordinate(sc.next().toLowerCase());
-//            if (!destinationCoordinate.isValidCoordinate() ||
-//                    sourceCoordinate.equals(destinationCoordinate)) {
-//                continue;
-//            }
             Piece pieceToMove = getTile(sourceCoordinate).getPiece();
             Tile destinationTile = getTile(destinationCoordinate);
 
-//            System.out.println(pieceToMove.getClass().getName());
-//            System.out.println("destinationTile from Board: " + destinationCoordinate);
             if (pieceToMove.canMove(destinationTile)) {
                 pieceToMove.move(destinationTile);
                 whiteTurn = !whiteTurn;
@@ -178,12 +101,10 @@ public class Board {
                 System.out.println("Invalid move for piece: " + pieceToMove.getClass().getName());
             }
 
-            //this cannot be created from whiteTurn because whiteTurn is changed before we perform this check
             Color enemyColor = pieceToMove.color == Color.WHITE ? Color.BLACK : Color.WHITE;
             this.checkIfEnemyGotChecked(enemyColor);
-//            printBoard();
+        }else {
+            System.out.println("Game is over.");
         }
-
-        System.out.println("Game is over.");
     }
 }

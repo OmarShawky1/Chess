@@ -3,7 +3,6 @@ import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -95,6 +94,8 @@ public class GUI extends Application {
         for (int row = 0; row < board.BOARD_LENGTH; row++) {
             for (int col = 0; col < board.BOARD_WIDTH; col++) {
                 Coordinate coordinate = new Coordinate(col, row);
+                Tile tile = board.getTile(coordinate);
+
                 if (!board.getTile(coordinate).isEmpty()) {
                     Piece piece = board.getTile(coordinate).getPiece();
                     Image image = piece.getImage();
@@ -103,10 +104,11 @@ public class GUI extends Application {
 //                    button[col][row].setGraphic(imageView);
 //                    button[col][row].setAlignment(Pos.CENTER); // for non obvious reasons, this does not work with me
 //                    button[col][row].setContentDisplay(ContentDisplay.CENTER);
-                    Tile tile = board.getTile(coordinate);
                     tile.setGraphic(imageView);
                     tile.setAlignment(Pos.CENTER);
                     tile.setContentDisplay(ContentDisplay.CENTER);
+                }else {
+                    tile.setGraphic(null);
                 }
             }
         }
@@ -154,46 +156,61 @@ public class GUI extends Application {
         window.show();
     }
 
-    private void play(Coordinate coordinate) {
+    private void play(Coordinate newCoordinate) {
 
-        Tile tile  = board.getTile(coordinate);
-        boolean tileIsEmpty = tile.isEmpty();
-        Piece piece = tile.getPiece();
-        Color pieceColor = !tileIsEmpty? piece.getColor(): null;
-        boolean whitePlayerPiece  = !tileIsEmpty && pieceColor == Color.WHITE;
-        boolean blackPlayerPiece = !tileIsEmpty && pieceColor == Color.BLACK;
-        boolean sourceContainsPlayersPiece = whitePlayerPiece || blackPlayerPiece;
+        if (sourceTile != null && destinationTile != null) {
 
-        if (board.whiteTurn && sourceContainsPlayersPiece) {
-            System.out.println("I assigned the sourceTile");
-            sourceTile = board.getTile(coordinate);
+            sourceTile = null;
+            destinationTile = null;
+        }
+
+        Tile newTile = board.getTile(newCoordinate);
+        boolean newTileIsEmpty = newTile.isEmpty();
+
+        //assigning the piece, seeing if the piece is from sourceTile or from the newCoordinate
+        Piece movingPiece = null;
+        Color movingPieceColor = null;
+        if (sourceTile != null && !sourceTile.isEmpty()) {
+            movingPiece = sourceTile.getPiece();
+            movingPieceColor = movingPiece.getColor();
+        } else if (!newTileIsEmpty) {
+            movingPiece = newTileIsEmpty ? null : newTile.getPiece();
+            movingPieceColor = movingPiece.getColor();
+        }
+
+
+        boolean whitePlayerPiece = movingPiece == null ? false : (movingPieceColor == Color.WHITE);
+        boolean blackPlayerPiece = movingPiece == null ? false : (movingPieceColor == Color.BLACK);
+        boolean rightWhiteTurn = board.whiteTurn && whitePlayerPiece;
+        boolean rightBlackTurn = !board.whiteTurn && blackPlayerPiece;
+        boolean rightPlayerTurn = rightWhiteTurn || rightBlackTurn;
+
+        if (rightPlayerTurn && sourceTile == null) {
+            sourceTile = board.getTile(newCoordinate);
             return;
         }
 
+        //if the sourceTile that contains the correct piece to move is already assigned, proceed to know the destination of the piece
         if (sourceTile != null) {
-            System.out.println("I am trying to assign the destination Tile");
-            Piece enemyPiece = tileIsEmpty? null:tile.getPiece();
-            Color enemyColor = !tileIsEmpty? enemyPiece.getColor(): null;
-            boolean destinationIsEmpty = tileIsEmpty;
-            boolean destinationIsFreeOrContainsEnemy = destinationIsEmpty || (enemyColor == Color.BLACK);
-            if (board.whiteTurn && destinationIsFreeOrContainsEnemy) {
 
-                System.out.println("i assigned the destination Tile");
-                destinationTile = board.getTile(coordinate);
+            //the code will reach this part after having moving piece
+            //this is dedicated to get the destination tile and see if the assigned movingPiece can move to the destination or not
+            boolean destinationIsEmpty = newTileIsEmpty;
+            Piece enemyPiece = destinationIsEmpty ? null : newTile.getPiece();
+            Color enemyColor = destinationIsEmpty ? null : enemyPiece.getColor();
+            boolean destinationIsFreeOrContainsEnemy = destinationIsEmpty || (enemyColor != movingPieceColor);
+
+            //if things went right, in other words, the destination is free or contain an enemy, pass those parameters to board.play();
+            if (rightPlayerTurn && destinationIsFreeOrContainsEnemy) {
+
+                destinationTile = board.getTile(newCoordinate);
                 Coordinate sourceCoordinate = sourceTile.getCoordinates();
                 Coordinate destinationCoordinate = destinationTile.getCoordinates();
-                System.out.println("sourceCoordinate: " + sourceCoordinate);
-                System.out.println("destinationCoordinate: " + destinationCoordinate);
-                board.play(sourceCoordinate, destinationCoordinate);
-            }
-            if (!sourceTile.isEmpty() && !destinationTile.isEmpty()){
 
-                System.out.println("i assigned the sourceTile and the destinationTile to null");
-                sourceTile = null;
-                destinationTile = null;
+                board.play(sourceCoordinate, destinationCoordinate);
+                putPieces();
+                return;
             }
         }
-
     }
-
 }
