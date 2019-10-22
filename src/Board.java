@@ -88,7 +88,6 @@ public class Board {
 
     public void play(Coordinate sourceCoordinate, Coordinate destinationCoordinate) {
 
-        //just changed from while to if
         if (whiteKing.isAlive() && blackKing.isAlive()) {
 
             Piece pieceToMove = getTile(sourceCoordinate).getPiece();

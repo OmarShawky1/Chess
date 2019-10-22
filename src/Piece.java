@@ -29,7 +29,9 @@ public abstract class Piece {
 
         /* Check if the player's own king will be checked if this piece were moved out of the way. */
         tile.setPiece(null);
-        tile = null;
+        tile = destinationTile;
+
+
 
         boolean willOwnPlayerKingBeChecked = playerOwnKing.isBeingChecked();
 
