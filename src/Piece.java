@@ -31,8 +31,6 @@ public abstract class Piece {
         tile.setPiece(null);
         tile = destinationTile;
 
-
-
         boolean willOwnPlayerKingBeChecked = playerOwnKing.isBeingChecked();
 
         tile = originalTile;

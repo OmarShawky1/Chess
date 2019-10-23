@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -39,7 +40,7 @@ public class GUI extends Application {
     private void createUpperMenu() {
         //setting the upper menu for (Player's turn, time, check)
         upperGridPane = new GridPane();
-        upperGridPane.setHgap(200);
+        upperGridPane.setHgap(100);
         upperGridPane.setVgap(20);
         Label whiteLabel = new Label("White Player Info");
         Label blackLabel = new Label("Black Player Info");
@@ -55,7 +56,15 @@ public class GUI extends Application {
 
 
         upperGridPane.add(whiteLabel, 0, 0);
-        upperGridPane.add(blackLabel, 1, 0);
+        upperGridPane.add(blackLabel, 2, 0);
+
+        Button rstButton = new Button("Reset Game");
+        rstButton.setOnAction(e->{
+            board = new Board();
+            createBlankBoard();
+        });
+
+        upperGridPane.add(rstButton,1,1);
 
         upperGridPane.setGridLinesVisible(true);
         int upperMenuInstes = 10;
@@ -158,6 +167,7 @@ public class GUI extends Application {
 
     private void play(Coordinate newCoordinate) {
 
+        //setting the sourceTile and destinationTile to null after being used
         if (sourceTile != null && destinationTile != null) {
 
             sourceTile = null;
@@ -167,7 +177,7 @@ public class GUI extends Application {
         Tile newTile = board.getTile(newCoordinate);
         boolean newTileIsEmpty = newTile.isEmpty();
 
-        //assigning the piece, seeing if the piece is from sourceTile or from the newCoordinate
+        //assigning the piece, seeing if the piece is from old sourceTile or from the newCoordinate
         Piece movingPiece = null;
         Color movingPieceColor = null;
         if (sourceTile != null && !sourceTile.isEmpty()) {
@@ -185,6 +195,7 @@ public class GUI extends Application {
         boolean rightBlackTurn = !board.whiteTurn && blackPlayerPiece;
         boolean rightPlayerTurn = rightWhiteTurn || rightBlackTurn;
 
+        //assigning the value of the newCoordinate to the sourceTile
         if (rightPlayerTurn && sourceTile == null) {
             sourceTile = board.getTile(newCoordinate);
             return;

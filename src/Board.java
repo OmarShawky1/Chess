@@ -14,11 +14,11 @@ public class Board {
         board = new Tile[BOARD_LENGTH][BOARD_WIDTH];
 
         /* Filling the board with Tile objects */
-        for (int i = 0; i < BOARD_LENGTH; i++) {
-            for (int j = 0; j < BOARD_WIDTH; j++) {
-                Coordinate coordinate = new Coordinate(j, i);
-                String color = ((i + j) % 2 == 0) ? "yellow" : "brown";
-                board[i][j] = new Tile(coordinate, color, this);
+        for (int row = 0; row < BOARD_LENGTH; row++) {
+            for (int col = 0; col < BOARD_WIDTH; col++) {
+                Coordinate coordinate = new Coordinate(col, row);
+                String color = ((row + col) % 2 == 0) ? "yellow" : "brown";
+                board[row][col] = new Tile(coordinate, color, this, coordinate.toString());
             }
         }
 

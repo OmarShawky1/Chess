@@ -15,6 +15,14 @@ public class Tile extends Button {
         this.board = board;
     }
 
+    Tile(Coordinate coordinate, String color, Board board, String stringCoor) {
+        super(stringCoor);
+        this.color = color;
+        this.coordinate = coordinate;
+        this.isEmpty = true;
+        this.board = board;
+    }
+
     boolean isEmpty() {
         return isEmpty;
     }
@@ -63,8 +71,5 @@ public class Tile extends Button {
         return color;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
 }
 
