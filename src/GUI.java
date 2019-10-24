@@ -66,7 +66,7 @@ public class GUI extends Application {
 
         upperGridPane.add(rstButton,1,1);
 
-        upperGridPane.setGridLinesVisible(true);
+//        upperGridPane.setGridLinesVisible(true);
         int upperMenuInstes = 10;
         BorderPane.setMargin(upperGridPane, new Insets(upperMenuInstes));
     }

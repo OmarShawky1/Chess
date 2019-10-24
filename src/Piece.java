@@ -31,17 +31,25 @@ public abstract class Piece {
         tile.setPiece(null);
         tile = destinationTile;
 
+        System.out.println("i am \"canMove\" in Piece and i will call \"isBeingChecked\"");
         boolean willOwnPlayerKingBeChecked = playerOwnKing.isBeingChecked();
 
         tile = originalTile;
         tile.setPiece(this);
 
+        if (tile.getPiece() instanceof Queen) {
+            System.out.println("i am a queen and returned " + (!destinationContainsAlly && !willOwnPlayerKingBeChecked) + " from canMove " +
+                    "in Piece");
+        }
         return !destinationContainsAlly && !willOwnPlayerKingBeChecked;
     }
 
     void move(Tile destinationTile) {
         tile.setPiece(null);
         destinationTile.setPiece(this);
+        if (tile.getPiece() instanceof Queen){
+            System.out.println("I am a queen and i successfully moved to new tile which is " + tile.getCoordinates());
+        }
     }
 
     private boolean isPathClearTowards(Tile destTile) {
