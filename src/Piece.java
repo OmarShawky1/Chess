@@ -21,35 +21,64 @@ public abstract class Piece {
     }
 
     public boolean canMove(Tile destinationTile) {
+
+        // Can move is the general steps that any piece should follow by. They are:
+        // 1- Destination does not contain an Ally
+        // 2- moving to Destination will not result in a check on his own king (the piece blocks a valid check from opponent)
+
+        //this condition is important, this is used when doing internal functions such as isAlive or isBeingChecked
         boolean destinationContainsAlly = !destinationTile.isEmpty() &&
                 destinationTile.getPiece().getColor() == color;
 
-        Tile originalTile = tile;
-        King playerOwnKing = tile.getBoard().getKing(color);
+        if (destinationContainsAlly){
+            return false;
+        }
 
         /* Check if the player's own king will be checked if this piece were moved out of the way. */
-        tile.setPiece(null);
+
+        King king = tile.getBoard().getKing(color);
+        Tile[][] oldBoard = tile.getBoard().getBoard();
+        Tile oldTile = tile;
+        //not sure why this is useful but without the previous line, Pieces where repeated in the board
+        //this is why i putted this line to study more why the king isAlive is causing bugs
+        Piece oldPiece = tile.getPiece();
         tile = destinationTile;
+        Piece oldDestinationPiece = tile.getPiece();
+        tile.setPiece(oldPiece);
+        boolean willOwnPlayerKingBeChecked = king.isBeingChecked();
+        tile.getBoard().setBoard(oldBoard);
+        tile = oldTile;
+        destinationTile.setPiece(oldDestinationPiece);
+        tile.setPiece(oldPiece);
 
-        System.out.println("i am \"canMove\" in Piece and i will call \"isBeingChecked\"");
-        boolean willOwnPlayerKingBeChecked = playerOwnKing.isBeingChecked();
+        //Start of Old Way
+        //saving original tile contents
+//        Tile sourceTile = tile;
+//        King king = tile.getBoard().getKing(color);
+//
+//        tile.setPiece(null);
+//        tile = destinationTile;
+//
+////        System.out.println("i am \"canMove\" in Piece and i will call \"isBeingChecked\"");
+//        boolean willOwnPlayerKingBeChecked = king.isBeingChecked();
+//
+//        tile = sourceTile;
+//        tile.setPiece(this);
+        // End of Old Way
 
-        tile = originalTile;
-        tile.setPiece(this);
-
-        if (tile.getPiece() instanceof Queen) {
-            System.out.println("i am a queen and returned " + (!destinationContainsAlly && !willOwnPlayerKingBeChecked) + " from canMove " +
-                    "in Piece");
-        }
-        return !destinationContainsAlly && !willOwnPlayerKingBeChecked;
+//        if (tile.getPiece() instanceof Queen) {
+//            System.out.println("i am a queen and returned " + (!destinationContainsAlly && !willOwnPlayerKingBeChecked) + " from canMove " +
+//                    "in Piece");
+//        }
+        return !willOwnPlayerKingBeChecked;
     }
 
-    void move(Tile destinationTile) {
+    public void move(Tile destinationTile) {
         tile.setPiece(null);
         destinationTile.setPiece(this);
-        if (tile.getPiece() instanceof Queen){
-            System.out.println("I am a queen and i successfully moved to new tile which is " + tile.getCoordinates());
-        }
+//        if (tile.getPiece() instanceof Queen){
+//                System.out.println("I am a queen and i successfully moved to new tile which is " + tile.getCoordinates());
+//        }
     }
 
     private boolean isPathClearTowards(Tile destTile) {

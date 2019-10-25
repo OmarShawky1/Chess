@@ -21,6 +21,10 @@ public class Knight extends Piece {
         int yDist = Math.abs(tile.yDiffFrom(destinationTile));
         boolean validKnightMove = (xDist == 2 && yDist == 1) || (xDist == 1 && yDist == 2);
 
-        return validKnightMove && super.canMove(destinationTile);
+        if (validKnightMove){
+            boolean superCanMove = super.canMove(destinationTile);
+            return superCanMove;
+        }
+        return false;
     }
 }

@@ -1,4 +1,5 @@
 import javafx.scene.paint.Color;
+
 import java.util.*;
 
 public class Board {
@@ -6,8 +7,11 @@ public class Board {
     static final int BOARD_WIDTH = 8;
 
     public boolean whiteTurn;
-    private King whiteKing;
-    private King blackKing;
+    protected King whiteKing, blackKing;
+    protected boolean whiteKingChecked, blackKingChecked;
+    protected boolean whiteKingAlive, blackKingAlive;
+
+
     private Tile[][] board;
 
     public Board() {
@@ -52,6 +56,11 @@ public class Board {
         board[7][4].setPiece(whiteKing);
 
         whiteTurn = true;
+        whiteKingChecked = false;
+        blackKingChecked = false;
+        whiteKingAlive = true;
+        blackKingAlive = true;
+
     }
 
     LinkedList<Piece> getAllPiecesWithColor(Color color) {
@@ -75,35 +84,74 @@ public class Board {
         return board[coordinate.getY()][coordinate.getX()];
     }
 
-    private void checkIfEnemyGotChecked(Color enemyColor) {
-        Color currentPlayerColor = enemyColor == Color.WHITE ? Color.BLACK: Color.WHITE;
-        LinkedList<Piece> currentPlayerArmy = getAllPiecesWithColor(currentPlayerColor);
-        Piece enemyKing = getKing(enemyColor);
-        for (Piece piece : currentPlayerArmy) {
-            if (piece.canMove(enemyKing.tile)) {
-                System.out.println("The " + (enemyColor == Color.WHITE ? "White" : "Black") + " king's is in check");
-            }
-        }
+    public Tile[][] getBoard() {
+        return board;
     }
 
-    public void play(Coordinate sourceCoordinate, Coordinate destinationCoordinate) {
+    public void setBoard(Tile[][] board) {
+        this.board = board;
+    }
 
-        if (whiteKing.isAlive() && blackKing.isAlive()) {
 
-            Piece pieceToMove = getTile(sourceCoordinate).getPiece();
-            Tile destinationTile = getTile(destinationCoordinate);
+//    private void checkIfEnemyGotChecked(Color enemyColor) {
+//        Color currentPlayerColor = enemyColor == Color.WHITE ? Color.BLACK : Color.WHITE;
+//        LinkedList<Piece> currentPlayerArmy = getAllPiecesWithColor(currentPlayerColor);
+//        Piece enemyKing = getKing(enemyColor);
+//        for (Piece piece : currentPlayerArmy) {
+//            if (piece.canMove(enemyKing.tile)) {
+//                System.out.println("The " + (enemyColor == Color.WHITE ? "White" : "Black") + " king's is in check");
+//            }
+//        }
+//    }
 
-            if (pieceToMove.canMove(destinationTile)) {
+    public void play(Tile sourceTile, Tile destinationTile) {
+
+        //this if condition is useless but i kept it anyway (100% useless)
+        if (whiteKingAlive && blackKingAlive) {
+
+            //getPiece to move, there is no need to check if the sourceTile is Empty because it is already checked in GUI
+            Piece pieceToMove = sourceTile.getPiece();
+            Color pieceColor = pieceToMove.getColor();
+            boolean rightPlayersTurn = (pieceColor == Color.WHITE && whiteTurn) || (pieceColor == Color.BLACK && !whiteTurn);
+            if (rightPlayersTurn && pieceToMove.canMove(destinationTile)) {
+
                 pieceToMove.move(destinationTile);
+
                 whiteTurn = !whiteTurn;
+
+                whiteKingAlive = whiteKing.isAlive();
+                blackKingAlive = blackKing.isAlive();
+                //print who lost and exit the game
+                if (!whiteKingAlive) {
+                    System.out.println("White Lost");
+                    return;
+                }
+                if (!blackKingAlive) {
+                    System.out.println("Black Lost");
+                    return;
+                }
+
+                whiteKingChecked = whiteKing.isBeingChecked();
+                blackKingChecked = blackKing.isBeingChecked();
+                //Print who got checked
+                if (whiteKingChecked) {
+                    System.out.println("White got checked");
+                }
+                if (blackKingChecked) {
+                    System.out.println("Black King got Checked");
+                }
+
             } else {
                 System.out.println("Invalid move for piece: " + pieceToMove.getClass().getName());
             }
 
-            Color enemyColor = pieceToMove.color == Color.WHITE ? Color.BLACK : Color.WHITE;
-            this.checkIfEnemyGotChecked(enemyColor);
-        }else {
-            System.out.println("Game is over.");
+            //this two lines are commented because i found out that we have 2 isBeingChecked in the program
+//            Color enemyColor = pieceToMove.color == Color.WHITE ? Color.BLACK : Color.WHITE;
+//            this.checkIfEnemyGotChecked(enemyColor);
+
+
+        } else {
+            System.out.println("Cannot Play as Game is over.");
         }
     }
 }

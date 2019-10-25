@@ -6,17 +6,22 @@ public class Bishop extends Piece {
     Bishop(Color color) {
         super(color);
 
-        if (color == Color.WHITE){
+        if (color == Color.WHITE) {
             this.image = new Image("White_Bishop.png");
-        }else {
+        } else {
             this.image = new Image("Black_Bishop.png");
         }
 
     }
 
-    public boolean canMove (Tile destinationTile){
-        return isCorrectCornerMoveTowards(destinationTile) &&
-                super.canMove(destinationTile);
+    public boolean canMove(Tile destinationTile) {
+
+        if (isCorrectCornerMoveTowards(destinationTile)) {
+            boolean superCanMove = super.canMove(destinationTile);
+
+            return superCanMove;
+        }
+        return false;
     }
 }
 

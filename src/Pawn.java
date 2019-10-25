@@ -36,7 +36,7 @@ public class Pawn extends Piece {
         Piece piecePassingBy = tilePassingBy != null ? tilePassingBy.getPiece() : null;
 
         if (piecePassingBy instanceof Pawn && piecePassingBy.getColor() != color &&
-                ((Pawn) piecePassingBy).firstTwoStepMovement == true) {
+                ((Pawn) piecePassingBy).firstTwoStepMovement) {
             eatEnPassingDirection = xDirection;
             isPawnInAttackMode = true;
         } else {
@@ -45,18 +45,22 @@ public class Pawn extends Piece {
 
         /* Check correct movement for the Pawn */
         int yDiff = tile.yDiffFrom(destinationTile);
-        int maxYSteps = (firstTwoStepMovement == true || isPawnInAttackMode) ? 1 : 2;
+        int maxYSteps = (firstTwoStepMovement || isPawnInAttackMode) ? 1 : 2;
 
         boolean isCorrectVerticalMove = (color == Color.BLACK && yDiff <= maxYSteps && yDiff > 0) ||
                 (color == Color.WHITE && yDiff >= -maxYSteps && yDiff < 0);
         boolean isCorrectHorizontalMove = Math.abs(xDiff) == (isPawnInAttackMode ? 1 : 0);
 
-        return isCorrectVerticalMove &&
-                isCorrectHorizontalMove &&
-                super.canMove(destinationTile);
+        if (isCorrectVerticalMove && isCorrectHorizontalMove){
+
+            return super.canMove(destinationTile);
+        }
+
+        return false;
     }
 
-    void move(Tile destinationTile) {
+    /*TODO revise this, it was origionally written for EnPassant*/
+    public void move(Tile destinationTile) {
         if (eatEnPassingDirection != 0) {
             Tile tilePassedBy = tile.getNeighbourTile(eatEnPassingDirection, 0);
             Piece piecePassedBy = tilePassedBy.getPiece();
@@ -71,11 +75,6 @@ public class Pawn extends Piece {
         tile.setPiece(null);
         destinationTile.setPiece(this);
 
-//        boolean moved = Math.abs(destinationTile.getCoordinates().getY() - tile.getCoordinates().getY()) == 2;
-//        System.out.println("moved: " + moved);
-//        if (moved){
-//            firstTwoStepMovement = true;
-//        }
         firstTwoStepMovement = true;
     }
 }

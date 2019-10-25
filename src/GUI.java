@@ -23,7 +23,7 @@ public class GUI extends Application {
     private final int WINDOWSIZE = 600;
     private final int size = 8;
     private Tile sourceTile;
-    private Tile destinationTile;
+//    private Tile destinationTile;
 
 
     @Override
@@ -59,12 +59,12 @@ public class GUI extends Application {
         upperGridPane.add(blackLabel, 2, 0);
 
         Button rstButton = new Button("Reset Game");
-        rstButton.setOnAction(e->{
+        rstButton.setOnAction(e -> {
             board = new Board();
             createBlankBoard();
         });
 
-        upperGridPane.add(rstButton,1,1);
+        upperGridPane.add(rstButton, 1, 1);
 
 //        upperGridPane.setGridLinesVisible(true);
         int upperMenuInstes = 10;
@@ -116,7 +116,7 @@ public class GUI extends Application {
                     tile.setGraphic(imageView);
                     tile.setAlignment(Pos.CENTER);
                     tile.setContentDisplay(ContentDisplay.CENTER);
-                }else {
+                } else {
                     tile.setGraphic(null);
                 }
             }
@@ -167,61 +167,97 @@ public class GUI extends Application {
 
     private void play(Coordinate newCoordinate) {
 
-        //setting the sourceTile and destinationTile to null after being used
-        if (sourceTile != null && destinationTile != null) {
+        //if Kings are alive
+        if (board.whiteKingAlive && board.blackKingAlive) {
+            Tile newTile = board.getTile(newCoordinate);
 
-            sourceTile = null;
-            destinationTile = null;
-        }
+            //Start of getSourceTile
+            //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
+            if (sourceTile == null) {
+                //if the newTile contains a piece
+                if (!newTile.isEmpty()) {
+                    sourceTile = newTile;
+                }
+                return;
+                //End of getSourceTile
+            } else{ //Start of getDestinationTile
 
-        Tile newTile = board.getTile(newCoordinate);
-        boolean newTileIsEmpty = newTile.isEmpty();
-
-        //assigning the piece, seeing if the piece is from old sourceTile or from the newCoordinate
-        Piece movingPiece = null;
-        Color movingPieceColor = null;
-        if (sourceTile != null && !sourceTile.isEmpty()) {
-            movingPiece = sourceTile.getPiece();
-            movingPieceColor = movingPiece.getColor();
-        } else if (!newTileIsEmpty) {
-            movingPiece = newTileIsEmpty ? null : newTile.getPiece();
-            movingPieceColor = movingPiece.getColor();
-        }
-
-
-        boolean whitePlayerPiece = movingPiece == null ? false : (movingPieceColor == Color.WHITE);
-        boolean blackPlayerPiece = movingPiece == null ? false : (movingPieceColor == Color.BLACK);
-        boolean rightWhiteTurn = board.whiteTurn && whitePlayerPiece;
-        boolean rightBlackTurn = !board.whiteTurn && blackPlayerPiece;
-        boolean rightPlayerTurn = rightWhiteTurn || rightBlackTurn;
-
-        //assigning the value of the newCoordinate to the sourceTile
-        if (rightPlayerTurn && sourceTile == null) {
-            sourceTile = board.getTile(newCoordinate);
-            return;
-        }
-
-        //if the sourceTile that contains the correct piece to move is already assigned, proceed to know the destination of the piece
-        if (sourceTile != null) {
-
-            //the code will reach this part after having moving piece
-            //this is dedicated to get the destination tile and see if the assigned movingPiece can move to the destination or not
-            boolean destinationIsEmpty = newTileIsEmpty;
-            Piece enemyPiece = destinationIsEmpty ? null : newTile.getPiece();
-            Color enemyColor = destinationIsEmpty ? null : enemyPiece.getColor();
-            boolean destinationIsFreeOrContainsEnemy = destinationIsEmpty || (enemyColor != movingPieceColor);
-
-            //if things went right, in other words, the destination is free or contain an enemy, pass those parameters to board.play();
-            if (rightPlayerTurn && destinationIsFreeOrContainsEnemy) {
-
-                destinationTile = board.getTile(newCoordinate);
-                Coordinate sourceCoordinate = sourceTile.getCoordinates();
-                Coordinate destinationCoordinate = destinationTile.getCoordinates();
-
-                board.play(sourceCoordinate, destinationCoordinate);
-                putPieces();
+                boolean newTileIsEmpty = newTile.isEmpty();
+                boolean newTileContainsEnemy = !newTile.isEmpty() && (sourceTile.getPiece().getColor() != newTile.getPiece().getColor());
+                boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
+                if (newTileDoesNotContainAlly) {
+                    Tile destinationTile = newTile;
+                    board.play(sourceTile, destinationTile);
+                    putPieces();
+                    //after playing, set sourceTile to null
+                    sourceTile = null;
+                }
                 return;
             }
+            //End of getDestinationTile
+
+            //Start of IsMovement valid?
+//            if (sourceTile != null && destinationTile != null) {
+//
+//            }
+            //End of IsMovementValid?
         }
+
+//        //setting the sourceTile and destinationTile to null after being used
+//        if (sourceTile != null && destinationTile != null) {
+//
+//            sourceTile = null;
+//            destinationTile = null;
+//        }
+//
+//        Tile newTile = board.getTile(newCoordinate);
+//        boolean newTileIsEmpty = newTile.isEmpty();
+//
+//        //assigning the piece, seeing if the piece is from old sourceTile or from the newCoordinate
+//        Piece movingPiece = null;
+//        Color movingPieceColor = null;
+//        if (sourceTile != null && !sourceTile.isEmpty()) {
+//            movingPiece = sourceTile.getPiece();
+//            movingPieceColor = movingPiece.getColor();
+//        } else if (!newTileIsEmpty) {
+//            movingPiece = newTileIsEmpty ? null : newTile.getPiece();
+//            movingPieceColor = movingPiece.getColor();
+//        }
+//
+//
+//        boolean whitePlayerPiece = movingPiece == null ? false : (movingPieceColor == Color.WHITE);
+//        boolean blackPlayerPiece = movingPiece == null ? false : (movingPieceColor == Color.BLACK);
+//        boolean rightWhiteTurn = board.whiteTurn && whitePlayerPiece;
+//        boolean rightBlackTurn = !board.whiteTurn && blackPlayerPiece;
+//        boolean rightPlayerTurn = rightWhiteTurn || rightBlackTurn;
+//
+//        //assigning the value of the newCoordinate to the sourceTile
+//        if (rightPlayerTurn && sourceTile == null) {
+//            sourceTile = board.getTile(newCoordinate);
+//            return;
+//        }
+//
+//        //if the sourceTile that contains the correct piece to move is already assigned, proceed to know the destination of the piece
+//        if (sourceTile != null) {
+//
+//            //the code will reach this part after having moving piece
+//            //this is dedicated to get the destination tile and see if the assigned movingPiece can move to the destination or not
+//            boolean destinationIsEmpty = newTileIsEmpty;
+//            Piece enemyPiece = destinationIsEmpty ? null : newTile.getPiece();
+//            Color enemyColor = destinationIsEmpty ? null : enemyPiece.getColor();
+//            boolean destinationIsFreeOrContainsEnemy = destinationIsEmpty || (enemyColor != movingPieceColor);
+//
+//            //if things went right, in other words, the destination is free or contain an enemy, pass those parameters to board.play();
+//            if (rightPlayerTurn && destinationIsFreeOrContainsEnemy) {
+//
+//                destinationTile = board.getTile(newCoordinate);
+//                Coordinate sourceCoordinate = sourceTile.getCoordinates();
+//                Coordinate destinationCoordinate = destinationTile.getCoordinates();
+//
+//                board.play(sourceCoordinate, destinationCoordinate);
+//                putPieces();
+//                return;
+//            }
+//        }
     }
 }

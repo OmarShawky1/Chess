@@ -16,7 +16,7 @@ public class Queen extends Piece {
         boolean isValidQueenMove = isCorrectCornerMoveTowards(destinationTile) ||
                 isCorrectStraightMoveTowards(destinationTile);
 
-        System.out.println("i was trying to move to destination tile: " + destinationTile.getCoordinates());
+//        System.out.println("i was trying to move to destination tile: " + destinationTile.getCoordinates());
 //
 //        boolean superCanMove = super.canMove(destinationTile);
 //        System.out.println("isValidQueenMove returned "+ isValidQueenMove + " and superCanMove returned " + superCanMove );
@@ -25,10 +25,10 @@ public class Queen extends Piece {
 //        System.out.println("i returned " + queenMove + " from Queen");
 //
 //        return queenMove;
-        System.out.println("isValidQueenMove: " + isValidQueenMove);
+//        System.out.println("isValidQueenMove: " + isValidQueenMove);
         if (isValidQueenMove){
+            //this is written that way because it was and will be used in so many calculations, so no need to do it over and over
             boolean superCanMove = super.canMove(destinationTile);
-            System.out.println(superCanMove);
             return superCanMove;
         }
         return false;
