@@ -51,34 +51,13 @@ public abstract class Piece {
         destinationTile.setPiece(oldDestinationPiece);
         tile.setPiece(oldPiece);
 
-        //Start of Old Way
-        //saving original tile contents
-//        Tile sourceTile = tile;
-//        King king = tile.getBoard().getKing(color);
-//
-//        tile.setPiece(null);
-//        tile = destinationTile;
-//
-////        System.out.println("i am \"canMove\" in Piece and i will call \"isBeingChecked\"");
-//        boolean willOwnPlayerKingBeChecked = king.isBeingChecked();
-//
-//        tile = sourceTile;
-//        tile.setPiece(this);
-        // End of Old Way
-
-//        if (tile.getPiece() instanceof Queen) {
-//            System.out.println("i am a queen and returned " + (!destinationContainsAlly && !willOwnPlayerKingBeChecked) + " from canMove " +
-//                    "in Piece");
-//        }
         return !willOwnPlayerKingBeChecked;
     }
 
     public void move(Tile destinationTile) {
         tile.setPiece(null);
         destinationTile.setPiece(this);
-//        if (tile.getPiece() instanceof Queen){
-//                System.out.println("I am a queen and i successfully moved to new tile which is " + tile.getCoordinates());
-//        }
+
     }
 
     private boolean isPathClearTowards(Tile destTile) {

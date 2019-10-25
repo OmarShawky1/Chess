@@ -16,18 +16,7 @@ public class King extends Piece {
     }
 
     boolean isBeingChecked() {
-//        Color enemyColor = color == Color.WHITE ? Color.BLACK : Color.WHITE;
-//        LinkedList<Piece> enemyPieces = getPiecesOfColor(enemyColor);
-//        for (Piece piece : enemyPieces) {
-//            if (piece.canMove(tile)) {
-//                return true;
-//            }
-//        }
-//        return false;
-
-//        System.out.println("I am \"isBeingChecked\" and i will call PieceCanKillKing, i am king at: " + tile.getCoordinates());
         return pieceCanKillAKing();
-
     }
 
     boolean isAlive() {
@@ -37,18 +26,12 @@ public class King extends Piece {
         // 2- check if there is a piece that can kill the enemy piece that threats the king
         // 3- check for a place where any piece from the army can block the threat
 
-        System.out.println("I am \"isAlive\" and I am king at: " + tile.getCoordinates());
         if (pieceCanKillAKing()) {
-            System.out.println("kingCanMoveAround(): " + kingCanMoveAround());
-            System.out.println("armyCanKillThreat(): " + armyCanKillThreat());
-            System.out.println("armyCanBlockThreat(): " + armyCanBlockThreat());
             if (kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat()) {
                 return true;
             } else {
                 return false;
             }
-        }else {
-            System.out.println("There is no piece that can kill the king");
         }
         return true;
     }
@@ -115,7 +98,6 @@ public class King extends Piece {
         Color enemyColor = color == Color.WHITE ? Color.BLACK : Color.WHITE;
         LinkedList<Piece> enemyPieces = getPiecesOfColor(enemyColor);
 
-//        System.out.println("I am \"pieceCanKillAKing\" and i will call getThreateningPieces");
         LinkedList<Piece> enemyPiecesThatThreats = getThreateningPieces(enemyPieces);
 //        for (Piece enemyPieceThatThreats : enemyPiecesThatThreats) {
 //            if (enemyPieceThatThreats.canMove(tile)) {
@@ -133,19 +115,13 @@ public class King extends Piece {
     }
 
     private LinkedList<Piece> getThreateningPieces(LinkedList<Piece> enemyPieces) {
-        //creating enemyPiecesThatThreats LinkedList
-//        System.out.println("I'm at GetThreateningPieces");
         LinkedList<Piece> enemyPiecesThatThreats = new LinkedList<>();
         for (Piece enemyPiece : enemyPieces) {
-//            System.out.println("enemyPiece Name: " + enemyPiece.getClass().getName() + " at: " + enemyPiece.tile.getCoordinates());
             if (enemyPiece.canMove(tile)) {
-//                System.out.println("enemyPiece " + enemyPiece.getClass().getName() + " is added to enemyPiecesThatThreats");
                 enemyPiecesThatThreats.add(enemyPiece);
             } else {
-//                System.out.println("The previous piece cannot be added, check why");
             }
         }
-//        System.out.println("I Finally returned the LinkedList enemyPiecesThatThreats and it's length is: " + enemyPiecesThatThreats.size());
         return enemyPiecesThatThreats;
     }
 }

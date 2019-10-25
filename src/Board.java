@@ -92,18 +92,6 @@ public class Board {
         this.board = board;
     }
 
-
-//    private void checkIfEnemyGotChecked(Color enemyColor) {
-//        Color currentPlayerColor = enemyColor == Color.WHITE ? Color.BLACK : Color.WHITE;
-//        LinkedList<Piece> currentPlayerArmy = getAllPiecesWithColor(currentPlayerColor);
-//        Piece enemyKing = getKing(enemyColor);
-//        for (Piece piece : currentPlayerArmy) {
-//            if (piece.canMove(enemyKing.tile)) {
-//                System.out.println("The " + (enemyColor == Color.WHITE ? "White" : "Black") + " king's is in check");
-//            }
-//        }
-//    }
-
     public void play(Tile sourceTile, Tile destinationTile) {
 
         //this if condition is useless but i kept it anyway (100% useless)
@@ -150,8 +138,6 @@ public class Board {
 //            this.checkIfEnemyGotChecked(enemyColor);
 
 
-        } else {
-            System.out.println("Cannot Play as Game is over.");
         }
     }
 }
