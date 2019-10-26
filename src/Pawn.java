@@ -60,21 +60,21 @@ public class Pawn extends Piece {
     }
 
     /*TODO revise this, it was origionally written for EnPassant*/
-    public void move(Tile destinationTile) {
-        if (eatEnPassingDirection != 0) {
-            Tile tilePassedBy = tile.getNeighbourTile(eatEnPassingDirection, 0);
-            Piece piecePassedBy = tilePassedBy.getPiece();
-
-            if (piecePassedBy != null) {
-                piecePassedBy.setTile(null);
-                tilePassedBy.setPiece(null);
-            }
-        }
-        eatEnPassingDirection = 0;
-
-        tile.setPiece(null);
-        destinationTile.setPiece(this);
-
-        firstTwoStepMovement = true;
-    }
+//    public void move(Tile destinationTile) {
+//        if (eatEnPassingDirection != 0) {
+//            Tile tilePassedBy = tile.getNeighbourTile(eatEnPassingDirection, 0);
+//            Piece piecePassedBy = tilePassedBy.getPiece();
+//
+//            if (piecePassedBy != null) {
+//                piecePassedBy.setTile(null);
+//                tilePassedBy.setPiece(null);
+//            }
+//        }
+//        eatEnPassingDirection = 0;
+//
+//        tile.setPiece(null);
+//        destinationTile.setPiece(this);
+//
+//        firstTwoStepMovement = true;
+//    }
 }

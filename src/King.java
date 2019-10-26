@@ -99,11 +99,6 @@ public class King extends Piece {
         LinkedList<Piece> enemyPieces = getPiecesOfColor(enemyColor);
 
         LinkedList<Piece> enemyPiecesThatThreats = getThreateningPieces(enemyPieces);
-//        for (Piece enemyPieceThatThreats : enemyPiecesThatThreats) {
-//            if (enemyPieceThatThreats.canMove(tile)) {
-//                return true;
-//            }
-//        }
         if (enemyPiecesThatThreats.size()>0){
             return true;
         }

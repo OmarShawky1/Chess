@@ -30,26 +30,30 @@ public abstract class Piece {
         boolean destinationContainsAlly = !destinationTile.isEmpty() &&
                 destinationTile.getPiece().getColor() == color;
 
-        if (destinationContainsAlly){
+        if (destinationContainsAlly) {
             return false;
         }
 
         /* Check if the player's own king will be checked if this piece were moved out of the way. */
 
-        King king = tile.getBoard().getKing(color);
-        Tile[][] oldBoard = tile.getBoard().getBoard();
+        //not sure why this is useful but without the previous line, Pieces where repeated in the board this is why i putted this line to
+        // study more why the king isAlive is causing bugs
+//        Tile[][] oldBoard = tile.getBoard().getBoard();
         Tile oldTile = tile;
-        //not sure why this is useful but without the previous line, Pieces where repeated in the board
-        //this is why i putted this line to study more why the king isAlive is causing bugs
+        King king = tile.getBoard().getKing(color);
         Piece oldPiece = tile.getPiece();
+        Piece oldDestinationPiece = destinationTile.getPiece();
+
+        tile.setPiece(null);
         tile = destinationTile;
-        Piece oldDestinationPiece = tile.getPiece();
         tile.setPiece(oldPiece);
+
         boolean willOwnPlayerKingBeChecked = king.isBeingChecked();
-        tile.getBoard().setBoard(oldBoard);
+
+//        tile.getBoard().setBoard(oldBoard);
         tile = oldTile;
-        destinationTile.setPiece(oldDestinationPiece);
         tile.setPiece(oldPiece);
+        destinationTile.setPiece(oldDestinationPiece);
 
         return !willOwnPlayerKingBeChecked;
     }

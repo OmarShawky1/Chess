@@ -15,7 +15,7 @@ public class Queen extends Piece {
     public boolean canMove(Tile destinationTile) {
         boolean isValidQueenMove = isCorrectCornerMoveTowards(destinationTile) ||
                 isCorrectStraightMoveTowards(destinationTile);
-        
+
         if (isValidQueenMove){
             //this is written that way because it was and will be used in so many calculations, so no need to do it over and over
             boolean superCanMove = super.canMove(destinationTile);
