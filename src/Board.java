@@ -84,19 +84,20 @@ public class Board {
         return board[coordinate.getY()][coordinate.getX()];
     }
 
-    public Tile[][] getBoard() {
-        return board;
-    }
+//    public Tile[][] getBoard() {
+//        return board;
+//    }
 
-    public void setBoard(Tile[][] board) {
-        this.board = board;
-    }
+//    public void setBoard(Tile[][] board) {
+//        this.board = board;
+//    }
 
     public void play(Tile sourceTile, Tile destinationTile) {
 
         //this if condition is useless but i kept it anyway (100% useless)
         if (whiteKingAlive && blackKingAlive) {
 
+            removeEnPassant();
             //getPiece to move, there is no need to check if the sourceTile is Empty because it is already checked in GUI
             Piece pieceToMove = sourceTile.getPiece();
             Color pieceColor = pieceToMove.getColor();
@@ -138,6 +139,16 @@ public class Board {
 //            this.checkIfEnemyGotChecked(enemyColor);
 
 
+        }
+    }
+
+    private void removeEnPassant (){
+        LinkedList<Piece> pieces = whiteTurn? getAllPiecesWithColor(Color.WHITE):getAllPiecesWithColor(Color.BLACK);
+        for (Piece piece : pieces){
+            if (piece instanceof Pawn){
+                Pawn pawn = (Pawn) piece;
+                pawn.setCanEnPassantMe(false);
+            }
         }
     }
 }

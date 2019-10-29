@@ -4,77 +4,118 @@ import javafx.scene.paint.Color;
 public class Pawn extends Piece {
 
     private boolean firstTwoStepMovement;
-    private int eatEnPassingDirection;
+    private boolean canEnPassantMe;
+
 
     public Pawn(Color color) {
         super(color);
 
-        if (color == Color.WHITE){
+        if (color == Color.WHITE) {
             this.image = new Image("White_Pawn.png");
-        }else {
+        } else {
             this.image = new Image("Black_Pawn.png");
         }
-        eatEnPassingDirection = 0;
         firstTwoStepMovement = false;
     }
 
+    public boolean isCanEnPassantMe() {
+        return canEnPassantMe;
+    }
+
+    public void setCanEnPassantMe(boolean canEnPassantMe) {
+        this.canEnPassantMe = canEnPassantMe;
+    }
+
     public boolean canMove(Tile destinationTile) {
-        //TODO el 3askry maybetra2ash
-        //TODO pawn can move forward although if there is anything in frond of him
+        if (isForwardMove(destinationTile)) {
+            return super.canMove(destinationTile);
+        } else return isValidCornerMove(destinationTile);
 
-        /* Check if trying to attack an enemy */
-        boolean isPawnInAttackMode = false;
-        if (!destinationTile.isEmpty() && color != destinationTile.getPiece().getColor()) {
-            isPawnInAttackMode = true;
-        }
+    }
 
-        /* Determine if trying to eat an enemy on the passing */
-        int xDiff = tile.xDiffFrom(destinationTile);
-        int xDirection = xDiff == 0 ? 0 : xDiff / Math.abs(xDiff);
+    private boolean isForwardMove(Tile destinationTile) {
 
-        Tile tilePassingBy = tile.getNeighbourTile(xDirection, 0);
-        Piece piecePassingBy = tilePassingBy != null ? tilePassingBy.getPiece() : null;
-
-        if (piecePassingBy instanceof Pawn && piecePassingBy.getColor() != color &&
-                ((Pawn) piecePassingBy).firstTwoStepMovement) {
-            eatEnPassingDirection = xDirection;
-            isPawnInAttackMode = true;
-        } else {
-            eatEnPassingDirection = 0;
-        }
-
-        /* Check correct movement for the Pawn */
         int yDiff = tile.yDiffFrom(destinationTile);
-        int maxYSteps = (firstTwoStepMovement || isPawnInAttackMode) ? 1 : 2;
+        int xDiff = tile.xDiffFrom(destinationTile);
+        int maxYSteps = firstTwoStepMovement ? 1 : 2;
 
         boolean isCorrectVerticalMove = (color == Color.BLACK && yDiff <= maxYSteps && yDiff > 0) ||
                 (color == Color.WHITE && yDiff >= -maxYSteps && yDiff < 0);
-        boolean isCorrectHorizontalMove = Math.abs(xDiff) == (isPawnInAttackMode ? 1 : 0);
+        boolean isCorrectHorizontalMove = Math.abs(xDiff) == 0;
 
-        if (isCorrectVerticalMove && isCorrectHorizontalMove){
-
-            return super.canMove(destinationTile);
+        if (isCorrectVerticalMove && isCorrectHorizontalMove && destinationTile.isEmpty()) {
+            return true;
         }
-
         return false;
     }
 
-    /*TODO revise this, it was origionally written for EnPassant*/
-//    public void move(Tile destinationTile) {
-//        if (eatEnPassingDirection != 0) {
-//            Tile tilePassedBy = tile.getNeighbourTile(eatEnPassingDirection, 0);
-//            Piece piecePassedBy = tilePassedBy.getPiece();
-//
-//            if (piecePassedBy != null) {
-//                piecePassedBy.setTile(null);
-//                tilePassedBy.setPiece(null);
-//            }
-//        }
-//        eatEnPassingDirection = 0;
-//
-//        tile.setPiece(null);
-//        destinationTile.setPiece(this);
-//
-//        firstTwoStepMovement = true;
-//    }
+    private boolean isValidCornerMove(Tile destinationTile) {
+        //if i can move to corner because there is a piece in the corner
+        if (isCornerMove(destinationTile)) {
+            // if the corner tile is empty, check if i can en passant
+            if (!destinationTile.isEmpty()) {
+                return true;
+            } else return iCanEnPassant(destinationTile);
+        }
+        return false;
+    }
+
+    private boolean isCornerMove(Tile destinationTile) {
+        int yDiff = tile.yDiffFrom(destinationTile);
+        int xDiff = tile.xDiffFrom(destinationTile);
+
+        boolean isCorrectVerticalMove = (color == Color.BLACK && yDiff == 1) || (color == Color.WHITE && yDiff == -1);
+        boolean isCorrectHorizontalMove = Math.abs(xDiff) == 1;
+        if(isCorrectVerticalMove && isCorrectHorizontalMove){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean iCanEnPassant(Tile destinationTile) {
+        Pawn rightPawn = sidePawn(destinationTile, 1);
+        Pawn leftPawn = sidePawn(destinationTile, -1);
+
+        if ((rightPawn != null && rightPawn.isCanEnPassantMe()) || (leftPawn != null && leftPawn.isCanEnPassantMe())){
+            return true;
+        }
+        return false;
+    }
+
+    private Pawn sidePawn(Tile destinationTile, int direction) {
+        int side = tile.getCoordinates().getX() + direction;
+        Coordinate sideCoor = new Coordinate(side, tile.getCoordinates().getY());
+        Pawn sidePawn = null;
+
+        if (sideCoor.isValidCoordinate()){
+        Tile sideTile = tile.getBoard().getTile(sideCoor);
+        Piece sidePiece = sideTile.isEmpty() ? null : sideTile.getPiece();
+        sidePawn = sidePiece instanceof Pawn ? (Pawn) sidePiece : null;
+        }
+        return sidePawn;
+    }
+
+    public void move(Tile destinationTile) {
+
+        Pawn rightPawn = sidePawn(destinationTile, 1);
+        Pawn leftPawn = sidePawn(destinationTile, -1);
+
+        int x = Math.abs(destinationTile.getCoordinates().getY() - tile.getCoordinates().getY());
+        if (x == 2) {
+            if (rightPawn != null || leftPawn != null) {
+                canEnPassantMe = true;
+            }
+        }
+        //eat the enPassant Pawn
+        if (iCanEnPassant(destinationTile)){
+
+            if (rightPawn != null && rightPawn.isCanEnPassantMe()){
+                rightPawn.tile.setPiece(null);
+            }
+            if (leftPawn != null && leftPawn.isCanEnPassantMe()){
+                leftPawn.tile.setPiece(null);
+            }
+        }
+        super.move(destinationTile);
+    }
 }
