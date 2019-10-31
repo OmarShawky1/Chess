@@ -84,14 +84,6 @@ public class Board {
         return board[coordinate.getY()][coordinate.getX()];
     }
 
-//    public Tile[][] getBoard() {
-//        return board;
-//    }
-
-//    public void setBoard(Tile[][] board) {
-//        this.board = board;
-//    }
-
     public void play(Tile sourceTile, Tile destinationTile) {
 
         //this if condition is useless but i kept it anyway (100% useless)

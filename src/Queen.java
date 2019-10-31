@@ -18,8 +18,7 @@ public class Queen extends Piece {
 
         if (isValidQueenMove){
             //this is written that way because it was and will be used in so many calculations, so no need to do it over and over
-            boolean superCanMove = super.canMove(destinationTile);
-            return superCanMove;
+            return super.canMove(destinationTile);
         }
         return false;
     }

@@ -35,10 +35,6 @@ public abstract class Piece {
         }
 
         /* Check if the player's own king will be checked if this piece were moved out of the way. */
-
-        //not sure why this is useful but without the previous line, Pieces where repeated in the board this is why i putted this line to
-        // study more why the king isAlive is causing bugs
-//        Tile[][] oldBoard = tile.getBoard().getBoard();
         Tile oldTile = tile;
         King king = tile.getBoard().getKing(color);
         Piece oldPiece = tile.getPiece();
@@ -50,7 +46,6 @@ public abstract class Piece {
 
         boolean willOwnPlayerKingBeChecked = king.isBeingChecked();
 
-//        tile.getBoard().setBoard(oldBoard);
         tile = oldTile;
         tile.setPiece(oldPiece);
         destinationTile.setPiece(oldDestinationPiece);

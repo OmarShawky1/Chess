@@ -23,7 +23,6 @@ public class GUI extends Application {
     private final int WINDOWSIZE = 600;
     private final int size = 8;
     private Tile sourceTile;
-//    private Tile destinationTile;
 
 
     @Override
@@ -76,8 +75,6 @@ public class GUI extends Application {
         //initial window conditions
         window.setTitle("Chess Game");
         window.centerOnScreen();
-//        window.setMinWidth(WINDOWSIZE);
-//        window.setMinHeight(WINDOWSIZE + 100);
     }
 
     private void coloringTiles() {
@@ -110,9 +107,6 @@ public class GUI extends Application {
                     Image image = piece.getImage();
                     ImageView imageView = new ImageView();
                     imageView.setImage(image);
-//                    button[col][row].setGraphic(imageView);
-//                    button[col][row].setAlignment(Pos.CENTER); // for non obvious reasons, this does not work with me
-//                    button[col][row].setContentDisplay(ContentDisplay.CENTER);
                     tile.setGraphic(imageView);
                     tile.setAlignment(Pos.CENTER);
                     tile.setContentDisplay(ContentDisplay.CENTER);
@@ -126,15 +120,6 @@ public class GUI extends Application {
     private void constraintsAligning() {
         //setting the constraints to align the columns and rows (make them appear in the GUI)
         for (int i = 0; i < size; i++) {
-            // correct this shit because resizing the window does not change the area of each item
-//            ColumnConstraints cc = new ColumnConstraints();
-//            cc.setPercentWidth(12.5);
-//            root.getColumnConstraints().add(cc);
-//
-//            RowConstraints rc = new RowConstraints();
-//            rc.setPercentHeight(12.5);
-//            root.getRowConstraints().add(rc);
-
             int square = 8;
             root.getColumnConstraints().add(
                     new ColumnConstraints(square, square, Double.POSITIVE_INFINITY,
@@ -195,69 +180,6 @@ public class GUI extends Application {
                 return;
             }
             //End of getDestinationTile
-
-            //Start of IsMovement valid?
-//            if (sourceTile != null && destinationTile != null) {
-//
-//            }
-            //End of IsMovementValid?
         }
-
-//        //setting the sourceTile and destinationTile to null after being used
-//        if (sourceTile != null && destinationTile != null) {
-//
-//            sourceTile = null;
-//            destinationTile = null;
-//        }
-//
-//        Tile newTile = board.getTile(newCoordinate);
-//        boolean newTileIsEmpty = newTile.isEmpty();
-//
-//        //assigning the piece, seeing if the piece is from old sourceTile or from the newCoordinate
-//        Piece movingPiece = null;
-//        Color movingPieceColor = null;
-//        if (sourceTile != null && !sourceTile.isEmpty()) {
-//            movingPiece = sourceTile.getPiece();
-//            movingPieceColor = movingPiece.getColor();
-//        } else if (!newTileIsEmpty) {
-//            movingPiece = newTileIsEmpty ? null : newTile.getPiece();
-//            movingPieceColor = movingPiece.getColor();
-//        }
-//
-//
-//        boolean whitePlayerPiece = movingPiece == null ? false : (movingPieceColor == Color.WHITE);
-//        boolean blackPlayerPiece = movingPiece == null ? false : (movingPieceColor == Color.BLACK);
-//        boolean rightWhiteTurn = board.whiteTurn && whitePlayerPiece;
-//        boolean rightBlackTurn = !board.whiteTurn && blackPlayerPiece;
-//        boolean rightPlayerTurn = rightWhiteTurn || rightBlackTurn;
-//
-//        //assigning the value of the newCoordinate to the sourceTile
-//        if (rightPlayerTurn && sourceTile == null) {
-//            sourceTile = board.getTile(newCoordinate);
-//            return;
-//        }
-//
-//        //if the sourceTile that contains the correct piece to move is already assigned, proceed to know the destination of the piece
-//        if (sourceTile != null) {
-//
-//            //the code will reach this part after having moving piece
-//            //this is dedicated to get the destination tile and see if the assigned movingPiece can move to the destination or not
-//            boolean destinationIsEmpty = newTileIsEmpty;
-//            Piece enemyPiece = destinationIsEmpty ? null : newTile.getPiece();
-//            Color enemyColor = destinationIsEmpty ? null : enemyPiece.getColor();
-//            boolean destinationIsFreeOrContainsEnemy = destinationIsEmpty || (enemyColor != movingPieceColor);
-//
-//            //if things went right, in other words, the destination is free or contain an enemy, pass those parameters to board.play();
-//            if (rightPlayerTurn && destinationIsFreeOrContainsEnemy) {
-//
-//                destinationTile = board.getTile(newCoordinate);
-//                Coordinate sourceCoordinate = sourceTile.getCoordinates();
-//                Coordinate destinationCoordinate = destinationTile.getCoordinates();
-//
-//                board.play(sourceCoordinate, destinationCoordinate);
-//                putPieces();
-//                return;
-//            }
-//        }
     }
 }
