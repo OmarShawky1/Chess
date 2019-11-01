@@ -8,20 +8,15 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
 public class GUI extends Application {
 
     private Stage window;
-    private Scene scene;
     private GridPane root;
     private GridPane upperGridPane;
-    private BorderPane borderPane;
     private static Board board = new Board();
-    private final int WINDOWSIZE = 600;
-    private final int size = 8;
     private Tile sourceTile;
 
 
@@ -97,8 +92,8 @@ public class GUI extends Application {
     private void putPieces() {
 
         //putting tile pieces on the GUI Board
-        for (int row = 0; row < board.BOARD_LENGTH; row++) {
-            for (int col = 0; col < board.BOARD_WIDTH; col++) {
+        for (int row = 0; row < Board.BOARD_LENGTH; row++) {
+            for (int col = 0; col < Board.BOARD_WIDTH; col++) {
                 Coordinate coordinate = new Coordinate(col, row);
                 Tile tile = board.getTile(coordinate);
 
@@ -119,6 +114,7 @@ public class GUI extends Application {
 
     private void constraintsAligning() {
         //setting the constraints to align the columns and rows (make them appear in the GUI)
+        int size = 8;
         for (int i = 0; i < size; i++) {
             int square = 8;
             root.getColumnConstraints().add(
@@ -139,12 +135,13 @@ public class GUI extends Application {
         constraintsAligning();
 
         //creating the main board that contains the center and the upper menu
-        borderPane = new BorderPane();
+        BorderPane borderPane = new BorderPane();
         borderPane.setTop(upperGridPane);
         borderPane.setCenter(root);
 
         //putting the border menu in the main scene and the main scene in the main stage
-        scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
+        int WINDOWSIZE = 600;
+        Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
         window.setScene(scene);
         createMainWindow();
         window.show();
@@ -163,7 +160,6 @@ public class GUI extends Application {
                 if (!newTile.isEmpty()) {
                     sourceTile = newTile;
                 }
-                return;
                 //End of getSourceTile
             } else{ //Start of getDestinationTile
 
@@ -171,13 +167,11 @@ public class GUI extends Application {
                 boolean newTileContainsEnemy = !newTile.isEmpty() && (sourceTile.getPiece().getColor() != newTile.getPiece().getColor());
                 boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
                 if (newTileDoesNotContainAlly) {
-                    Tile destinationTile = newTile;
-                    board.play(sourceTile, destinationTile);
+                    board.play(sourceTile, newTile);
                     putPieces();
                     //after playing, set sourceTile to null
                     sourceTile = null;
                 }
-                return;
             }
             //End of getDestinationTile
         }

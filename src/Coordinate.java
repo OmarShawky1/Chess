@@ -1,7 +1,7 @@
 public class Coordinate {
     private int x, y;
 
-    public Coordinate(int x, int y) {
+    Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -11,15 +11,15 @@ public class Coordinate {
         y = coordinate.charAt(1) - '1';
     }
 
-    public boolean isValidCoordinate() { /* valid chess board coordinate */
+    boolean isValidCoordinate() { /* valid chess board coordinate */
         return x >= 0 && x <= 7 && y >= 0 && y <= 7;
     }
 
-    public int getXDifference(Coordinate coordinate) {
+    int getXDifference(Coordinate coordinate) {
         return coordinate.getX() - x;
     }
 
-    public int getYDifference(Coordinate coordinate) {
+    int getYDifference(Coordinate coordinate) {
         return coordinate.getY() - y;
     }
 
@@ -29,15 +29,15 @@ public class Coordinate {
         return new String(bytes);
     }
 
-    public int getX() {
+    int getX() {
         return x;
     }
 
-    public int getY() {
+    int getY() {
         return y;
     }
 
-    public Coordinate shift(int xDist, int yDist) {
+    Coordinate shift(int xDist, int yDist) {
         return new Coordinate(x + xDist, y + yDist);
     }
 }

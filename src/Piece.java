@@ -6,7 +6,7 @@ public abstract class Piece {
     protected Color color;
     protected Tile tile;
 
-    protected Image image;
+    Image image;
 
     public Piece(Color color) {
         this.color = color;
@@ -86,7 +86,7 @@ public abstract class Piece {
                 isPathClearTowards(destTile);
     }
 
-    public Image getImage() {
+    Image getImage() {
         return image;
     }
 }

@@ -2,7 +2,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Queen extends Piece {
-    public Queen(Color color) {
+    Queen(Color color) {
         super(color);
 
         if (color == Color.WHITE){

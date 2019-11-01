@@ -26,11 +26,7 @@ public class King extends Piece {
         // 2- check if there is a piece that can kill the enemy piece that threats the king
         // 3- check for a place where any piece from the army can block the threat
         if (pieceCanKillAKing()) {
-            if (kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat()) {
-                return true;
-            } else {
-                return false;
-            }
+            return kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat();
         }
         return true;
     }
@@ -97,10 +93,7 @@ public class King extends Piece {
         Color enemyColor = color == Color.WHITE ? Color.BLACK : Color.WHITE;
         LinkedList<Piece> enemyPieces = getPiecesOfColor(enemyColor);
         LinkedList<Piece> enemyPiecesThatThreats = getThreateningPieces(enemyPieces);
-        if (enemyPiecesThatThreats.size()>0){
-            return true;
-        }
-        return false;
+        return enemyPiecesThatThreats.size() > 0;
     }
 
     private LinkedList<Piece> getPiecesOfColor(Color color) {
@@ -112,7 +105,6 @@ public class King extends Piece {
         for (Piece enemyPiece : enemyPieces) {
             if (enemyPiece.canMove(tile)) {
                 enemyPiecesThatThreats.add(enemyPiece);
-            } else {
             }
         }
         return enemyPiecesThatThreats;

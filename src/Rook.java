@@ -3,7 +3,7 @@ import javafx.scene.paint.Color;
 
 public class Rook extends Piece {
 
-    public Rook(Color color) {
+    Rook(Color color) {
         super(color);
 
         if (color == Color.WHITE) {
@@ -16,8 +16,7 @@ public class Rook extends Piece {
     @Override
     public boolean canMove(Tile destinationTile) {
         if (isCorrectStraightMoveTowards(destinationTile)) {
-            boolean superCanMove = super.canMove(destinationTile);
-            return superCanMove;
+            return super.canMove(destinationTile);
         }
         return false;
     }

@@ -14,7 +14,7 @@ public class Board {
 
     private Tile[][] board;
 
-    public Board() {
+    Board() {
         board = new Tile[BOARD_LENGTH][BOARD_WIDTH];
 
         /* Filling the board with Tile objects */
@@ -76,7 +76,7 @@ public class Board {
         return listOfPieces;
     }
 
-    public King getKing(Color color) {
+    King getKing(Color color) {
         return color == Color.WHITE ? whiteKing : blackKing;
     }
 
@@ -84,7 +84,7 @@ public class Board {
         return board[coordinate.getY()][coordinate.getX()];
     }
 
-    public void play(Tile sourceTile, Tile destinationTile) {
+    void play(Tile sourceTile, Tile destinationTile) {
 
         //this if condition is useless but i kept it anyway (100% useless)
         if (whiteKingAlive && blackKingAlive) {
@@ -139,7 +139,7 @@ public class Board {
         for (Piece piece : pieces){
             if (piece instanceof Pawn){
                 Pawn pawn = (Pawn) piece;
-                pawn.setCanEnPassantMe(false);
+                pawn.setCanEnPassantMe();
             }
         }
     }

@@ -17,9 +17,8 @@ public class Bishop extends Piece {
     public boolean canMove(Tile destinationTile) {
 
         if (isCorrectCornerMoveTowards(destinationTile)) {
-            boolean superCanMove = super.canMove(destinationTile);
 
-            return superCanMove;
+            return super.canMove(destinationTile);
         }
         return false;
     }

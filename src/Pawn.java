@@ -7,7 +7,7 @@ public class Pawn extends Piece {
     private boolean canEnPassantMe;
 
 
-    public Pawn(Color color) {
+    Pawn(Color color) {
         super(color);
 
         if (color == Color.WHITE) {
@@ -18,12 +18,12 @@ public class Pawn extends Piece {
         firstTwoStepMovement = false;
     }
 
-    public boolean isCanEnPassantMe() {
+    private boolean isCanEnPassantMe() {
         return canEnPassantMe;
     }
 
-    public void setCanEnPassantMe(boolean canEnPassantMe) {
-        this.canEnPassantMe = canEnPassantMe;
+    void setCanEnPassantMe() {
+        this.canEnPassantMe = false;
     }
 
     public boolean canMove(Tile destinationTile) {
@@ -43,10 +43,7 @@ public class Pawn extends Piece {
                 (color == Color.WHITE && yDiff >= -maxYSteps && yDiff < 0);
         boolean isCorrectHorizontalMove = Math.abs(xDiff) == 0;
 
-        if (isCorrectVerticalMove && isCorrectHorizontalMove && destinationTile.isEmpty()) {
-            return true;
-        }
-        return false;
+        return isCorrectVerticalMove && isCorrectHorizontalMove && destinationTile.isEmpty();
     }
 
     private boolean isValidCornerMove(Tile destinationTile) {
@@ -55,7 +52,7 @@ public class Pawn extends Piece {
             // if the corner tile is empty, check if i can en passant
             if (!destinationTile.isEmpty()) {
                 return true;
-            } else return iCanEnPassant(destinationTile);
+            } else return iCanEnPassant();
         }
         return false;
     }
@@ -66,23 +63,17 @@ public class Pawn extends Piece {
 
         boolean isCorrectVerticalMove = (color == Color.BLACK && yDiff == 1) || (color == Color.WHITE && yDiff == -1);
         boolean isCorrectHorizontalMove = Math.abs(xDiff) == 1;
-        if(isCorrectVerticalMove && isCorrectHorizontalMove){
-            return true;
-        }
-        return false;
+        return isCorrectVerticalMove && isCorrectHorizontalMove;
     }
 
-    private boolean iCanEnPassant(Tile destinationTile) {
-        Pawn rightPawn = sidePawn(destinationTile, 1);
-        Pawn leftPawn = sidePawn(destinationTile, -1);
+    private boolean iCanEnPassant() {
+        Pawn rightPawn = sidePawn(1);
+        Pawn leftPawn = sidePawn(-1);
 
-        if ((rightPawn != null && rightPawn.isCanEnPassantMe()) || (leftPawn != null && leftPawn.isCanEnPassantMe())){
-            return true;
-        }
-        return false;
+        return (rightPawn != null && rightPawn.isCanEnPassantMe()) || (leftPawn != null && leftPawn.isCanEnPassantMe());
     }
 
-    private Pawn sidePawn(Tile destinationTile, int direction) {
+    private Pawn sidePawn(int direction) {
         int side = tile.getCoordinates().getX() + direction;
         Coordinate sideCoor = new Coordinate(side, tile.getCoordinates().getY());
         Pawn sidePawn = null;
@@ -97,8 +88,8 @@ public class Pawn extends Piece {
 
     public void move(Tile destinationTile) {
 
-        Pawn rightPawn = sidePawn(destinationTile, 1);
-        Pawn leftPawn = sidePawn(destinationTile, -1);
+        Pawn rightPawn = sidePawn(1);
+        Pawn leftPawn = sidePawn(-1);
 
         int x = Math.abs(destinationTile.getCoordinates().getY() - tile.getCoordinates().getY());
         if (x == 2) {
@@ -107,7 +98,7 @@ public class Pawn extends Piece {
             }
         }
         //eat the enPassant Pawn
-        if (iCanEnPassant(destinationTile)){
+        if (iCanEnPassant()){
 
             if (rightPawn != null && rightPawn.isCanEnPassantMe()){
                 rightPawn.tile.setPiece(null);

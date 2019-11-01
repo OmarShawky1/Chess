@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 public class Knight extends Piece {
 
 
-    public Knight(Color color) {
+    Knight(Color color) {
         super(color);
 
         if (color == Color.WHITE){
@@ -22,8 +22,7 @@ public class Knight extends Piece {
         boolean validKnightMove = (xDist == 2 && yDist == 1) || (xDist == 1 && yDist == 2);
 
         if (validKnightMove){
-            boolean superCanMove = super.canMove(destinationTile);
-            return superCanMove;
+            return super.canMove(destinationTile);
         }
         return false;
     }
