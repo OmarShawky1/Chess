@@ -37,36 +37,28 @@ public class GUI extends Application {
         launch();
     }
 
-    private void createUpperMenu() {
-        //setting the upper menu for (Player's turn, time, check)
-        upperGridPane = new GridPane();
-        upperGridPane.setHgap(100);
-        upperGridPane.setVgap(20);
-        Label whiteLabel = new Label("White Player Info");
-        Label blackLabel = new Label("Black Player Info");
-        whiteLabel.setStyle("-fx-font-weight: bold");
-        blackLabel.setStyle("-fx-font-weight: bold");
-        GridPane.setHalignment(whiteLabel, HPos.CENTER);
-        GridPane.setHalignment(blackLabel, HPos.CENTER);
-        GridPane.setHgrow(whiteLabel, Priority.ALWAYS);
-        GridPane.setHgrow(blackLabel, Priority.ALWAYS);
-        upperGridPane.add(whiteLabel, 0, 0);
-        upperGridPane.add(blackLabel, 2, 0);
+    private void createPlayerInfo(String playerColorName) {
 
-        Button rstButton = new Button("Reset Game");
-        rstButton.setOnAction(e -> {
-            board = new Board();
-            createBlankBoard();
-        });
-        upperGridPane.add(rstButton, 1, 1);
+        int rightOrLeft = playerColorName.equals("White") ? 0 : 2;
 
-        Label whiteTimerLabel = new Label("15:00");
-        Label blackTimerLabel = new Label("15:00");
-        upperGridPane.add(whiteTimerLabel, 0, 1);
-        upperGridPane.add(blackTimerLabel, 2, 1);
+        Label playerColorNameLabel = new Label(playerColorName + "Player Info");
+        playerColorNameLabel.setStyle("-fx-font-weight: bold");
+        GridPane.setHalignment(playerColorNameLabel, HPos.CENTER);
+        GridPane.setHgrow(playerColorNameLabel, Priority.ALWAYS);
+        upperGridPane.add(playerColorNameLabel, rightOrLeft, 0);
 
-        whiteTime = LocalTime.of(0, 15, 0, 0);
-        blackTime = LocalTime.of(0, 15, 0, 0);
+        Label playerColorTimerLabel = new Label("15:00");
+        upperGridPane.add(playerColorTimerLabel, rightOrLeft, 1);
+    }
+
+    private void runTimer() {
+
+        Label whiteTimerLabel = (Label) upperGridPane.getChildren().get(1);
+        Label blackTimerLabel = (Label) upperGridPane.getChildren().get(3);
+
+        whiteTime = LocalTime.of(0,15);
+        blackTime = whiteTime;
+
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -76,18 +68,37 @@ public class GUI extends Application {
                         whiteTimerLabel.setText(whiteTime.getMinute() + ":" + whiteTime.getSecond());
                     } else {
                         blackTime = blackTime.minusSeconds(1);
-                        blackTimerLabel.setText(blackTime.getMinute() + ":" + blackTime.getSecond()); }
+                        blackTimerLabel.setText(blackTime.getMinute() + ":" + blackTime.getSecond());
+                    }
                 });
             }
         };
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 1000, 1000);
+    }
 
+    private void createUpperMenu() {
+        //setting the upper menu for (Player's turn, time, check)
+        upperGridPane = new GridPane();
+        upperGridPane.setHgap(100);
+        upperGridPane.setVgap(20);
+
+        createPlayerInfo("White");
+        createPlayerInfo("Black");
+
+        Button rstButton = new Button("Reset Game");
+        rstButton.setOnAction(e -> {
+            board = new Board();
+            createBlankBoard();
+        });
+        upperGridPane.add(rstButton, 1, 1);
+
+        runTimer();
 
         upperGridPane.setGridLinesVisible(true);
-        int upperMenuInstes = 10;
-        BorderPane.setMargin(upperGridPane, new Insets(upperMenuInstes));
+        int upperMenuInsets = 10;
+        BorderPane.setMargin(upperGridPane, new Insets(upperMenuInsets));
     }
 
     private void createMainWindow() {
