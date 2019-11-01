@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,6 +11,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.time.LocalTime;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class GUI extends Application {
 
@@ -18,6 +23,7 @@ public class GUI extends Application {
     private GridPane upperGridPane;
     private static Board board = new Board();
     private Tile sourceTile;
+    private LocalTime whiteTime, blackTime;
 
 
     @Override
@@ -38,17 +44,12 @@ public class GUI extends Application {
         upperGridPane.setVgap(20);
         Label whiteLabel = new Label("White Player Info");
         Label blackLabel = new Label("Black Player Info");
-
         whiteLabel.setStyle("-fx-font-weight: bold");
         blackLabel.setStyle("-fx-font-weight: bold");
-
         GridPane.setHalignment(whiteLabel, HPos.CENTER);
         GridPane.setHalignment(blackLabel, HPos.CENTER);
-
         GridPane.setHgrow(whiteLabel, Priority.ALWAYS);
         GridPane.setHgrow(blackLabel, Priority.ALWAYS);
-
-
         upperGridPane.add(whiteLabel, 0, 0);
         upperGridPane.add(blackLabel, 2, 0);
 
@@ -57,10 +58,34 @@ public class GUI extends Application {
             board = new Board();
             createBlankBoard();
         });
-
         upperGridPane.add(rstButton, 1, 1);
 
-//        upperGridPane.setGridLinesVisible(true);
+        Label whiteTimerLabel = new Label("15:00");
+        Label blackTimerLabel = new Label("15:00");
+        upperGridPane.add(whiteTimerLabel, 0, 1);
+        upperGridPane.add(blackTimerLabel, 2, 1);
+
+        whiteTime = LocalTime.of(0, 15, 0, 0);
+        blackTime = LocalTime.of(0, 15, 0, 0);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    if (board.whiteTurn) {
+                        whiteTime = whiteTime.minusSeconds(1);
+                        whiteTimerLabel.setText(whiteTime.getMinute() + ":" + whiteTime.getSecond());
+                    } else {
+                        blackTime = blackTime.minusSeconds(1);
+                        blackTimerLabel.setText(blackTime.getMinute() + ":" + blackTime.getSecond()); }
+                });
+            }
+        };
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(timerTask, 1000, 1000);
+
+
+        upperGridPane.setGridLinesVisible(true);
         int upperMenuInstes = 10;
         BorderPane.setMargin(upperGridPane, new Insets(upperMenuInstes));
     }
@@ -161,7 +186,7 @@ public class GUI extends Application {
                     sourceTile = newTile;
                 }
                 //End of getSourceTile
-            } else{ //Start of getDestinationTile
+            } else { //Start of getDestinationTile
 
                 boolean newTileIsEmpty = newTile.isEmpty();
                 boolean newTileContainsEnemy = !newTile.isEmpty() && (sourceTile.getPiece().getColor() != newTile.getPiece().getColor());
