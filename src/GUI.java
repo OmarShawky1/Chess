@@ -48,6 +48,8 @@ public class GUI extends Application {
         upperGridPane.add(playerColorNameLabel, rightOrLeft, 0);
 
         Label playerColorTimerLabel = new Label("15:00");
+        GridPane.setHalignment(playerColorTimerLabel, HPos.CENTER);
+        GridPane.setHgrow(playerColorTimerLabel, Priority.ALWAYS);
         upperGridPane.add(playerColorTimerLabel, rightOrLeft, 1);
     }
 
@@ -96,7 +98,7 @@ public class GUI extends Application {
 
         runTimer();
 
-        upperGridPane.setGridLinesVisible(true);
+//        upperGridPane.setGridLinesVisible(true);
         int upperMenuInsets = 10;
         BorderPane.setMargin(upperGridPane, new Insets(upperMenuInsets));
     }
