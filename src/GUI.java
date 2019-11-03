@@ -21,9 +21,10 @@ public class GUI extends Application {
     private Stage window;
     private GridPane root;
     private GridPane upperGridPane;
-    private static Board board = new Board();
+    private Board board = new Board();
     private Tile sourceTile;
     private LocalTime whiteTime, blackTime;
+    static Label gameStatusBar;
 
 
     @Override
@@ -94,11 +95,18 @@ public class GUI extends Application {
             board = new Board();
             createBlankBoard();
         });
+        GridPane.setHalignment(rstButton, HPos.CENTER);
+        GridPane.setHgrow(rstButton, Priority.ALWAYS);
         upperGridPane.add(rstButton, 1, 1);
 
         runTimer();
 
-//        upperGridPane.setGridLinesVisible(true);
+        gameStatusBar = new Label("Start Game");
+        GridPane.setHalignment(gameStatusBar, HPos.CENTER);
+        GridPane.setHgrow(gameStatusBar, Priority.ALWAYS);
+        upperGridPane.add(gameStatusBar, 1,0);
+
+        upperGridPane.setGridLinesVisible(true);
         int upperMenuInsets = 10;
         BorderPane.setMargin(upperGridPane, new Insets(upperMenuInsets));
     }
