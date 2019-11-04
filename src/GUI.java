@@ -1,6 +1,5 @@
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -11,8 +10,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 
 import java.time.LocalTime;
 import java.util.Timer;
@@ -36,7 +33,7 @@ public class GUI extends Application {
 
         window = primaryStage;
         createBlankBoard();
-        window.setOnCloseRequest(e->{
+        window.setOnCloseRequest(e -> {
             window.close();
             timer.cancel();
             timer.purge();
@@ -127,19 +124,38 @@ public class GUI extends Application {
         window.centerOnScreen();
     }
 
-    private void coloringTiles() {
+    private void creatingBlankTiles() {
         root = new GridPane();
         final int size = 8;
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                Coordinate coordinate = new Coordinate(col, row);
-                Tile tile = board.getTile(coordinate);
-                tile.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                tile.setOnAction(e -> play(coordinate));
-                String tileColor = tile.getColor();
-                tile.setStyle("-fx-background-color: " + tileColor + ";");
-                root.add(tile, col, row);
+        if (board.whiteTurn) {
+            for (int row = 0; row < size; row++) {
+                for (int col = 0; col < size; col++) {
+                    Coordinate coordinate = new Coordinate(col, row);
+                    Tile tile = board.getTile(coordinate);
+                    tile.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                    tile.setOnAction(e -> play(coordinate));
+                    String tileColor = tile.getColor();
+                    tile.setStyle("-fx-background-color: " + tileColor + ";");
+                    root.add(tile, col, row);
 
+                }
+            }
+
+        } else {
+            int oppRow = 0;
+            for (int row = size - 1; row >= 0; row--) {
+                int oppCol = 0;
+                for (int col = size - 1; col >= 0; col--) {
+                    Coordinate coordinate = new Coordinate(col, row);
+                    Tile tile = board.getTile(coordinate);
+                    tile.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                    tile.setOnAction(e -> play(coordinate));
+                    String tileColor = tile.getColor();
+                    tile.setStyle("-fx-background-color: " + tileColor + ";");
+                    root.add(tile, oppCol, oppRow);
+                    oppCol++;
+                }
+                oppRow++;
             }
         }
     }
@@ -185,7 +201,7 @@ public class GUI extends Application {
     private void createBlankBoard() {
 
         createUpperMenu();
-        coloringTiles();
+        creatingBlankTiles();
         putPieces();
         constraintsAligning();
 
@@ -224,6 +240,7 @@ public class GUI extends Application {
                 boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
                 if (newTileDoesNotContainAlly) {
                     board.play(sourceTile, newTile);
+                    createBlankBoard();
                     putPieces();
                     //after playing, set sourceTile to null
                     sourceTile = null;
