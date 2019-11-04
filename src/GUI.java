@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,6 +11,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 import java.time.LocalTime;
 import java.util.Timer;
@@ -19,12 +22,14 @@ import java.util.TimerTask;
 public class GUI extends Application {
 
     private Stage window;
+    private Scene scene;
     private GridPane root;
     private GridPane upperGridPane;
     private Board board = new Board();
     private Tile sourceTile;
     private LocalTime whiteTime, blackTime;
     static Label gameStatusBar;
+    Timer timer;
 
 
     @Override
@@ -32,10 +37,19 @@ public class GUI extends Application {
 
         window = primaryStage;
         createBlankBoard();
+        window.setOnCloseRequest(e->{
+            window.close();
+            timer.cancel();
+            timer.purge();
+        });
     }
 
     public static void main(String[] args) {
         launch();
+//        System.out.println("Thread.activeCount(): " + Thread.activeCount());
+//        System.out.println("Thread.currentThread(): " + Thread.currentThread());
+
+
     }
 
     private void createPlayerInfo(String playerColorName) {
@@ -59,7 +73,7 @@ public class GUI extends Application {
         Label whiteTimerLabel = (Label) upperGridPane.getChildren().get(1);
         Label blackTimerLabel = (Label) upperGridPane.getChildren().get(3);
 
-        whiteTime = LocalTime.of(0,15);
+        whiteTime = LocalTime.of(0, 15);
         blackTime = whiteTime;
 
         TimerTask timerTask = new TimerTask() {
@@ -77,7 +91,7 @@ public class GUI extends Application {
             }
         };
 
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 1000, 1000);
     }
 
@@ -104,7 +118,7 @@ public class GUI extends Application {
         gameStatusBar = new Label("Start Game");
         GridPane.setHalignment(gameStatusBar, HPos.CENTER);
         GridPane.setHgrow(gameStatusBar, Priority.ALWAYS);
-        upperGridPane.add(gameStatusBar, 1,0);
+        upperGridPane.add(gameStatusBar, 1, 0);
 
         upperGridPane.setGridLinesVisible(true);
         int upperMenuInsets = 10;
@@ -187,7 +201,8 @@ public class GUI extends Application {
 
         //putting the border menu in the main scene and the main scene in the main stage
         int WINDOWSIZE = 600;
-        Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
+//        Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
+        scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
         window.setScene(scene);
         createMainWindow();
         window.show();
@@ -222,4 +237,6 @@ public class GUI extends Application {
             //End of getDestinationTile
         }
     }
+
+
 }
