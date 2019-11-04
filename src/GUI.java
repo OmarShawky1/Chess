@@ -22,14 +22,13 @@ import java.util.TimerTask;
 public class GUI extends Application {
 
     private Stage window;
-    private Scene scene;
     private GridPane root;
     private GridPane upperGridPane;
     private Board board = new Board();
     private Tile sourceTile;
     private LocalTime whiteTime, blackTime;
     static Label gameStatusBar;
-    Timer timer;
+    private Timer timer;
 
 
     @Override
@@ -46,10 +45,6 @@ public class GUI extends Application {
 
     public static void main(String[] args) {
         launch();
-//        System.out.println("Thread.activeCount(): " + Thread.activeCount());
-//        System.out.println("Thread.currentThread(): " + Thread.currentThread());
-
-
     }
 
     private void createPlayerInfo(String playerColorName) {
@@ -202,7 +197,7 @@ public class GUI extends Application {
         //putting the border menu in the main scene and the main scene in the main stage
         int WINDOWSIZE = 600;
 //        Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
-        scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
+        Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
         window.setScene(scene);
         createMainWindow();
         window.show();
