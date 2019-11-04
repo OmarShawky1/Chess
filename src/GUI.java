@@ -32,7 +32,7 @@ public class GUI extends Application {
     public void start(Stage primaryStage) {
 
         window = primaryStage;
-        createBlankBoard();
+        createBlankWindow();
         window.setOnCloseRequest(e -> {
             window.close();
             timer.cancel();
@@ -99,7 +99,7 @@ public class GUI extends Application {
         Button rstButton = new Button("Reset Game");
         rstButton.setOnAction(e -> {
             board = new Board();
-            createBlankBoard();
+            createBlankWindow();
         });
         GridPane.setHalignment(rstButton, HPos.CENTER);
         GridPane.setHgrow(rstButton, Priority.ALWAYS);
@@ -112,7 +112,7 @@ public class GUI extends Application {
         GridPane.setHgrow(gameStatusBar, Priority.ALWAYS);
         upperGridPane.add(gameStatusBar, 1, 0);
 
-        upperGridPane.setGridLinesVisible(true);
+//        upperGridPane.setGridLinesVisible(true);
         int upperMenuInsets = 10;
         BorderPane.setMargin(upperGridPane, new Insets(upperMenuInsets));
     }
@@ -198,9 +198,7 @@ public class GUI extends Application {
         }
     }
 
-    private void createBlankBoard() {
-
-        createUpperMenu();
+    private void createBlankBoard(){
         creatingBlankTiles();
         putPieces();
         constraintsAligning();
@@ -217,6 +215,12 @@ public class GUI extends Application {
         window.setScene(scene);
         createMainWindow();
         window.show();
+    }
+
+    private void createBlankWindow() {
+
+        createUpperMenu();
+        createBlankBoard();
     }
 
     private void play(Coordinate newCoordinate) {
