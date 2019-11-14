@@ -1,5 +1,11 @@
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+
+import javax.swing.*;
+import java.util.Optional;
 
 public class Pawn extends Piece {
 
@@ -78,12 +84,58 @@ public class Pawn extends Piece {
         Coordinate sideCoor = new Coordinate(side, tile.getCoordinates().getY());
         Pawn sidePawn = null;
 
-        if (sideCoor.isValidCoordinate()){
-        Tile sideTile = tile.getBoard().getTile(sideCoor);
-        Piece sidePiece = sideTile.isEmpty() ? null : sideTile.getPiece();
-        sidePawn = sidePiece instanceof Pawn ? (Pawn) sidePiece : null;
+        if (sideCoor.isValidCoordinate()) {
+            Tile sideTile = tile.getBoard().getTile(sideCoor);
+            Piece sidePiece = sideTile.isEmpty() ? null : sideTile.getPiece();
+            sidePawn = sidePiece instanceof Pawn ? (Pawn) sidePiece : null;
         }
         return sidePawn;
+    }
+
+    private void setNewPiece(Piece piece, Tile destinationTile) {
+        System.out.println("Reached setNewPiece");
+        System.out.println("destinationTile.getCoordinates(): " + destinationTile.getCoordinates());
+        System.out.println("piece.getClass().getName(): " + piece.getClass().getName());
+        destinationTile.setPiece(piece);
+        piece.setTile(destinationTile);
+    }
+
+    private void promotePawn(Tile destinationTile) {
+        int y = destinationTile.getCoordinates().getY();
+        boolean reachedLastTileInBoard = (y == 7) || (y == 0);
+        if (reachedLastTileInBoard) {
+
+            ButtonType queenButton = new ButtonType("Queen");
+            ButtonType rookButton = new ButtonType("Rook");
+            ButtonType bishopButton = new ButtonType("Bishop");
+            ButtonType knightButton = new ButtonType("Knight");
+
+            Alert choosePiece = new Alert(Alert.AlertType.CONFIRMATION);
+            choosePiece.setTitle("Promote a piece");
+            choosePiece.setHeaderText("You can promote your pawn into another piece");
+            choosePiece.setContentText("Choose one of the following piece");
+            choosePiece.getButtonTypes().addAll(queenButton, rookButton, bishopButton, knightButton);
+
+            choosePiece.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+            choosePiece.getDialogPane().lookupButton(ButtonType.OK).setVisible(false);
+            choosePiece.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
+            choosePiece.getDialogPane().lookupButton(ButtonType.CANCEL).setVisible(false);
+
+            Optional<ButtonType> result = choosePiece.showAndWait();
+            if (result.get() == queenButton){
+                setNewPiece(new Queen(color), destinationTile);
+
+            }else if(result.get() == rookButton){
+                setNewPiece(new Rook(color), destinationTile);
+
+            }else if(result.get() == bishopButton){
+                setNewPiece(new Bishop(color), destinationTile);
+
+            }else if(result.get() == knightButton){
+                setNewPiece(new Knight(color), destinationTile);
+
+            }
+        }
     }
 
     public void move(Tile destinationTile) {
@@ -98,15 +150,18 @@ public class Pawn extends Piece {
             }
         }
         //eat the enPassant Pawn
-        if (iCanEnPassant()){
+        if (iCanEnPassant()) {
 
-            if (rightPawn != null && rightPawn.isCanEnPassantMe()){
+            if (rightPawn != null && rightPawn.isCanEnPassantMe()) {
                 rightPawn.tile.setPiece(null);
             }
-            if (leftPawn != null && leftPawn.isCanEnPassantMe()){
+            if (leftPawn != null && leftPawn.isCanEnPassantMe()) {
                 leftPawn.tile.setPiece(null);
             }
         }
+
         super.move(destinationTile);
+        promotePawn(destinationTile);
+        //the previous order was made for a reason, because when the super.move works, it will overlap with promotion
     }
 }

@@ -13,6 +13,7 @@ public class Board {
 
 
     private Tile[][] board;
+    private GUI gui;
 
     Board() {
         board = new Tile[BOARD_LENGTH][BOARD_WIDTH];
@@ -83,6 +84,10 @@ public class Board {
         return board[coordinate.getY()][coordinate.getX()];
     }
 
+    GUI getGUI() {
+        return gui;
+    }
+
     void play(Tile sourceTile, Tile destinationTile) {
         if (whiteKingAlive && blackKingAlive) {
             removeEnPassant();
@@ -140,4 +145,5 @@ public class Board {
             }
         }
     }
+
 }

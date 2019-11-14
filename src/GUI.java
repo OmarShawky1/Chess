@@ -1,8 +1,10 @@
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -19,7 +21,7 @@ import java.util.TimerTask;
 public class GUI extends Application {
 
     private Stage window;
-    private GridPane root;
+    private GridPane chessBoard;
     private GridPane upperGridPane;
     private Board board = new Board();
     private Tile sourceTile;
@@ -112,7 +114,7 @@ public class GUI extends Application {
         GridPane.setHgrow(gameStatusBar, Priority.ALWAYS);
         upperGridPane.add(gameStatusBar, 1, 0);
 
-//        upperGridPane.setGridLinesVisible(true);
+        upperGridPane.setGridLinesVisible(true);
         int upperMenuInsets = 10;
         BorderPane.setMargin(upperGridPane, new Insets(upperMenuInsets));
     }
@@ -125,7 +127,7 @@ public class GUI extends Application {
     }
 
     private void creatingBlankTiles() {
-        root = new GridPane();
+        chessBoard = new GridPane();
         final int size = 8;
         if (board.whiteTurn) {
             for (int row = 0; row < size; row++) {
@@ -136,7 +138,7 @@ public class GUI extends Application {
                     tile.setOnAction(e -> play(coordinate));
                     String tileColor = tile.getColor();
                     tile.setStyle("-fx-background-color: " + tileColor + ";");
-                    root.add(tile, col, row);
+                    chessBoard.add(tile, col, row);
 
                 }
             }
@@ -152,7 +154,7 @@ public class GUI extends Application {
                     tile.setOnAction(e -> play(coordinate));
                     String tileColor = tile.getColor();
                     tile.setStyle("-fx-background-color: " + tileColor + ";");
-                    root.add(tile, oppCol, oppRow);
+                    chessBoard.add(tile, oppCol, oppRow);
                     oppCol++;
                 }
                 oppRow++;
@@ -188,11 +190,11 @@ public class GUI extends Application {
         int size = 8;
         for (int i = 0; i < size; i++) {
             int square = 8;
-            root.getColumnConstraints().add(
+            chessBoard.getColumnConstraints().add(
                     new ColumnConstraints(square, square, Double.POSITIVE_INFINITY,
                             Priority.ALWAYS
                             , HPos.CENTER, true));
-            root.getRowConstraints().add(
+            chessBoard.getRowConstraints().add(
                     new RowConstraints(square, square, Double.POSITIVE_INFINITY, Priority.ALWAYS,
                             VPos.CENTER, true));
         }
@@ -206,7 +208,7 @@ public class GUI extends Application {
         //creating the main board that contains the center and the upper menu
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(upperGridPane);
-        borderPane.setCenter(root);
+        borderPane.setCenter(chessBoard);
 
         //putting the border menu in the main scene and the main scene in the main stage
         int WINDOWSIZE = 600;
@@ -253,6 +255,5 @@ public class GUI extends Application {
             //End of getDestinationTile
         }
     }
-
 
 }
