@@ -67,7 +67,7 @@ public class GUI extends Application {
         Label whiteTimerLabel = (Label) upperGridPane.getChildren().get(1);
         Label blackTimerLabel = (Label) upperGridPane.getChildren().get(3);
 
-        whiteTime = LocalTime.of(0, 15);
+        whiteTime = LocalTime.of(0, 15, 0);
         blackTime = whiteTime;
 
         TimerTask timerTask = new TimerTask() {
@@ -75,11 +75,15 @@ public class GUI extends Application {
             public void run() {
                 Platform.runLater(() -> {
                     if (board.whiteTurn) {
-                        whiteTime = whiteTime.minusSeconds(1);
-                        whiteTimerLabel.setText(whiteTime.getMinute() + ":" + whiteTime.getSecond());
+                        if (whiteTime.getMinute() !=0 && whiteTime.getSecond() != 0) {
+                            whiteTime = whiteTime.minusSeconds(1);
+                            whiteTimerLabel.setText(whiteTime.getMinute() + ":" + whiteTime.getSecond());
+                        }
                     } else {
-                        blackTime = blackTime.minusSeconds(1);
-                        blackTimerLabel.setText(blackTime.getMinute() + ":" + blackTime.getSecond());
+                        if (blackTime.getMinute() != 0 && blackTime.getSecond() != 0) {
+                            blackTime = blackTime.minusSeconds(1);
+                            blackTimerLabel.setText(blackTime.getMinute() + ":" + blackTime.getSecond());
+                        }
                     }
                 });
             }
@@ -87,6 +91,18 @@ public class GUI extends Application {
 
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 1000, 1000);
+
+        //if time is over
+//        boolean whiteTimeIsOver = whiteTime.getSecond() == 0 && whiteTime.getMinute() == 0;
+//        boolean blackTimeIsOver = blackTime.getSecond() == 0 && blackTime.getMinute() == 0;
+//
+//        if (whiteTimeIsOver){
+//            board.whiteKingAlive = false;
+//        }
+//
+//        if(blackTimeIsOver){
+//            board.blackKingAlive = false;
+//        }
     }
 
     private void createUpperMenu() {
@@ -139,10 +155,8 @@ public class GUI extends Application {
                     String tileColor = tile.getColor();
                     tile.setStyle("-fx-background-color: " + tileColor + ";");
                     chessBoard.add(tile, col, row);
-
                 }
             }
-
         } else {
             int oppRow = 0;
             for (int row = size - 1; row >= 0; row--) {
@@ -200,7 +214,7 @@ public class GUI extends Application {
         }
     }
 
-    private void createBlankBoard(){
+    private void createBlankBoard() {
         creatingBlankTiles();
         putPieces();
         constraintsAligning();
@@ -225,18 +239,34 @@ public class GUI extends Application {
         createBlankBoard();
     }
 
+    private void highlightTile(Tile tile) {
+        tile.setStyle("-fx-background-color: " + "green" + ";");
+    }
+
+    private void highlightPossibleDestinations(Tile sourceTile) {
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                if (sourceTile.getPiece().canMove(sourceTile.getBoard().getTile(new Coordinate(row, col)))) {
+//                    highlightTile();
+                    sourceTile.getBoard().getTile(new Coordinate(row, col)).setStyle("-fx-background-color: " + "blue" + ";");
+                }
+            }
+        }
+    }
+
     private void play(Coordinate newCoordinate) {
 
         //if Kings are alive
         if (board.whiteKingAlive && board.blackKingAlive) {
             Tile newTile = board.getTile(newCoordinate);
-
             //Start of getSourceTile
             //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
             if (sourceTile == null) {
                 //if the newTile contains a piece
                 if (!newTile.isEmpty()) {
                     sourceTile = newTile;
+                    highlightTile(sourceTile);
+                    highlightPossibleDestinations(sourceTile);
                 }
                 //End of getSourceTile
             } else { //Start of getDestinationTile
@@ -254,6 +284,8 @@ public class GUI extends Application {
             }
             //End of getDestinationTile
         }
+
     }
+
 
 }

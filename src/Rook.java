@@ -3,10 +3,10 @@ import javafx.scene.paint.Color;
 
 public class Rook extends Piece {
 
-    Rook(Color color) {
+    Rook(String color) {
         super(color);
 
-        if (color == Color.WHITE) {
+        if (color.equalsIgnoreCase("white")) {
             this.image = new Image("White_Rook.png");
         } else {
             this.image = new Image("Black_Rook.png");

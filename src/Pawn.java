@@ -13,10 +13,10 @@ public class Pawn extends Piece {
     private boolean canEnPassantMe;
 
 
-    Pawn(Color color) {
+    Pawn(String color) {
         super(color);
 
-        if (color == Color.WHITE) {
+        if (color.equalsIgnoreCase("white")) {
             this.image = new Image("White_Pawn.png");
         } else {
             this.image = new Image("Black_Pawn.png");
@@ -52,8 +52,8 @@ public class Pawn extends Piece {
         int xDiff = tile.xDiffFrom(destinationTile);
         int maxYSteps = firstTwoStepMovement ? 1 : 2;
 
-        boolean isCorrectVerticalMove = (color == Color.BLACK && yDiff <= maxYSteps && yDiff > 0) ||
-                (color == Color.WHITE && yDiff >= -maxYSteps && yDiff < 0);
+        boolean isCorrectVerticalMove = (color.equalsIgnoreCase("black") && yDiff <= maxYSteps && yDiff > 0) ||
+                (color.equalsIgnoreCase("white") && yDiff >= -maxYSteps && yDiff < 0);
         boolean isCorrectHorizontalMove = Math.abs(xDiff) == 0;
 
         return isCorrectVerticalMove && isCorrectHorizontalMove && destinationTile.isEmpty();
@@ -74,7 +74,7 @@ public class Pawn extends Piece {
         int yDiff = tile.yDiffFrom(destinationTile);
         int xDiff = tile.xDiffFrom(destinationTile);
 
-        boolean isCorrectVerticalMove = (color == Color.BLACK && yDiff == 1) || (color == Color.WHITE && yDiff == -1);
+        boolean isCorrectVerticalMove = (color.equalsIgnoreCase("black") && yDiff == 1) || (color.equalsIgnoreCase("white") && yDiff == -1);
         boolean isCorrectHorizontalMove = Math.abs(xDiff) == 1;
         return isCorrectVerticalMove && isCorrectHorizontalMove;
     }

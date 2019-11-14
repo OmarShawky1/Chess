@@ -3,16 +3,16 @@ import javafx.scene.paint.Color;
 
 public abstract class Piece {
 
-    protected Color color;
+    protected String color;
     protected Tile tile;
 
     Image image;
 
-    public Piece(Color color) {
+    public Piece(String color) {
         this.color = color;
     }
 
-    public Color getColor() {
+    public String getColor() {
         return color;
     }
 

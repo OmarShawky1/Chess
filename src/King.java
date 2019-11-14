@@ -5,10 +5,10 @@ import java.util.LinkedList;
 
 public class King extends Piece {
 
-    King(Color color) {
+    King(String color) {
         super(color);
 
-        if (color == Color.WHITE) {
+        if (color.equalsIgnoreCase("white")) {
             this.image = new Image("White_King.png");
         } else {
             this.image = new Image("Black_King.png");
@@ -25,7 +25,12 @@ public class King extends Piece {
         // 1- check if he can move to another place or not
         // 2- check if there is a piece that can kill the enemy piece that threats the king
         // 3- check for a place where any piece from the army can block the threat
+        System.out.println(this.color.toString() + " King");
+        System.out.println("pieceCanKillAKing(): " + pieceCanKillAKing());
         if (pieceCanKillAKing()) {
+            System.out.println("kingCanMoveAround(): "+ kingCanMoveAround());
+            System.out.println("armyCanKillThreat():" + armyCanKillThreat());
+            System.out.println("armyCanBlockThreat(): " + armyCanBlockThreat());
             return kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat();
         }
         return true;
@@ -56,7 +61,7 @@ public class King extends Piece {
 
     private boolean armyCanKillThreat() {
         LinkedList<Piece> army = getPiecesOfColor(color);
-        LinkedList<Piece> enemyPieces = color == Color.WHITE ? getPiecesOfColor(Color.BLACK) : getPiecesOfColor(Color.WHITE);
+        LinkedList<Piece> enemyPieces = color.equalsIgnoreCase("white") ? getPiecesOfColor("black") : getPiecesOfColor("white");
         LinkedList<Piece> enemyPiecesThatThreats = getThreateningPieces(enemyPieces);
         //checking if we can kill this threatening piece
         for (Piece armyPiece : army) {
@@ -80,6 +85,7 @@ public class King extends Piece {
                     //checking if the coordinate is a valid movement for the piece
                     if (armyPiece.canMove(tile.getBoard().getTile(coordinate))) {
                         //if this armyPiece moved to the new coordinate, check if there is a leftover enemyThreat
+                        System.out.println("armyPiece.tile.getCoordinates(): " + armyPiece.tile.getCoordinates());
                         return true;
                     }
                 }
@@ -90,13 +96,13 @@ public class King extends Piece {
 
     private boolean pieceCanKillAKing() {
 
-        Color enemyColor = color == Color.WHITE ? Color.BLACK : Color.WHITE;
+        String enemyColor = color.equalsIgnoreCase("white")? "black" : "white";
         LinkedList<Piece> enemyPieces = getPiecesOfColor(enemyColor);
         LinkedList<Piece> enemyPiecesThatThreats = getThreateningPieces(enemyPieces);
         return enemyPiecesThatThreats.size() > 0;
     }
 
-    private LinkedList<Piece> getPiecesOfColor(Color color) {
+    private LinkedList<Piece> getPiecesOfColor(String color) {
         return tile.getBoard().getAllPiecesWithColor(color);
     }
 

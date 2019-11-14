@@ -2,10 +2,10 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Queen extends Piece {
-    Queen(Color color) {
+    Queen(String color) {
         super(color);
 
-        if (color == Color.WHITE){
+        if (color.equalsIgnoreCase("white")){
             this.image = new Image("White_Queen.png");
         }else {
             this.image = new Image("Black_Queen.png");

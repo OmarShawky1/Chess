@@ -10,8 +10,6 @@ public class Board {
     private King whiteKing, blackKing;
     private boolean whiteKingChecked, blackKingChecked;
     boolean whiteKingAlive, blackKingAlive;
-
-
     private Tile[][] board;
 
     Board() {
@@ -27,30 +25,30 @@ public class Board {
 
         /* Initializing the Tiles with pieces */
         for (int i = 0; i < 8; i++) {
-            board[1][i].setPiece(new Pawn(Color.BLACK));
-            board[6][i].setPiece(new Pawn(Color.WHITE));
+            board[1][i].setPiece(new Pawn("black"));
+            board[6][i].setPiece(new Pawn("white"));
         }
 
-        board[0][0].setPiece(new Rook(Color.BLACK));
-        board[0][7].setPiece(new Rook(Color.BLACK));
-        board[7][0].setPiece(new Rook(Color.WHITE));
-        board[7][7].setPiece(new Rook(Color.WHITE));
+        board[0][0].setPiece(new Rook("black"));
+        board[0][7].setPiece(new Rook("black"));
+        board[7][0].setPiece(new Rook("white"));
+        board[7][7].setPiece(new Rook("white"));
 
-        board[0][1].setPiece(new Knight(Color.BLACK));
-        board[0][6].setPiece(new Knight(Color.BLACK));
-        board[7][1].setPiece(new Knight(Color.WHITE));
-        board[7][6].setPiece(new Knight(Color.WHITE));
+        board[0][1].setPiece(new Knight("black"));
+        board[0][6].setPiece(new Knight("black"));
+        board[7][1].setPiece(new Knight("white"));
+        board[7][6].setPiece(new Knight("white"));
 
-        board[0][2].setPiece(new Bishop(Color.BLACK));
-        board[0][5].setPiece(new Bishop(Color.BLACK));
-        board[7][2].setPiece(new Bishop(Color.WHITE));
-        board[7][5].setPiece(new Bishop(Color.WHITE));
+        board[0][2].setPiece(new Bishop("black"));
+        board[0][5].setPiece(new Bishop("black"));
+        board[7][2].setPiece(new Bishop("white"));
+        board[7][5].setPiece(new Bishop("white"));
 
-        board[0][3].setPiece(new Queen(Color.BLACK));
-        board[7][3].setPiece(new Queen(Color.WHITE));
+        board[0][3].setPiece(new Queen("black"));
+        board[7][3].setPiece(new Queen("white"));
 
-        blackKing = new King(Color.BLACK);
-        whiteKing = new King(Color.WHITE);
+        blackKing = new King("black");
+        whiteKing = new King("white");
         board[0][4].setPiece(blackKing);
         board[7][4].setPiece(whiteKing);
 
@@ -62,11 +60,11 @@ public class Board {
 
     }
 
-    LinkedList<Piece> getAllPiecesWithColor(Color color) {
+    LinkedList<Piece> getAllPiecesWithColor(String color) {
         LinkedList<Piece> listOfPieces = new LinkedList<Piece>();
         for (int i = 0; i < BOARD_WIDTH; i++) {
             for (int j = 0; j < BOARD_LENGTH; j++) {
-                if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() == color) {
+                if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor().equals(color)) {
                     listOfPieces.add(board[i][j].getPiece());
                 }
             }
@@ -75,8 +73,9 @@ public class Board {
         return listOfPieces;
     }
 
-    King getKing(Color color) {
-        return color == Color.WHITE ? whiteKing : blackKing;
+    King getKing(String color) {
+//        return color == Color.WHITE ? whiteKing : blackKing;
+        return color.equalsIgnoreCase("white")? whiteKing: blackKing;
     }
 
     Tile getTile(Coordinate coordinate) {
@@ -89,8 +88,9 @@ public class Board {
 
             //getPiece to move, there is no need to check if the sourceTile is Empty because it is already checked in GUI
             Piece pieceToMove = sourceTile.getPiece();
-            Color pieceColor = pieceToMove.getColor();
-            boolean rightPlayersTurn = (pieceColor == Color.WHITE && whiteTurn) || (pieceColor == Color.BLACK && !whiteTurn);
+            String pieceColor = pieceToMove.getColor();
+            boolean rightPlayersTurn =
+                    (pieceColor.equalsIgnoreCase("white") && whiteTurn) || (pieceColor.equalsIgnoreCase("black") && !whiteTurn);
             if (rightPlayersTurn) {
                 if (pieceToMove.canMove(destinationTile)) {
 
@@ -125,14 +125,14 @@ public class Board {
                     GUI.gameStatusBar.setText("Invalid Move For Piece: " + pieceToMove.getClass().getName());
                 }
             } else {
-                boolean whosTurn = pieceColor == Color.BLACK;
+                boolean whosTurn = pieceColor.equalsIgnoreCase("black");
                 GUI.gameStatusBar.setText("This is " + (whosTurn? "White's":"Black's") + " Turn");
             }
         }
     }
 
     private void removeEnPassant (){
-        LinkedList<Piece> pieces = whiteTurn? getAllPiecesWithColor(Color.WHITE):getAllPiecesWithColor(Color.BLACK);
+        LinkedList<Piece> pieces = whiteTurn? getAllPiecesWithColor("white"):getAllPiecesWithColor("black");
         for (Piece piece : pieces){
             if (piece instanceof Pawn){
                 Pawn pawn = (Pawn) piece;
