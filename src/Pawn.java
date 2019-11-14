@@ -24,6 +24,13 @@ public class Pawn extends Piece {
         firstTwoStepMovement = false;
     }
 
+    void setFirstTwoStepMovement(Tile destinationTile){
+        int y = Math.abs(destinationTile.getCoordinates().getY() - tile.getCoordinates().getY());
+        if (y ==2){
+            firstTwoStepMovement = true;
+        }
+    }
+
     private boolean isCanEnPassantMe() {
         return canEnPassantMe;
     }
@@ -140,9 +147,10 @@ public class Pawn extends Piece {
 
     public void move(Tile destinationTile) {
 
+        setFirstTwoStepMovement(destinationTile);
+        
         Pawn rightPawn = sidePawn(1);
         Pawn leftPawn = sidePawn(-1);
-
         int x = Math.abs(destinationTile.getCoordinates().getY() - tile.getCoordinates().getY());
         if (x == 2) {
             if (rightPawn != null || leftPawn != null) {
