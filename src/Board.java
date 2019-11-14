@@ -13,7 +13,6 @@ public class Board {
 
 
     private Tile[][] board;
-    private GUI gui;
 
     Board() {
         board = new Tile[BOARD_LENGTH][BOARD_WIDTH];
@@ -82,10 +81,6 @@ public class Board {
 
     Tile getTile(Coordinate coordinate) {
         return board[coordinate.getY()][coordinate.getX()];
-    }
-
-    GUI getGUI() {
-        return gui;
     }
 
     void play(Tile sourceTile, Tile destinationTile) {
