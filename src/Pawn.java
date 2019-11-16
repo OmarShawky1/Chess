@@ -42,7 +42,7 @@ public class Pawn extends Piece {
     public boolean canMove(Tile destinationTile) {
         if (isForwardMove(destinationTile)) {
             return super.canMove(destinationTile);
-        } else return isValidCornerMove(destinationTile);
+        } else return isValidCornerMove(destinationTile) && super.canMove(destinationTile);
 
     }
 
