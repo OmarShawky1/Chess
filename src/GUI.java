@@ -273,6 +273,9 @@ public class GUI extends Application {
                     highlightPossibleDestinations(sourceTile);
                 }
                 //End of getSourceTile
+            } else if (sourceTile.getCoordinates() == newTile.getCoordinates()) {
+                sourceTile = null;
+                createBlankBoard();
             } else { //Start of getDestinationTile
 
                 boolean newTileIsEmpty = newTile.isEmpty();
@@ -285,6 +288,7 @@ public class GUI extends Application {
                     //after playing, set sourceTile to null
                     sourceTile = null;
                 }
+
             }
             //End of getDestinationTile
         }

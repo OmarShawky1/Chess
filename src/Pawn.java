@@ -24,9 +24,9 @@ public class Pawn extends Piece {
         firstTwoStepMovement = false;
     }
 
-    private void setFirstTwoStepMovement(Tile destinationTile){
+    private void setFirstTwoStepMovement(Tile destinationTile) {
         int y = Math.abs(destinationTile.getCoordinates().getY() - tile.getCoordinates().getY());
-        if (y ==2){
+        if (y == 2) {
             firstTwoStepMovement = true;
         }
     }
@@ -129,16 +129,16 @@ public class Pawn extends Piece {
             choosePiece.getDialogPane().lookupButton(ButtonType.CANCEL).setVisible(false);
 
             Optional<ButtonType> result = choosePiece.showAndWait();
-            if (result.get() == queenButton){
+            if (result.get() == queenButton) {
                 setNewPiece(new Queen(color), destinationTile);
 
-            }else if(result.get() == rookButton){
+            } else if (result.get() == rookButton) {
                 setNewPiece(new Rook(color), destinationTile);
 
-            }else if(result.get() == bishopButton){
+            } else if (result.get() == bishopButton) {
                 setNewPiece(new Bishop(color), destinationTile);
 
-            }else if(result.get() == knightButton){
+            } else if (result.get() == knightButton) {
                 setNewPiece(new Knight(color), destinationTile);
 
             }
