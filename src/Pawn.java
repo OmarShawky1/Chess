@@ -56,7 +56,7 @@ public class Pawn extends Piece {
                 (color.equalsIgnoreCase("white") && yDiff >= -maxYSteps && yDiff < 0);
         boolean isCorrectHorizontalMove = Math.abs(xDiff) == 0;
 
-        return isCorrectVerticalMove && isCorrectHorizontalMove && destinationTile.isEmpty();
+        return isCorrectVerticalMove && isCorrectHorizontalMove && isPathClearTowards(destinationTile);
     }
 
     private boolean isValidCornerMove(Tile destinationTile) {

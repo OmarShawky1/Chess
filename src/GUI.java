@@ -75,12 +75,14 @@ public class GUI extends Application {
             public void run() {
                 Platform.runLater(() -> {
                     if (board.whiteTurn) {
-                        if (whiteTime.getMinute() !=0 && whiteTime.getSecond() != 0) {
+                        boolean whiteTimeIsOver = whiteTime.getMinute() == 0 && whiteTime.getSecond() == 0;
+                        if (!whiteTimeIsOver) {
                             whiteTime = whiteTime.minusSeconds(1);
                             whiteTimerLabel.setText(whiteTime.getMinute() + ":" + whiteTime.getSecond());
                         }
                     } else {
-                        if (blackTime.getMinute() != 0 && blackTime.getSecond() != 0) {
+                        boolean blackTimerIsOver = blackTime.getMinute() == 0 && blackTime.getSecond() == 0;
+                        if (!blackTimerIsOver) {
                             blackTime = blackTime.minusSeconds(1);
                             blackTimerLabel.setText(blackTime.getMinute() + ":" + blackTime.getSecond());
                         }
@@ -116,6 +118,8 @@ public class GUI extends Application {
 
         Button rstButton = new Button("Reset Game");
         rstButton.setOnAction(e -> {
+            timer.cancel();
+            timer.purge();
             board = new Board();
             createBlankWindow();
         });
@@ -263,7 +267,7 @@ public class GUI extends Application {
             //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
             if (sourceTile == null) {
                 //if the newTile contains a piece
-                if (!newTile.isEmpty()) {
+                if (!newTile.isEmpty() && ((newTile.getPiece().getColor().equalsIgnoreCase("white")) && board.whiteTurn) || ((newTile.getPiece().getColor().equalsIgnoreCase("black")) && !board.whiteTurn)) {
                     sourceTile = newTile;
                     highlightTile(sourceTile);
                     highlightPossibleDestinations(sourceTile);

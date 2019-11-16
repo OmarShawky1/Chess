@@ -25,12 +25,9 @@ public class King extends Piece {
         // 1- check if he can move to another place or not
         // 2- check if there is a piece that can kill the enemy piece that threats the king
         // 3- check for a place where any piece from the army can block the threat
-        System.out.println(this.color.toString() + " King");
-        System.out.println("pieceCanKillAKing(): " + pieceCanKillAKing());
+        System.out.println((color.equalsIgnoreCase("white") ? "White" : "Black") + " King \n" + "pieceCanKillAKing(): " + pieceCanKillAKing());
         if (pieceCanKillAKing()) {
-            System.out.println("kingCanMoveAround(): "+ kingCanMoveAround());
-            System.out.println("armyCanKillThreat():" + armyCanKillThreat());
-            System.out.println("armyCanBlockThreat(): " + armyCanBlockThreat());
+            System.out.println("kingCanMoveAround(): " + kingCanMoveAround() + ", " + "armyCanKillThreat(): " + armyCanKillThreat() + ", " + "armyCanBlockThreat(): " + armyCanBlockThreat());
             return kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat();
         }
         return true;
@@ -40,7 +37,7 @@ public class King extends Piece {
         int xDist = Math.abs(tile.xDiffFrom(destinationTile));
         int yDist = Math.abs(tile.yDiffFrom(destinationTile));
 
-        if (xDist <= 1 && yDist <= 1){
+        if (xDist <= 1 && yDist <= 1) {
 
             return super.canMove(destinationTile);
         }
@@ -85,7 +82,6 @@ public class King extends Piece {
                     //checking if the coordinate is a valid movement for the piece
                     if (armyPiece.canMove(tile.getBoard().getTile(coordinate))) {
                         //if this armyPiece moved to the new coordinate, check if there is a leftover enemyThreat
-                        System.out.println("armyPiece.tile.getCoordinates(): " + armyPiece.tile.getCoordinates());
                         return true;
                     }
                 }
@@ -96,7 +92,7 @@ public class King extends Piece {
 
     private boolean pieceCanKillAKing() {
 
-        String enemyColor = color.equalsIgnoreCase("white")? "black" : "white";
+        String enemyColor = color.equalsIgnoreCase("white") ? "black" : "white";
         LinkedList<Piece> enemyPieces = getPiecesOfColor(enemyColor);
         LinkedList<Piece> enemyPiecesThatThreats = getThreateningPieces(enemyPieces);
         return enemyPiecesThatThreats.size() > 0;

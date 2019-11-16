@@ -28,7 +28,7 @@ public abstract class Piece {
 
         //this condition is important, this is used when doing internal functions such as isAlive or isBeingChecked
         boolean destinationContainsAlly = !destinationTile.isEmpty() &&
-                destinationTile.getPiece().getColor() == color;
+                destinationTile.getPiece().getColor().equalsIgnoreCase(color);
 
         if (destinationContainsAlly) {
             return false;
@@ -59,7 +59,7 @@ public abstract class Piece {
 
     }
 
-    private boolean isPathClearTowards(Tile destTile) {
+    boolean isPathClearTowards(Tile destTile) {
         int xDiff = tile.xDiffFrom(destTile);
         int yDiff = tile.yDiffFrom(destTile);
         int xDirection = xDiff == 0 ? 0 : xDiff / Math.abs(xDiff);
