@@ -56,7 +56,7 @@ public class Pawn extends Piece {
                 (color.equalsIgnoreCase("white") && yDiff >= -maxYSteps && yDiff < 0);
         boolean isCorrectHorizontalMove = Math.abs(xDiff) == 0;
 
-        return isCorrectVerticalMove && isCorrectHorizontalMove && isPathClearTowards(destinationTile);
+        return isCorrectVerticalMove && isCorrectHorizontalMove && isPathClearTowards(destinationTile) && destinationTile.isEmpty();
     }
 
     private boolean isValidCornerMove(Tile destinationTile) {
@@ -65,7 +65,7 @@ public class Pawn extends Piece {
             // if the corner tile is empty, check if i can en passant
             if (!destinationTile.isEmpty()) {
                 return true;
-            } else return iCanEnPassant();
+            } else return iCanEnPassant(destinationTile);
         }
         return false;
     }
@@ -79,11 +79,18 @@ public class Pawn extends Piece {
         return isCorrectVerticalMove && isCorrectHorizontalMove;
     }
 
-    private boolean iCanEnPassant() {
+    private boolean iCanEnPassant(Tile destinationTile) {
         Pawn rightPawn = sidePawn(1);
         Pawn leftPawn = sidePawn(-1);
+        boolean correctTile = false;
+        if (rightPawn != null && rightPawn.isCanEnPassantMe()){
+            correctTile = rightPawn.tile.getCoordinates().getX() == destinationTile.getCoordinates().getX();
+        }
+        if (leftPawn != null && leftPawn.isCanEnPassantMe()){
+            correctTile = leftPawn.tile.getCoordinates().getX() == destinationTile.getCoordinates().getX();
+        }
 
-        return (rightPawn != null && rightPawn.isCanEnPassantMe()) || (leftPawn != null && leftPawn.isCanEnPassantMe());
+        return (rightPawn != null && rightPawn.isCanEnPassantMe()) || (leftPawn != null && leftPawn.isCanEnPassantMe()) && correctTile;
     }
 
     private Pawn sidePawn(int direction) {
@@ -158,7 +165,7 @@ public class Pawn extends Piece {
             }
         }
         //eat the enPassant Pawn
-        if (iCanEnPassant()) {
+        if (iCanEnPassant(destinationTile)) {
 
             if (rightPawn != null && rightPawn.isCanEnPassantMe()) {
                 rightPawn.tile.setPiece(null);
