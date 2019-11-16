@@ -67,7 +67,7 @@ public class GUI extends Application {
         Label whiteTimerLabel = (Label) upperGridPane.getChildren().get(1);
         Label blackTimerLabel = (Label) upperGridPane.getChildren().get(3);
 
-        whiteTime = LocalTime.of(0, 15, 0);
+        whiteTime = LocalTime.of(0, 0, 2);
         blackTime = whiteTime;
 
         TimerTask timerTask = new TimerTask() {
@@ -79,12 +79,18 @@ public class GUI extends Application {
                         if (!whiteTimeIsOver) {
                             whiteTime = whiteTime.minusSeconds(1);
                             whiteTimerLabel.setText(whiteTime.getMinute() + ":" + whiteTime.getSecond());
+                        } else {
+                            gameStatusBar.setText("White Lost");
+                            board.whiteKingAlive = false;
                         }
                     } else {
-                        boolean blackTimerIsOver = blackTime.getMinute() == 0 && blackTime.getSecond() == 0;
-                        if (!blackTimerIsOver) {
+                        boolean blackTimeIsOver = blackTime.getMinute() == 0 && blackTime.getSecond() == 0;
+                        if (!blackTimeIsOver) {
                             blackTime = blackTime.minusSeconds(1);
                             blackTimerLabel.setText(blackTime.getMinute() + ":" + blackTime.getSecond());
+                        } else {
+                            gameStatusBar.setText("Black Lost");
+                            board.blackKingAlive = false;
                         }
                     }
                 });
@@ -95,14 +101,14 @@ public class GUI extends Application {
         timer.scheduleAtFixedRate(timerTask, 1000, 1000);
 
         //if time is over
-//        boolean whiteTimeIsOver = whiteTime.getSecond() == 0 && whiteTime.getMinute() == 0;
+//        boolean whiteTimeIsOver = whiteTime.getMinute() == 0 && whiteTime.getSecond() == 0;
 //        boolean blackTimeIsOver = blackTime.getSecond() == 0 && blackTime.getMinute() == 0;
-//
-//        if (whiteTimeIsOver){
+
+//        if (whiteTimeIsOver) {
 //            board.whiteKingAlive = false;
 //        }
 //
-//        if(blackTimeIsOver){
+//        if (blackTimeIsOver) {
 //            board.blackKingAlive = false;
 //        }
     }
@@ -259,6 +265,10 @@ public class GUI extends Application {
     }
 
     private void play(Coordinate newCoordinate) {
+
+        boolean whiteTimeIsOver = whiteTime.getMinute() == 0 && whiteTime.getSecond() == 0;
+        boolean blackTimeIsOver = blackTime.getSecond() == 0 && blackTime.getMinute() == 0;
+
 
         //if Kings are alive
         if (board.whiteKingAlive && board.blackKingAlive) {

@@ -25,10 +25,8 @@ public class King extends Piece {
         // 1- check if he can move to another place or not
         // 2- check if there is a piece that can kill the enemy piece that threats the king
         // 3- check for a place where any piece from the army can block the threat
-        System.out.println((color.equalsIgnoreCase("white") ? "White" : "Black") + " King \n" + "pieceCanKillAKing(): " + pieceCanKillAKing());
         if (pieceCanKillAKing()) {
-            System.out.println("kingCanMoveAround(): " + kingCanMoveAround() + "\n " + "armyCanKillThreat(): " + armyCanKillThreat() +
-                    "\n" + "armyCanBlockThreat(): " + armyCanBlockThreat());
+
             return kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat();
         }
         return true;
@@ -82,7 +80,6 @@ public class King extends Piece {
                     Coordinate coordinate = new Coordinate(row, col);
                     //checking if the coordinate is a valid movement for the piece
                     if (armyPiece.canMove(tile.getBoard().getTile(coordinate))) {
-                        System.out.println("piece at " + armyPiece.tile.getCoordinates() + " can go to " + coordinate);
                         //if this armyPiece moved to the new coordinate, check if there is a leftover enemyThreat
                         return true;
                     }

@@ -1,8 +1,9 @@
-import javafx.scene.paint.Color;
-
 import java.util.*;
 
-public class Board {
+//there are accumilated unnecessary checks here that was updated and implemented in different way, i will not remove it until i know them
+// all, examples to that; rightPlayersTurn and so on
+
+class Board {
     static final int BOARD_LENGTH = 8;
     static final int BOARD_WIDTH = 8;
 
@@ -75,7 +76,7 @@ public class Board {
 
     King getKing(String color) {
 //        return color == Color.WHITE ? whiteKing : blackKing;
-        return color.equalsIgnoreCase("white")? whiteKing: blackKing;
+        return color.equalsIgnoreCase("white") ? whiteKing : blackKing;
     }
 
     Tile getTile(Coordinate coordinate) {
@@ -126,15 +127,15 @@ public class Board {
                 }
             } else {
                 boolean whosTurn = pieceColor.equalsIgnoreCase("black");
-                GUI.gameStatusBar.setText("This is " + (whosTurn? "White's":"Black's") + " Turn");
+                GUI.gameStatusBar.setText("This is " + (whosTurn ? "White's" : "Black's") + " Turn");
             }
         }
     }
 
-    private void removeEnPassant (){
-        LinkedList<Piece> pieces = whiteTurn? getAllPiecesWithColor("white"):getAllPiecesWithColor("black");
-        for (Piece piece : pieces){
-            if (piece instanceof Pawn){
+    private void removeEnPassant() {
+        LinkedList<Piece> pieces = whiteTurn ? getAllPiecesWithColor("white") : getAllPiecesWithColor("black");
+        for (Piece piece : pieces) {
+            if (piece instanceof Pawn) {
                 Pawn pawn = (Pawn) piece;
                 pawn.setCanEnPassantMe();
             }
