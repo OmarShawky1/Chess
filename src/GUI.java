@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class GUI extends Application {
 
-    private Stage window;
+    public Stage window;
     private GridPane chessBoard;
     private GridPane upperGridPane;
     private Board board = new Board();
@@ -31,21 +31,15 @@ public class GUI extends Application {
     private LocalTime whiteTime, blackTime;
     static Label gameStatusBar;
     private Timer timer;
-//    private Socket opponent;
-
 
     @Override
     public void start(Stage primaryStage) {
         window = primaryStage;
-        createBlankWindow();
-        window.setOnCloseRequest(e -> {
-            window.close();
-            timer.cancel();
-            timer.purge();
-        });
+        connectToPlayer();
+//        startGame();
     }
 
-    public static void main(String[] args) {
+    static void main() {
         launch();
     }
 
@@ -302,136 +296,65 @@ public class GUI extends Application {
         }
     }
 
-//    private void createGame() {
-//        createBlankWindow();
-//        window.setOnCloseRequest(e -> {
-//            window.close();
-//            timer.cancel();
-//            timer.purge();
-//        });
-//    }
-//
-//    private Scene createCustomizedGridPane(Node... node) {
-//        // Create a Grid and add vBox to it and set it at the center & set it to automatic resizing
-//        VBox vBox = new VBox();
-//        vBox.getChildren().addAll(node);
-//        vBox.setSpacing(40);
-//        GridPane gridPane = new GridPane();
-//        gridPane.add(vBox, 0, 0);
-//        gridPane.setAlignment(Pos.CENTER);
-//        GridPane.setHalignment(gridPane, HPos.CENTER);
-//        GridPane.setValignment(gridPane, VPos.CENTER);
-//        GridPane.setHgrow(gridPane, Priority.ALWAYS);
-//        GridPane.setVgrow(gridPane, Priority.ALWAYS);
-//        return new Scene(gridPane, 400, 400);
-//    }
-//
-//    private void createOpponentScene() {
-//
-//        // Create the Main Label
-//        Label message = new Label("Enter Data");
-//
-//        //Create the Main items to get the IP and the connect Button and then add them to one hBox
-//        Label enterIP = new Label("Enter IP Address");
-//        enterIP.setAlignment(Pos.CENTER);
-//
-//        TextField IPEntered = new TextField();
-//
-//        Button connect = new Button("Connect");
-//        AtomicReference<Socket> opponent = null;
-//        AtomicReference<DataInputStream> dataInputStream = null;
-//        AtomicReference<DataOutputStream> dataOutputStream = null;
-//        connect.setOnAction(ev -> {
-//            try {
-//                System.out.println("I Am Opponent, I Am Trying To Connect");
-//                assert false;
-//                opponent.set(new Socket(IPEntered.getText(), 9090));
-//                while (!opponent.get().isConnected()) {
-//                    message.setText("IP Address Is incorrect, Please Enter a valid IP Address");
-//                    Thread.sleep(1000);
-//                }
-//                dataInputStream.set(new DataInputStream(opponent.get().getInputStream()));
-//                dataOutputStream.set(new DataOutputStream(opponent.get().getOutputStream()));
-//            } catch (IOException | InterruptedException ex) {
-//                ex.printStackTrace();
-//            }
-//        });
-//
-//        // Add all of the Above to the Main hBox
-//        HBox hBox = new HBox();
-//        hBox.getChildren().addAll(enterIP, IPEntered, connect);
-//        hBox.setSpacing(20);
-//
-//        // Create a GridPane Scene of automatic resizing
-//        window.setScene(createCustomizedGridPane(message, hBox));
-//    }
-//
-//    private void createServerScene() throws IOException {
-//        /*Wait for an opponent to connect*/
-//        Label message = new Label("Waiting for Opponent");
-//        System.out.println("I Am Server, I Am Trying To connect");
-//        window.setScene(createCustomizedGridPane(message));
-//
-//        ServerSocket serverSocket = new ServerSocket(9090);
-//
-//        Socket socket = serverSocket.accept();
-//
-//        System.out.println("I Am Server, I Am Connected");
-//
-//        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-//    }
-//
-//    private void goToOpponentOrServerScene(ToggleGroup toggleGroup) throws IOException {
-//
-//        String selection = ((RadioButton) toggleGroup.getSelectedToggle()).getText();
-//        if (selection.equalsIgnoreCase("Opponent")) {
-//            createOpponentScene();
-//        } else {
-//            createServerScene();
-//        }
-//    }
-//
-//    private void createServerOrOpponentScene() {
-//
-//        // Create the RadioButtons and add them to a VBox and a ToggleGroup
-//        Label chooseServerOrOpponent = new Label("Choose Server Or Opponent");
-//
-//
-//        ToggleGroup toggleGroup = new ToggleGroup();
-//
-//        RadioButton radioButton1 = new RadioButton("Server");
-//        radioButton1.setToggleGroup(toggleGroup);
-//        radioButton1.setSelected(true);
-//
-//        RadioButton radioButton2 = new RadioButton("Opponent");
-//        radioButton2.setToggleGroup(toggleGroup);
-//
-//        VBox radioButtons = new VBox();
-//        radioButtons.getChildren().addAll(radioButton1, radioButton2);
-//        radioButtons.setSpacing(20);
-//
-//
-//        // Create a button to get the selection from the radio button and pass it to connect To Player
-//        Button selectButton = new Button("Select");
-//        selectButton.setOnAction(e -> {
-//            try {
-//                goToOpponentOrServerScene(toggleGroup);
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        });
-//
-//        // Create A VBox to add the RadioButtons VBox and select Button and the Main Label
-//        //Create the Main Stage
-//        window.setTitle("Connection Window");
-//        window.setScene(createCustomizedGridPane(chooseServerOrOpponent, radioButtons, selectButton));
-//        window.show();
-//
-//    }
-//
-//    private void connect() {
-//
-//        createServerOrOpponentScene();
-//
-//    }
+    private void startGame(){
+        createBlankWindow();
+        window.setOnCloseRequest(e -> {
+            window.close();
+            timer.cancel();
+            timer.purge();
+        });
+    }
+
+    private void connectToPlayer(){
+        /** Choose if you are a server or an opponent to make the right object**/
+        Label message = new Label("Choose if you are the server or the opponent");
+//        message.setAlignment(Pos.TOP_CENTER);
+
+        ToggleGroup toggleGroup = new ToggleGroup();
+
+
+        RadioButton serverRadioButton = new RadioButton();
+        RadioButton opponentRadioButton = new RadioButton();
+
+        serverRadioButton.setSelected(true);
+        serverRadioButton.setText("Server");
+        serverRadioButton.setToggleGroup(toggleGroup);
+
+        opponentRadioButton.setText("Opponent");
+        opponentRadioButton.setToggleGroup(toggleGroup);
+
+        Button selectButton = new Button("Select");
+        selectButton.setOnAction(e->{
+            String selection = ((RadioButton) toggleGroup.getSelectedToggle()).getText();
+            if (selection.equalsIgnoreCase("Server")){
+                try {
+                    ServerPlayer serverPlayer = new ServerPlayer(window);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }else {
+                try {
+                    OpponentPlayer opponentPlayer = new OpponentPlayer(window);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        VBox radioButtons = new VBox();
+        radioButtons.getChildren().addAll(serverRadioButton, opponentRadioButton, selectButton);
+        radioButtons.setSpacing(20);
+
+        GridPane connectionMainRoot = new GridPane();
+        connectionMainRoot.add(radioButtons,0,0);
+        connectionMainRoot.setAlignment(Pos.CENTER);
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(message);
+        BorderPane.setAlignment(message,Pos.TOP_CENTER);
+        borderPane.setCenter(connectionMainRoot);
+        BorderPane.setMargin(message, new Insets(20, 0,0,0));
+        window.setScene(new Scene(borderPane, 400, 400));
+        window.show();
+    }
+
 }
