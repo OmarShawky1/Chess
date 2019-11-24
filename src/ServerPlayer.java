@@ -20,8 +20,11 @@ public class ServerPlayer {
     private BufferedReader in;
     private Label message;
 
-    ServerPlayer(Stage window) {
+    ServerPlayer(GUI gui) {
 
+        System.out.println("I Am Server");
+
+        Stage window = gui.window;
         message = new Label("Waiting to connect to Opponent");
 
         Thread runServerSocket = new Thread(() -> {
@@ -33,14 +36,16 @@ public class ServerPlayer {
                 if (clientSocket.isConnected()) {
                     Platform.runLater(() -> {
                         message.setText("Connected Successfully\n" + "clientSocket.getPort(): " + clientSocket.getPort());
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            Thread.sleep(2000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+                        gui.startGame();
                     });
 //                    System.out.println(in.readLine());
 //                    out.println("Hello Opponent");
+                    System.out.println("window.toString(): " + window.toString());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

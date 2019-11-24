@@ -32,6 +32,10 @@ public class GUI extends Application {
     static Label gameStatusBar;
     private Timer timer;
 
+//    public GUI(Stage window){
+//        this.window = window;
+//    }
+
     @Override
     public void start(Stage primaryStage) {
         window = primaryStage;
@@ -43,7 +47,7 @@ public class GUI extends Application {
         launch();
     }
 
-    void endTime() {
+    private void endTime() {
         timer.cancel();
         timer.purge();
     }
@@ -231,6 +235,7 @@ public class GUI extends Application {
         int WINDOWSIZE = 600;
 //        Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
         Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
+        System.out.println("window.toString(): " + window.toString());
         window.setScene(scene);
         createMainWindow();
         window.show();
@@ -302,7 +307,7 @@ public class GUI extends Application {
         }
     }
 
-    private void startGame() {
+    public void startGame() {
         createBlankWindow();
         window.setOnCloseRequest(e -> {
             window.close();
@@ -334,9 +339,9 @@ public class GUI extends Application {
         selectButton.setOnAction(e -> {
             String selection = ((RadioButton) toggleGroup.getSelectedToggle()).getText();
             if (selection.equalsIgnoreCase("Server")) {
-                ServerPlayer serverPlayer = new ServerPlayer(window);
+                ServerPlayer serverPlayer = new ServerPlayer(this);
             } else {
-                OpponentPlayer opponentPlayer = new OpponentPlayer(window);
+                OpponentPlayer opponentPlayer = new OpponentPlayer(this);
             }
         });
 

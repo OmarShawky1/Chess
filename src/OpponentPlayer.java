@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,10 +20,15 @@ class OpponentPlayer {
     private PrintWriter out;
     private BufferedReader in;
     private Label message;
+    private GUI gui;
+    private Stage window;
 
 
-    OpponentPlayer(Stage window) {
+    OpponentPlayer(GUI gui) {
 
+        System.out.println("I am Opponent");
+        this.gui = gui;
+        this.window = gui.window;
         message = new Label("Enter Data Below");
 
         Label enterIP = new Label("Enter IP Address:");
@@ -66,8 +72,9 @@ class OpponentPlayer {
             message.setText("Connected Successfully to Server");
 //                out.println("This Message is from The Opponent");
 //                in.readLine();
-            Thread.sleep(2000);
-        } catch (IOException | InterruptedException e) {
+//            Thread.sleep(2000);
+            gui.startGame();
+        } catch (IOException /*| InterruptedException*/ e) {
             e.printStackTrace();
         }
     }
