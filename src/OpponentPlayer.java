@@ -8,7 +8,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,12 +16,11 @@ import java.net.Socket;
 
 class OpponentPlayer {
     private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    public PrintWriter out;
+    public BufferedReader in;
     private Label message;
     private GUI gui;
     private Stage window;
-
 
     OpponentPlayer(GUI gui) {
 
@@ -79,27 +77,4 @@ class OpponentPlayer {
         }
     }
 
-//    public static void main (String[] args) throws IOException {
-//        OpponentPlayer opponentPlayer = new OpponentPlayer();
-//        opponentPlayer.startConnection("localhost", 9050);
-//        opponentPlayer.sendMessage("hello server");
-//    }
-//
-//    public void startConnection(String ip, int port) throws IOException {
-//        clientSocket = new Socket(ip, port);
-//        out = new PrintWriter(clientSocket.getOutputStream(), true);
-//        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//    }
-//
-//    public void sendMessage(String msg) throws IOException {
-////        System.out.println("This is Opponent, and this is sendMessage");
-//        out.println(msg);
-//        System.out.println(in.readLine());
-//    }
-//
-//    public void stopConnection() throws IOException {
-//        in.close();
-//        out.close();
-//        clientSocket.close();
-//    }
 }

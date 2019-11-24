@@ -28,13 +28,12 @@ public class GUI extends Application {
     private GridPane upperGridPane;
     private Board board = new Board();
     private Tile sourceTile;
+    private Tile destinationTile;
     private LocalTime whiteTime, blackTime;
     static Label gameStatusBar;
     private Timer timer;
-
-//    public GUI(Stage window){
-//        this.window = window;
-//    }
+    private ServerPlayer serverPlayer = null;
+    private OpponentPlayer opponentPlayer = null;
 
     @Override
     public void start(Stage primaryStage) {
@@ -158,7 +157,13 @@ public class GUI extends Application {
                     Coordinate coordinate = new Coordinate(col, row);
                     Tile tile = board.getTile(coordinate);
                     tile.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                    tile.setOnAction(e -> play(coordinate));
+                    tile.setOnAction(e -> {
+                        try {
+                            play(coordinate);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
                     String tileColor = tile.getColor();
                     tile.setStyle("-fx-background-color: " + tileColor + ";");
                     chessBoard.add(tile, col, row);
@@ -172,7 +177,13 @@ public class GUI extends Application {
                     Coordinate coordinate = new Coordinate(col, row);
                     Tile tile = board.getTile(coordinate);
                     tile.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                    tile.setOnAction(e -> play(coordinate));
+                    tile.setOnAction(e -> {
+                        try {
+                            play(coordinate);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
                     String tileColor = tile.getColor();
                     tile.setStyle("-fx-background-color: " + tileColor + ";");
                     chessBoard.add(tile, oppCol, oppRow);
@@ -262,52 +273,64 @@ public class GUI extends Application {
         }
     }
 
-    private void play(Coordinate newCoordinate) {
+    private void play(Coordinate newCoordinate) throws IOException {
 
-        //if Kings are alive
-        if (board.whiteKingAlive && board.blackKingAlive) {
-            Tile newTile = board.getTile(newCoordinate);
-            //Start of getSourceTile
-            //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
-            if (sourceTile == null) {
-                //if the newTile contains a piece
-                if (!newTile.isEmpty()) {
-                    boolean whiteTurn = newTile.getPiece().getColor().equalsIgnoreCase("white") && board.whiteTurn;
-                    boolean blackTurn = newTile.getPiece().getColor().equalsIgnoreCase("black") && !board.whiteTurn;
-                    boolean correctPlayerTurn = whiteTurn || blackTurn;
-                    if (correctPlayerTurn) {
-                        sourceTile = newTile;
-                        highlightTile(sourceTile);
-                        highlightPossibleDestinations(sourceTile);
+        if ((serverPlayer != null && serverPlayer.in.readLine() != null) || (opponentPlayer != null && opponentPlayer.in.readLine() != null)){
+            receiveMovement();
+            boardPlay();
+        }else {
+            //if Kings are alive
+            if (board.whiteKingAlive && board.blackKingAlive) {
+                Tile newTile = board.getTile(newCoordinate);
+                //Start of getSourceTile
+                //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
+                if (sourceTile == null) {
+                    //if the newTile contains a piece
+                    if (!newTile.isEmpty()) {
+                        boolean whiteTurn = newTile.getPiece().getColor().equalsIgnoreCase("white") && board.whiteTurn;
+                        boolean blackTurn = newTile.getPiece().getColor().equalsIgnoreCase("black") && !board.whiteTurn;
+                        boolean correctPlayerTurn = whiteTurn || blackTurn;
+                        if (correctPlayerTurn) {
+                            sourceTile = newTile;
+                            highlightTile(sourceTile);
+                            highlightPossibleDestinations(sourceTile);
+                        } else {
+                            gameStatusBar.setText("It's " + (board.whiteTurn ? "White" : "Black") + "'s Turn");
+                        }
                     } else {
-                        gameStatusBar.setText("It's " + (board.whiteTurn ? "White" : "Black") + "'s Turn");
+                        gameStatusBar.setText("Please select a correct Piece");
                     }
-                } else {
-                    gameStatusBar.setText("Please select a correct Piece");
-                }
-                //End of getSourceTile
-            } else if (sourceTile.getCoordinates() == newTile.getCoordinates()) {
-                sourceTile = null;
-                createBlankBoard();
-            } else { //Start of getDestinationTile
-
-                boolean newTileIsEmpty = newTile.isEmpty();
-                boolean newTileContainsEnemy = !newTile.isEmpty() && (!sourceTile.getPiece().getColor().equals(newTile.getPiece().getColor()));
-                boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
-                if (newTileDoesNotContainAlly) {
-                    gameStatusBar.setText("");
-                    board.play(sourceTile, newTile);
-                    createBlankBoard();
-                    putPieces();
-                    //after playing, set sourceTile to null
+                    //End of getSourceTile
+                } else if (sourceTile.getCoordinates() == newTile.getCoordinates()) {
                     sourceTile = null;
+                    createBlankBoard();
+                } else { //Start of getDestinationTile
+                    boolean newTileIsEmpty = newTile.isEmpty();
+                    boolean newTileContainsEnemy = !newTile.isEmpty() && (!sourceTile.getPiece().getColor().equals(newTile.getPiece().getColor()));
+                    boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
+                    if (newTileDoesNotContainAlly) {
+                        destinationTile = newTile;
+                        sendMovement();
+                        boardPlay();
+                    }
                 }
+                //End of getDestinationTile
             }
-            //End of getDestinationTile
         }
     }
 
-    public void startGame() {
+    void boardPlay() {
+        gameStatusBar.setText("");
+//                    sendMovement(newTile);
+        board.play(sourceTile, destinationTile);
+        createBlankBoard();
+        putPieces();
+        //after playing, set sourceTile to null
+        sourceTile = null;
+        destinationTile = null;
+    }
+
+    void startGame() {
         createBlankWindow();
         window.setOnCloseRequest(e -> {
             window.close();
@@ -339,9 +362,9 @@ public class GUI extends Application {
         selectButton.setOnAction(e -> {
             String selection = ((RadioButton) toggleGroup.getSelectedToggle()).getText();
             if (selection.equalsIgnoreCase("Server")) {
-                ServerPlayer serverPlayer = new ServerPlayer(this);
+                serverPlayer = new ServerPlayer(this);
             } else {
-                OpponentPlayer opponentPlayer = new OpponentPlayer(this);
+                opponentPlayer = new OpponentPlayer(this);
             }
         });
 
@@ -361,4 +384,25 @@ public class GUI extends Application {
         window.show();
     }
 
+    void sendMovement() {
+        String movement = sourceTile.getCoordinates().toString() + destinationTile.getCoordinates().toString();
+        if (serverPlayer != null) {
+            serverPlayer.out.println(movement);
+        } else if (opponentPlayer != null) {
+            opponentPlayer.out.println(movement);
+        }
+    }
+
+    void receiveMovement() throws IOException {
+        String movement = null;
+        if (serverPlayer != null) {
+            movement = serverPlayer.in.readLine();
+        } else if (opponentPlayer != null) {
+            movement = opponentPlayer.in.readLine();
+        }
+        Coordinate sourceCoordinate = new Coordinate(movement.charAt(1), movement.charAt(0)); //not sure of the order
+        Coordinate destinationCoordinate = new Coordinate(movement.charAt(2), movement.charAt(3));
+        sourceTile = board.getTile(sourceCoordinate);
+        destinationTile = board.getTile(destinationCoordinate);
+    }
 }

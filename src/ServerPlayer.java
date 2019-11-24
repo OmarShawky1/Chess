@@ -1,11 +1,9 @@
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,8 +14,8 @@ import java.net.Socket;
 public class ServerPlayer {
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    public PrintWriter out;
+    public BufferedReader in;
     private Label message;
 
     ServerPlayer(GUI gui) {
@@ -67,9 +65,5 @@ public class ServerPlayer {
     public static void main(String[] args)  {
 //        ServerPlayer server = new ServerPlayer();
 //        server.start();
-    }
-
-    public void start() {
-
     }
 }
