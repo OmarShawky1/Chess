@@ -33,8 +33,13 @@ public class ServerPlayer {
                 if (clientSocket.isConnected()) {
                     Platform.runLater(() -> {
                         message.setText("Connected Successfully\n" + "clientSocket.getPort(): " + clientSocket.getPort());
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     });
-//                    in.readLine();
+//                    System.out.println(in.readLine());
 //                    out.println("Hello Opponent");
                 }
             } catch (IOException e) {

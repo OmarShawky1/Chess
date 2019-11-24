@@ -18,22 +18,24 @@ class OpponentPlayer {
     private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
+    private Label message;
+
 
     OpponentPlayer(Stage window) {
-        Label message = new Label("Enter Data Below");
 
+        message = new Label("Enter Data Below");
 
         Label enterIP = new Label("Enter IP Address:");
         TextField enteredIP = new TextField();
         enteredIP.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER)) {
-                connectSocket(enteredIP);
+                connect(enteredIP);
             }
         });
         enteredIP.setMaxWidth(100);
         Button connect = new Button("Connect");
         connect.setOnAction(event -> {
-            connectSocket(enteredIP);
+            connect(enteredIP);
         });
 
         BorderPane root = new BorderPane();
@@ -55,15 +57,17 @@ class OpponentPlayer {
         window.show();
     }
 
-    private void connectSocket(TextField enteredIP) {
+    private void connect(TextField enteredIP) {
 
         try {
             clientSocket = new Socket(enteredIP.getText(), 9090);
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            message.setText("Connected Successfully to Server");
 //                out.println("This Message is from The Opponent");
 //                in.readLine();
-        } catch (IOException e) {
+            Thread.sleep(2000);
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
