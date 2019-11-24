@@ -4,51 +4,68 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class OpponentPlayer {
+class OpponentPlayer {
     private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
 
-    public OpponentPlayer(Stage window) throws IOException {
+    OpponentPlayer(Stage window) {
         Label message = new Label("Enter Data Below");
 
-        Label enterIP = new Label("Enter IP Address");
+
+        Label enterIP = new Label("Enter IP Address:");
         TextField enteredIP = new TextField();
-        Button connect = new Button("Connect");
-        connect.setOnAction(event -> {
-            try {
-                clientSocket = new Socket(enteredIP.getText(), 9090);
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            } catch (IOException e) {
-                e.printStackTrace();
+        enteredIP.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+                connectSocket(enteredIP);
             }
         });
+        enteredIP.setMaxWidth(100);
+        Button connect = new Button("Connect");
+        connect.setOnAction(event -> {
+            connectSocket(enteredIP);
+        });
 
-
-        HBox hBox = new HBox();
-        hBox.getChildren().addAll(enterIP, enteredIP, connect);
-        hBox.setSpacing(20);
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(message);
+        BorderPane root = new BorderPane();
+        BorderPane.setMargin(message, new Insets(50));
         BorderPane.setAlignment(message, Pos.TOP_CENTER);
-        BorderPane.setMargin(message, new Insets(20, 0, 0, 0));
-        borderPane.setCenter(hBox);
-        BorderPane.setAlignment(hBox, Pos.CENTER);
-        window.setScene(new Scene(borderPane, 400, 400));
-        window.show();
+        root.setTop(message);
 
+
+        GridPane gridPane = new GridPane();
+        gridPane.add(enterIP, 0, 0);
+        gridPane.add(enteredIP, 1, 0);
+        gridPane.add(connect, 2, 0);
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(40);
+        BorderPane.setAlignment(gridPane, Pos.CENTER);
+        root.setCenter(gridPane);
+
+        window.setScene(new Scene(root, 500, 400));
+        window.show();
+    }
+
+    private void connectSocket(TextField enteredIP) {
+
+        try {
+            clientSocket = new Socket(enteredIP.getText(), 9090);
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//                out.println("This Message is from The Opponent");
+//                in.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 //    public static void main (String[] args) throws IOException {

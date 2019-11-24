@@ -43,6 +43,11 @@ public class GUI extends Application {
         launch();
     }
 
+    void endTime() {
+        timer.cancel();
+        timer.purge();
+    }
+
     private void createPlayerInfo(String playerColorName) {
 
         int rightOrLeft = playerColorName.equals("White") ? 0 : 2;
@@ -109,8 +114,9 @@ public class GUI extends Application {
 
         Button rstButton = new Button("Reset Game");
         rstButton.setOnAction(e -> {
-            timer.cancel();
-            timer.purge();
+//            timer.cancel();
+//            timer.purge();
+            endTime();
             sourceTile = null;
             board = new Board();
             createBlankWindow();
@@ -271,7 +277,7 @@ public class GUI extends Application {
                     } else {
                         gameStatusBar.setText("It's " + (board.whiteTurn ? "White" : "Black") + "'s Turn");
                     }
-                }else {
+                } else {
                     gameStatusBar.setText("Please select a correct Piece");
                 }
                 //End of getSourceTile
@@ -296,16 +302,17 @@ public class GUI extends Application {
         }
     }
 
-    private void startGame(){
+    private void startGame() {
         createBlankWindow();
         window.setOnCloseRequest(e -> {
             window.close();
-            timer.cancel();
-            timer.purge();
+//            timer.cancel();
+//            timer.purge();
+            endTime();
         });
     }
 
-    private void connectToPlayer(){
+    private void connectToPlayer() {
         /** Choose if you are a server or an opponent to make the right object**/
         Label message = new Label("Choose if you are the server or the opponent");
 //        message.setAlignment(Pos.TOP_CENTER);
@@ -324,20 +331,12 @@ public class GUI extends Application {
         opponentRadioButton.setToggleGroup(toggleGroup);
 
         Button selectButton = new Button("Select");
-        selectButton.setOnAction(e->{
+        selectButton.setOnAction(e -> {
             String selection = ((RadioButton) toggleGroup.getSelectedToggle()).getText();
-            if (selection.equalsIgnoreCase("Server")){
-                try {
-                    ServerPlayer serverPlayer = new ServerPlayer(window);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }else {
-                try {
-                    OpponentPlayer opponentPlayer = new OpponentPlayer(window);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+            if (selection.equalsIgnoreCase("Server")) {
+                ServerPlayer serverPlayer = new ServerPlayer(window);
+            } else {
+                OpponentPlayer opponentPlayer = new OpponentPlayer(window);
             }
         });
 
@@ -346,13 +345,13 @@ public class GUI extends Application {
         radioButtons.setSpacing(20);
 
         GridPane connectionMainRoot = new GridPane();
-        connectionMainRoot.add(radioButtons,0,0);
+        connectionMainRoot.add(radioButtons, 0, 0);
         connectionMainRoot.setAlignment(Pos.CENTER);
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(message);
-        BorderPane.setAlignment(message,Pos.TOP_CENTER);
+        BorderPane.setAlignment(message, Pos.TOP_CENTER);
         borderPane.setCenter(connectionMainRoot);
-        BorderPane.setMargin(message, new Insets(20, 0,0,0));
+        BorderPane.setMargin(message, new Insets(20, 0, 0, 0));
         window.setScene(new Scene(borderPane, 400, 400));
         window.show();
     }
