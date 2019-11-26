@@ -14,13 +14,11 @@ import java.net.Socket;
 public class ServerPlayer {
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    public PrintWriter out;
-    public BufferedReader in;
+    PrintWriter out;
+    BufferedReader in;
     private Label message;
 
     ServerPlayer(GUI gui) {
-
-        System.out.println("I Am Server");
 
         Stage window = gui.window;
         message = new Label("Waiting to connect to Opponent");
@@ -43,7 +41,6 @@ public class ServerPlayer {
                     });
 //                    System.out.println(in.readLine());
 //                    out.println("Hello Opponent");
-                    System.out.println("window.toString(): " + window.toString());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

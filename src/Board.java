@@ -12,8 +12,13 @@ class Board {
     private boolean whiteKingChecked, blackKingChecked;
     boolean whiteKingAlive, blackKingAlive;
     private Tile[][] board;
+    public GUI gui; //This is so new
 
-    Board() {
+    Board(GUI gui) {
+        //This is so new
+        this.gui = gui;
+
+
         board = new Tile[BOARD_LENGTH][BOARD_WIDTH];
         /* Filling the board with Tile objects */
         for (int row = 0; row < BOARD_LENGTH; row++) {

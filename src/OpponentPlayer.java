@@ -15,18 +15,15 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 class OpponentPlayer {
-    private Socket clientSocket;
-    public PrintWriter out;
-    public BufferedReader in;
+    PrintWriter out;
+    BufferedReader in;
     private Label message;
     private GUI gui;
-    private Stage window;
 
     OpponentPlayer(GUI gui) {
 
-        System.out.println("I am Opponent");
         this.gui = gui;
-        this.window = gui.window;
+        Stage window = gui.window;
         message = new Label("Enter Data Below");
 
         Label enterIP = new Label("Enter IP Address:");
@@ -64,7 +61,7 @@ class OpponentPlayer {
     private void connect(TextField enteredIP) {
 
         try {
-            clientSocket = new Socket(enteredIP.getText(), 9090);
+            Socket clientSocket = new Socket(enteredIP.getText(), 9090);
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             message.setText("Connected Successfully to Server");

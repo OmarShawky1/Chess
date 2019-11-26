@@ -57,6 +57,12 @@ public abstract class Piece {
         tile.setPiece(null);
         destinationTile.setPiece(this);
 
+        /** This is so new and i do not know the consequences**/
+        tile.getBoard().gui.sendMovement();
+//        tile.getBoard().gui.sendTurn();
+        if (tile.getBoard().gui.firstMovement){
+            tile.getBoard().gui.firstMovement = !tile.getBoard().gui.firstMovement;
+        }
     }
 
     boolean isPathClearTowards(Tile destTile) {

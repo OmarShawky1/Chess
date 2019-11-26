@@ -2,7 +2,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -10,23 +9,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.time.LocalTime;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class GUI extends Application {
 
-    public Stage window;
+    Stage window;
     private GridPane chessBoard;
     private GridPane upperGridPane;
-    private Board board = new Board();
+    private Board board = new Board(this);
     private Tile sourceTile;
     private Tile destinationTile;
     private LocalTime whiteTime, blackTime;
@@ -34,15 +28,10 @@ public class GUI extends Application {
     private Timer timer;
     private ServerPlayer serverPlayer = null;
     private OpponentPlayer opponentPlayer = null;
+    boolean firstMovement = true;
 
-    @Override
-    public void start(Stage primaryStage) {
-        window = primaryStage;
-        connectToPlayer();
-//        startGame();
-    }
 
-    static void main() {
+    static void main(String[] args) {
         launch();
     }
 
@@ -121,7 +110,7 @@ public class GUI extends Application {
 //            timer.purge();
             endTime();
             sourceTile = null;
-            board = new Board();
+            board = new Board(this); //this is so new
             createBlankWindow();
 
         });
@@ -145,7 +134,7 @@ public class GUI extends Application {
 
         //initial window conditions
         window.setTitle("Chess Game");
-        window.centerOnScreen();
+//        window.centerOnScreen();
     }
 
     private void creatingBlankTiles() {
@@ -246,7 +235,6 @@ public class GUI extends Application {
         int WINDOWSIZE = 600;
 //        Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
         Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
-        System.out.println("window.toString(): " + window.toString());
         window.setScene(scene);
         createMainWindow();
         window.show();
@@ -258,7 +246,7 @@ public class GUI extends Application {
         createBlankBoard();
     }
 
-    private void highlightTile(Tile tile) {
+    private void highlightSourceTile(Tile tile) {
         tile.setStyle("-fx-background-color: " + "green" + ";");
     }
 
@@ -273,55 +261,8 @@ public class GUI extends Application {
         }
     }
 
-    private void play(Coordinate newCoordinate) throws IOException {
-
-        if ((serverPlayer != null && serverPlayer.in.readLine() != null) || (opponentPlayer != null && opponentPlayer.in.readLine() != null)){
-            receiveMovement();
-            boardPlay();
-        }else {
-            //if Kings are alive
-            if (board.whiteKingAlive && board.blackKingAlive) {
-                Tile newTile = board.getTile(newCoordinate);
-                //Start of getSourceTile
-                //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
-                if (sourceTile == null) {
-                    //if the newTile contains a piece
-                    if (!newTile.isEmpty()) {
-                        boolean whiteTurn = newTile.getPiece().getColor().equalsIgnoreCase("white") && board.whiteTurn;
-                        boolean blackTurn = newTile.getPiece().getColor().equalsIgnoreCase("black") && !board.whiteTurn;
-                        boolean correctPlayerTurn = whiteTurn || blackTurn;
-                        if (correctPlayerTurn) {
-                            sourceTile = newTile;
-                            highlightTile(sourceTile);
-                            highlightPossibleDestinations(sourceTile);
-                        } else {
-                            gameStatusBar.setText("It's " + (board.whiteTurn ? "White" : "Black") + "'s Turn");
-                        }
-                    } else {
-                        gameStatusBar.setText("Please select a correct Piece");
-                    }
-                    //End of getSourceTile
-                } else if (sourceTile.getCoordinates() == newTile.getCoordinates()) {
-                    sourceTile = null;
-                    createBlankBoard();
-                } else { //Start of getDestinationTile
-                    boolean newTileIsEmpty = newTile.isEmpty();
-                    boolean newTileContainsEnemy = !newTile.isEmpty() && (!sourceTile.getPiece().getColor().equals(newTile.getPiece().getColor()));
-                    boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
-                    if (newTileDoesNotContainAlly) {
-                        destinationTile = newTile;
-                        sendMovement();
-                        boardPlay();
-                    }
-                }
-                //End of getDestinationTile
-            }
-        }
-    }
-
-    void boardPlay() {
+    private void boardPlay() {
         gameStatusBar.setText("");
-//                    sendMovement(newTile);
         board.play(sourceTile, destinationTile);
         createBlankBoard();
         putPieces();
@@ -330,23 +271,92 @@ public class GUI extends Application {
         destinationTile = null;
     }
 
-    void startGame() {
-        createBlankWindow();
-        window.setOnCloseRequest(e -> {
-            window.close();
-//            timer.cancel();
-//            timer.purge();
-            endTime();
-        });
+    private void guiPlay(Coordinate newCoordinate) {
+        Tile newTile = board.getTile(newCoordinate);
+        //Start of getSourceTile
+        //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
+        if (sourceTile == null) {
+            //if the newTile contains a piece
+            if (!newTile.isEmpty()) {
+                boolean whiteTurn = newTile.getPiece().getColor().equalsIgnoreCase("white") && board.whiteTurn;
+                boolean blackTurn = newTile.getPiece().getColor().equalsIgnoreCase("black") && !board.whiteTurn;
+                boolean correctPlayerTurn = whiteTurn || blackTurn;
+                if (correctPlayerTurn) {
+                    sourceTile = newTile;
+                    highlightSourceTile(sourceTile);
+                    highlightPossibleDestinations(sourceTile);
+                } else {
+                    gameStatusBar.setText("It's " + (board.whiteTurn ? "White" : "Black") + "'s Turn");
+                }
+            } else {
+                gameStatusBar.setText("Please select a correct Piece");
+            }
+            //End of getSourceTile
+        } else if (sourceTile.getCoordinates() == newTile.getCoordinates()) {
+            sourceTile = null;
+            createBlankBoard();
+        } else { //Start of getDestinationTile
+            boolean newTileIsEmpty = newTile.isEmpty();
+            boolean newTileContainsEnemy = !newTile.isEmpty() && (!sourceTile.getPiece().getColor().equals(newTile.getPiece().getColor()));
+            boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
+            if (newTileDoesNotContainAlly) {
+                destinationTile = newTile;
+//                sendMovement();
+                boardPlay();
+//                sendWhosTurn();
+            }
+        }
+        //End of getDestinationTile
     }
 
+    private void play(Coordinate newCoordinate) throws IOException {
+        //the error here is that the server plays first then sends the movement, but in order for the opponent to play he must receive 
+        // that the server player to change the value of board.whiteTurn and that does not happen
+
+        if (board.whiteKingAlive && board.blackKingAlive) {
+
+            System.out.println("I Entered play Successfully");
+            if (serverPlayer != null) {
+                if (!firstMovement) { //do not receive any movement if this is the first movement in the game
+                    System.out.println("I Am server and i will call receiveMovement");
+                    receiveMovement();
+//                    receiveTurn();
+                }
+                if (board.whiteTurn) {
+                    guiPlay(newCoordinate);
+                }
+            } else if (opponentPlayer != null) {
+                System.out.println("I Entered opponent play, i'm stuck");
+                receiveMovement();
+//                receiveTurn();
+                System.out.println("I'm Opponent and i received movement and turn");
+                if (!board.whiteTurn) {
+                    guiPlay(newCoordinate);
+                }
+            }
+        }
+    }
+//    private void receiveTurn() throws IOException {
+//        System.out.println("I am receiveTurn");
+//        if (serverPlayer != null){
+//            board.whiteTurn = serverPlayer.in.readLine().charAt(4) == 1;
+//        }else if (opponentPlayer != null){
+//            board.whiteTurn = opponentPlayer.in.readLine().charAt(4) == 1;
+//        }
+//    }
+//    void sendTurn() {
+//        int turn = board.whiteTurn? 1:0;
+//        if (serverPlayer != null) {
+//            serverPlayer.out.print(turn);
+//        } else if (opponentPlayer != null) {
+//            opponentPlayer.out.print(turn);
+//        }
+//    }
     private void connectToPlayer() {
-        /** Choose if you are a server or an opponent to make the right object**/
+        /* Choose if you are a server or an opponent to make the right object**/
         Label message = new Label("Choose if you are the server or the opponent");
-//        message.setAlignment(Pos.TOP_CENTER);
 
         ToggleGroup toggleGroup = new ToggleGroup();
-
 
         RadioButton serverRadioButton = new RadioButton();
         RadioButton opponentRadioButton = new RadioButton();
@@ -384,25 +394,60 @@ public class GUI extends Application {
         window.show();
     }
 
-    void sendMovement() {
+    void sendMovement() { //i changed it's logic to be in piece.move (commented to this is so new)
         String movement = sourceTile.getCoordinates().toString() + destinationTile.getCoordinates().toString();
+        int turn = board.whiteTurn ? 1 : 0;
         if (serverPlayer != null) {
-            serverPlayer.out.println(movement);
+            movement = movement + turn;
+            serverPlayer.out.print(movement);
         } else if (opponentPlayer != null) {
-            opponentPlayer.out.println(movement);
+            movement = movement + turn;
+            opponentPlayer.out.print(movement);
         }
+        System.out.println(movement);
     }
 
-    void receiveMovement() throws IOException {
+    private void receiveMovement() throws IOException {
+
+        System.out.println("I Entered receiveMovement");
         String movement = null;
         if (serverPlayer != null) {
+            System.out.println("I Entered serverPlayer");
             movement = serverPlayer.in.readLine();
+            board.whiteTurn = movement.charAt(4) == 1;
         } else if (opponentPlayer != null) {
+            System.out.println("I Entered opponentPlayer");
             movement = opponentPlayer.in.readLine();
+            board.whiteTurn = movement.charAt(4) == 1;
         }
-        Coordinate sourceCoordinate = new Coordinate(movement.charAt(1), movement.charAt(0)); //not sure of the order
-        Coordinate destinationCoordinate = new Coordinate(movement.charAt(2), movement.charAt(3));
+        System.out.println(movement);
+//        int yAxis1 = movement.charAt(0) -'a';
+//        int yAxis2 = movement.charAt(2) -'a';
+//        System.out.println(yAxis1);
+//        System.out.println(yAxis2);
+//        Coordinate sourceCoordinate = new Coordinate(movement.charAt(1), yAxis1); //not sure of the order
+//        Coordinate destinationCoordinate = new Coordinate(movement.charAt(3), yAxis2);
+        assert movement != null;
+        Coordinate sourceCoordinate = new Coordinate(movement.charAt(1), movement.charAt(0) - 'a');
+        Coordinate destinationCoordinate = new Coordinate(movement.charAt(3), movement.charAt(2) - 'a');
         sourceTile = board.getTile(sourceCoordinate);
         destinationTile = board.getTile(destinationCoordinate);
+    }
+
+    void startGame() {
+        createBlankWindow();
+        window.setOnCloseRequest(e -> {
+            window.close();
+//            timer.cancel();
+//            timer.purge();
+            endTime();
+        });
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        window = primaryStage;
+        connectToPlayer();
+//        startGame();
     }
 }
