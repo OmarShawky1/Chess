@@ -12,7 +12,7 @@ class Board {
     private boolean whiteKingChecked, blackKingChecked;
     boolean whiteKingAlive, blackKingAlive;
     private Tile[][] board;
-    public GUI gui; //This is so new
+    private GUI gui; //This is so new
 
     Board(GUI gui) {
         //This is so new
@@ -101,8 +101,13 @@ class Board {
                 if (pieceToMove.canMove(destinationTile)) {
 
                     pieceToMove.move(destinationTile);
-
                     whiteTurn = !whiteTurn;
+
+                    /** This is so new and i do not know the consequences**/
+                    gui.sendMovement();
+                    if (gui.firstMovement){
+                        gui.firstMovement = false;
+                    }
 
                     whiteKingAlive = whiteKing.isAlive();
                     blackKingAlive = blackKing.isAlive();

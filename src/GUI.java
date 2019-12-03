@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.Timer;
@@ -29,11 +28,13 @@ public class GUI extends Application {
     private ServerPlayer serverPlayer = null;
     private OpponentPlayer opponentPlayer = null;
     boolean firstMovement = true;
+    private String movement = null; //this is only written here for the receive Thread
 
 
-    static void main(String[] args) {
-        launch();
-    }
+//    static void main(String[] args) {
+//        launch();
+//
+//    }
 
     private void endTime() {
         timer.cancel();
@@ -301,9 +302,7 @@ public class GUI extends Application {
             boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
             if (newTileDoesNotContainAlly) {
                 destinationTile = newTile;
-//                sendMovement();
                 boardPlay();
-//                sendWhosTurn();
             }
         }
         //End of getDestinationTile
@@ -312,10 +311,9 @@ public class GUI extends Application {
     private void play(Coordinate newCoordinate) throws IOException {
         //the error here is that the server plays first then sends the movement, but in order for the opponent to play he must receive 
         // that the server player to change the value of board.whiteTurn and that does not happen
+        System.out.println("I Entered play Successfully");
 
         if (board.whiteKingAlive && board.blackKingAlive) {
-
-            System.out.println("I Entered play Successfully");
             if (serverPlayer != null) {
                 if (!firstMovement) { //do not receive any movement if this is the first movement in the game
                     System.out.println("I Am server and i will call receiveMovement");
@@ -326,9 +324,8 @@ public class GUI extends Application {
                     guiPlay(newCoordinate);
                 }
             } else if (opponentPlayer != null) {
-                System.out.println("I Entered opponent play, i'm stuck");
+                System.out.println("I Entered opponent play");
                 receiveMovement();
-//                receiveTurn();
                 System.out.println("I'm Opponent and i received movement and turn");
                 if (!board.whiteTurn) {
                     guiPlay(newCoordinate);
@@ -336,7 +333,8 @@ public class GUI extends Application {
             }
         }
     }
-//    private void receiveTurn() throws IOException {
+
+    //    private void receiveTurn() throws IOException {
 //        System.out.println("I am receiveTurn");
 //        if (serverPlayer != null){
 //            board.whiteTurn = serverPlayer.in.readLine().charAt(4) == 1;
@@ -396,7 +394,7 @@ public class GUI extends Application {
 
     void sendMovement() { //i changed it's logic to be in piece.move (commented to this is so new)
         String movement = sourceTile.getCoordinates().toString() + destinationTile.getCoordinates().toString();
-        int turn = board.whiteTurn ? 1 : 0;
+        int turn = board.whiteTurn ? 1 : 0; //this is somehow wrong, because the check occurs before flipping turns
         if (serverPlayer != null) {
             movement = movement + turn;
             serverPlayer.out.print(movement);
@@ -410,28 +408,30 @@ public class GUI extends Application {
     private void receiveMovement() throws IOException {
 
         System.out.println("I Entered receiveMovement");
-        String movement = null;
-        if (serverPlayer != null) {
-            System.out.println("I Entered serverPlayer");
-            movement = serverPlayer.in.readLine();
-            board.whiteTurn = movement.charAt(4) == 1;
-        } else if (opponentPlayer != null) {
-            System.out.println("I Entered opponentPlayer");
-            movement = opponentPlayer.in.readLine();
-            board.whiteTurn = movement.charAt(4) == 1;
-        }
-        System.out.println(movement);
-//        int yAxis1 = movement.charAt(0) -'a';
-//        int yAxis2 = movement.charAt(2) -'a';
-//        System.out.println(yAxis1);
-//        System.out.println(yAxis2);
-//        Coordinate sourceCoordinate = new Coordinate(movement.charAt(1), yAxis1); //not sure of the order
-//        Coordinate destinationCoordinate = new Coordinate(movement.charAt(3), yAxis2);
-        assert movement != null;
-        Coordinate sourceCoordinate = new Coordinate(movement.charAt(1), movement.charAt(0) - 'a');
-        Coordinate destinationCoordinate = new Coordinate(movement.charAt(3), movement.charAt(2) - 'a');
-        sourceTile = board.getTile(sourceCoordinate);
-        destinationTile = board.getTile(destinationCoordinate);
+        Thread receive = new Thread(() -> {
+            try {
+                System.out.println("Receive Thread Started");
+                if (serverPlayer != null) {
+                    System.out.println("I Entered serverPlayer receiveMovement");
+
+                    movement = serverPlayer.in.readLine();
+                    board.whiteTurn = movement.charAt(4) == 1;
+                } else if (opponentPlayer != null) {
+                    System.out.println("I Entered opponentPlayer receiveMovement");
+                    movement = opponentPlayer.in.readLine();
+                    board.whiteTurn = movement.charAt(4) == 1;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            assert movement != null;
+            System.out.println(movement);
+            Coordinate sourceCoordinate = new Coordinate(movement.charAt(1), movement.charAt(0) - 'a');
+            Coordinate destinationCoordinate = new Coordinate(movement.charAt(3), movement.charAt(2) - 'a');
+            sourceTile = board.getTile(sourceCoordinate);
+            destinationTile = board.getTile(destinationCoordinate);
+        });
+        receive.start(); //I Stopped here
     }
 
     void startGame() {
