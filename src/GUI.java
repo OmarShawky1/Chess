@@ -31,10 +31,10 @@ public class GUI extends Application {
     private String movement = null; //this is only written here for the receive Thread
 
 
-//    static void main(String[] args) {
-//        launch();
-//
-//    }
+    static void main(String[] args) {
+        launch();
+
+    }
 
     private void endTime() {
         timer.cancel();
@@ -262,7 +262,7 @@ public class GUI extends Application {
         }
     }
 
-    private void boardPlay() {
+    private void boardPlay() throws IOException {
         gameStatusBar.setText("");
         board.play(sourceTile, destinationTile);
         createBlankBoard();
@@ -272,7 +272,7 @@ public class GUI extends Application {
         destinationTile = null;
     }
 
-    private void guiPlay(Coordinate newCoordinate) {
+    private void guiPlay(Coordinate newCoordinate) throws IOException {
         Tile newTile = board.getTile(newCoordinate);
         //Start of getSourceTile
         //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
@@ -334,22 +334,6 @@ public class GUI extends Application {
         }
     }
 
-    //    private void receiveTurn() throws IOException {
-//        System.out.println("I am receiveTurn");
-//        if (serverPlayer != null){
-//            board.whiteTurn = serverPlayer.in.readLine().charAt(4) == 1;
-//        }else if (opponentPlayer != null){
-//            board.whiteTurn = opponentPlayer.in.readLine().charAt(4) == 1;
-//        }
-//    }
-//    void sendTurn() {
-//        int turn = board.whiteTurn? 1:0;
-//        if (serverPlayer != null) {
-//            serverPlayer.out.print(turn);
-//        } else if (opponentPlayer != null) {
-//            opponentPlayer.out.print(turn);
-//        }
-//    }
     private void connectToPlayer() {
         /* Choose if you are a server or an opponent to make the right object**/
         Label message = new Label("Choose if you are the server or the opponent");
@@ -392,16 +376,22 @@ public class GUI extends Application {
         window.show();
     }
 
-    void sendMovement() { //i changed it's logic to be in piece.move (commented to this is so new)
+    void sendMovement() throws IOException { //i changed it's logic to be in piece.move (commented to this is so new)
         String movement = sourceTile.getCoordinates().toString() + destinationTile.getCoordinates().toString();
         int turn = board.whiteTurn ? 1 : 0; //this is somehow wrong, because the check occurs before flipping turns
         if (serverPlayer != null) {
             movement = movement + turn;
-            serverPlayer.out.print(movement);
+//            serverPlayer.out.print(movement);
+//            serverPlayer.out.write();
+            serverPlayer.out.writeUTF(movement);
+
         } else if (opponentPlayer != null) {
             movement = movement + turn;
-            opponentPlayer.out.print(movement);
+            opponentPlayer.out.writeUTF(movement);
+
         }
+        System.out.println("serverPlayerSocket: " + serverPlayer.clientSocket);
+        System.out.println("serverPlayer.clientSocket.getChannel(): " + serverPlayer.clientSocket.getChannel());
         System.out.println(movement);
     }
 
@@ -414,20 +404,21 @@ public class GUI extends Application {
                 if (serverPlayer != null) {
                     System.out.println("I Entered serverPlayer receiveMovement");
 
-                    movement = serverPlayer.in.readLine();
+                    movement = serverPlayer.in.readUTF();
                     board.whiteTurn = movement.charAt(4) == 1;
                 } else if (opponentPlayer != null) {
+                    System.out.println("opponentPlayer.clientSocket.getPort(): " + opponentPlayer.clientSocket.getPort());
+                    System.out.println("opponentPlayer.clientSocket.getChannel(): " + opponentPlayer.clientSocket.getChannel());
                     System.out.println("I Entered opponentPlayer receiveMovement");
-                    movement = opponentPlayer.in.readLine();
+                    movement = opponentPlayer.in.readUTF();
                     board.whiteTurn = movement.charAt(4) == 1;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             assert movement != null;
-            System.out.println(movement);
-            Coordinate sourceCoordinate = new Coordinate(movement.charAt(1), movement.charAt(0) - 'a');
-            Coordinate destinationCoordinate = new Coordinate(movement.charAt(3), movement.charAt(2) - 'a');
+            Coordinate sourceCoordinate = new Coordinate(movement.charAt(0) + "" + movement.charAt(1));
+            Coordinate destinationCoordinate = new Coordinate(movement.charAt(2) + "" + movement.charAt(3));
             sourceTile = board.getTile(sourceCoordinate);
             destinationTile = board.getTile(destinationCoordinate);
         });

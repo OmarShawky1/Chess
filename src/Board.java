@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.*;
 
 //there are accumilated unnecessary checks here that was updated and implemented in different way, i will not remove it until i know them
@@ -88,7 +89,7 @@ class Board {
         return board[coordinate.getY()][coordinate.getX()];
     }
 
-    void play(Tile sourceTile, Tile destinationTile) {
+    void play(Tile sourceTile, Tile destinationTile) throws IOException {
         if (whiteKingAlive && blackKingAlive) {
             removeEnPassant();
 

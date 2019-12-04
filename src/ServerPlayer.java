@@ -4,18 +4,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerPlayer {
     private ServerSocket serverSocket;
-    private Socket clientSocket;
-    PrintWriter out;
-    BufferedReader in;
+    public Socket clientSocket;
+    DataOutputStream out;
+    DataInputStream in;
     private Label message;
 
     ServerPlayer(GUI gui) {
@@ -27,20 +25,14 @@ public class ServerPlayer {
             try {
                 serverSocket = new ServerSocket(9090);
                 clientSocket = serverSocket.accept();
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                out = new DataOutputStream(clientSocket.getOutputStream());
+                out.flush();
+                in = new DataInputStream(clientSocket.getInputStream());
                 if (clientSocket.isConnected()) {
                     Platform.runLater(() -> {
                         message.setText("Connected Successfully\n" + "clientSocket.getPort(): " + clientSocket.getPort());
-//                        try {
-//                            Thread.sleep(2000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
                         gui.startGame();
                     });
-//                    System.out.println(in.readLine());
-//                    out.println("Hello Opponent");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
