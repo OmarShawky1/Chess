@@ -16,12 +16,12 @@ class OpponentPlayer {
     DataOutputStream out;
     DataInputStream in;
     private Label message;
-    private GUI gui;
+    private chessGUI chessGui;
     public Socket clientSocket;
-    OpponentPlayer(GUI gui) {
+    OpponentPlayer(chessGUI chessGui) {
 
-        this.gui = gui;
-        Stage window = gui.window;
+        this.chessGui = chessGui;
+        Stage window = chessGui.window;
         message = new Label("Enter Data Below");
 
         Label enterIP = new Label("Enter IP Address:");
@@ -64,7 +64,7 @@ class OpponentPlayer {
             out.flush();
             in = new DataInputStream(clientSocket.getInputStream());
             message.setText("Connected Successfully to Server");
-            gui.startGame();
+            chessGui.startGame();
         } catch (IOException /*| InterruptedException*/ e) {
             e.printStackTrace();
         }

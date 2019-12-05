@@ -16,9 +16,9 @@ public class ServerPlayer {
     DataInputStream in;
     private Label message;
 
-    ServerPlayer(GUI gui) {
+    ServerPlayer(chessGUI chessGui) {
 
-        Stage window = gui.window;
+        Stage window = chessGui.window;
         message = new Label("Waiting to connect to Opponent");
 
         Thread runServerSocket = new Thread(() -> {
@@ -31,7 +31,7 @@ public class ServerPlayer {
                 if (clientSocket.isConnected()) {
                     Platform.runLater(() -> {
                         message.setText("Connected Successfully\n" + "clientSocket.getPort(): " + clientSocket.getPort());
-                        gui.startGame();
+                        chessGui.startGame();
                     });
                 }
             } catch (IOException e) {

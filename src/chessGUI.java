@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class GUI extends Application {
+public class chessGUI extends Application {
 
     Stage window;
     private GridPane chessBoard;
@@ -311,12 +311,12 @@ public class GUI extends Application {
     private void play(Coordinate newCoordinate) throws IOException {
         //the error here is that the server plays first then sends the movement, but in order for the opponent to play he must receive 
         // that the server player to change the value of board.whiteTurn and that does not happen
-        System.out.println("I Entered play Successfully");
+//        System.out.println("I Entered play Successfully");
 
         if (board.whiteKingAlive && board.blackKingAlive) {
             if (serverPlayer != null) {
                 if (!firstMovement) { //do not receive any movement if this is the first movement in the game
-                    System.out.println("I Am server and i will call receiveMovement");
+//                    System.out.println("I Am server and i will call receiveMovement");
                     receiveMovement();
 //                    receiveTurn();
                 }
@@ -324,9 +324,9 @@ public class GUI extends Application {
                     guiPlay(newCoordinate);
                 }
             } else if (opponentPlayer != null) {
-                System.out.println("I Entered opponent play");
+//                System.out.println("I Entered opponent play");
                 receiveMovement();
-                System.out.println("I'm Opponent and i received movement and turn");
+//                System.out.println("I'm Opponent and i received movement and turn");
                 if (!board.whiteTurn) {
                     guiPlay(newCoordinate);
                 }
@@ -390,26 +390,26 @@ public class GUI extends Application {
             opponentPlayer.out.writeUTF(movement);
 
         }
-        System.out.println("serverPlayerSocket: " + serverPlayer.clientSocket);
-        System.out.println("serverPlayer.clientSocket.getChannel(): " + serverPlayer.clientSocket.getChannel());
-        System.out.println(movement);
+//        System.out.println("serverPlayerSocket: " + serverPlayer.clientSocket);
+//        System.out.println("serverPlayer.clientSocket.getChannel(): " + serverPlayer.clientSocket.getChannel());
+//        System.out.println(movement);
     }
 
     private void receiveMovement() throws IOException {
 
-        System.out.println("I Entered receiveMovement");
+//        System.out.println("I Entered receiveMovement");
         Thread receive = new Thread(() -> {
             try {
-                System.out.println("Receive Thread Started");
+//                System.out.println("Receive Thread Started");
                 if (serverPlayer != null) {
-                    System.out.println("I Entered serverPlayer receiveMovement");
+//                    System.out.println("I Entered serverPlayer receiveMovement");
 
                     movement = serverPlayer.in.readUTF();
                     board.whiteTurn = movement.charAt(4) == 1;
                 } else if (opponentPlayer != null) {
-                    System.out.println("opponentPlayer.clientSocket.getPort(): " + opponentPlayer.clientSocket.getPort());
-                    System.out.println("opponentPlayer.clientSocket.getChannel(): " + opponentPlayer.clientSocket.getChannel());
-                    System.out.println("I Entered opponentPlayer receiveMovement");
+//                    System.out.println("opponentPlayer.clientSocket.getPort(): " + opponentPlayer.clientSocket.getPort());
+//                    System.out.println("opponentPlayer.clientSocket.getChannel(): " + opponentPlayer.clientSocket.getChannel());
+//                    System.out.println("I Entered opponentPlayer receiveMovement");
                     movement = opponentPlayer.in.readUTF();
                     board.whiteTurn = movement.charAt(4) == 1;
                 }
@@ -422,7 +422,7 @@ public class GUI extends Application {
             sourceTile = board.getTile(sourceCoordinate);
             destinationTile = board.getTile(destinationCoordinate);
         });
-        receive.start(); //I Stopped here
+        receive.start();
     }
 
     void startGame() {
