@@ -61,11 +61,10 @@ class OpponentPlayer {
         try {
             Socket clientSocket = new Socket(enteredIP.getText(), 9090);
             out = new DataOutputStream(clientSocket.getOutputStream());
-            out.flush();
             in = new DataInputStream(clientSocket.getInputStream());
             message.setText("Connected Successfully to Server");
             gui.startGame();
-        } catch (IOException /*| InterruptedException*/ e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -36,11 +36,6 @@ public class GUI extends Application {
 
     }
 
-    private void endTime() {
-        timer.cancel();
-        timer.purge();
-    }
-
     private void createPlayerInfo(String playerColorName) {
 
         int rightOrLeft = playerColorName.equals("White") ? 0 : 2;
@@ -96,6 +91,11 @@ public class GUI extends Application {
         timer.scheduleAtFixedRate(timerTask, 1000, 1000);
     }
 
+    private void endTime() {
+        timer.cancel();
+        timer.purge();
+    }
+
     private void createUpperMenu() {
         //setting the upper menu for (Player's turn, time, check)
         upperGridPane = new GridPane();
@@ -107,8 +107,6 @@ public class GUI extends Application {
 
         Button rstButton = new Button("Reset Game");
         rstButton.setOnAction(e -> {
-//            timer.cancel();
-//            timer.purge();
             endTime();
             sourceTile = null;
             board = new Board(this); //this is so new
@@ -135,7 +133,6 @@ public class GUI extends Application {
 
         //initial window conditions
         window.setTitle("Chess Game");
-//        window.centerOnScreen();
     }
 
     private void creatingBlankTiles() {
@@ -234,7 +231,6 @@ public class GUI extends Application {
 
         //putting the border menu in the main scene and the main scene in the main stage
         int WINDOWSIZE = 600;
-//        Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
         Scene scene = new Scene(borderPane, WINDOWSIZE, WINDOWSIZE);
         window.setScene(scene);
         createMainWindow();
@@ -255,7 +251,6 @@ public class GUI extends Application {
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
                 if (sourceTile.getPiece().canMove(sourceTile.getBoard().getTile(new Coordinate(row, col)))) {
-//                    highlightTile();
                     sourceTile.getBoard().getTile(new Coordinate(row, col)).setStyle("-fx-background-color: " + "blue" + ";");
                 }
             }
@@ -311,22 +306,17 @@ public class GUI extends Application {
     private void play(Coordinate newCoordinate) throws IOException {
         //the error here is that the server plays first then sends the movement, but in order for the opponent to play he must receive 
         // that the server player to change the value of board.whiteTurn and that does not happen
-//        System.out.println("I Entered play Successfully");
 
         if (board.whiteKingAlive && board.blackKingAlive) {
             if (serverPlayer != null) {
                 if (!firstMovement) { //do not receive any movement if this is the first movement in the game
-//                    System.out.println("I Am server and i will call receiveMovement");
                     receiveMovement();
-//                    receiveTurn();
                 }
                 if (board.whiteTurn) {
                     guiPlay(newCoordinate);
                 }
             } else if (opponentPlayer != null) {
-//                System.out.println("I Entered opponent play");
                 receiveMovement();
-//                System.out.println("I'm Opponent and i received movement and turn");
                 if (!board.whiteTurn) {
                     guiPlay(newCoordinate);
                 }
@@ -376,40 +366,26 @@ public class GUI extends Application {
         window.show();
     }
 
-    void sendMovement() throws IOException { //i changed it's logic to be in piece.move (commented to this is so new)
+    void sendMovement() throws IOException {
+        //i changed it's logic to be in piece.move (commented to this is so new)
         String movement = sourceTile.getCoordinates().toString() + destinationTile.getCoordinates().toString();
         int turn = board.whiteTurn ? 1 : 0; //this is somehow wrong, because the check occurs before flipping turns
         if (serverPlayer != null) {
             movement = movement + turn;
-//            serverPlayer.out.print(movement);
-//            serverPlayer.out.write();
             serverPlayer.out.writeUTF(movement);
-
         } else if (opponentPlayer != null) {
             movement = movement + turn;
             opponentPlayer.out.writeUTF(movement);
-
         }
-//        System.out.println("serverPlayerSocket: " + serverPlayer.clientSocket);
-//        System.out.println("serverPlayer.clientSocket.getChannel(): " + serverPlayer.clientSocket.getChannel());
-//        System.out.println(movement);
     }
 
     private void receiveMovement() {
-
-//        System.out.println("I Entered receiveMovement");
         Thread receive = new Thread(() -> {
             try {
-//                System.out.println("Receive Thread Started");
                 if (serverPlayer != null) {
-//                    System.out.println("I Entered serverPlayer receiveMovement");
-
                     movement = serverPlayer.in.readUTF();
                     board.whiteTurn = movement.charAt(4) == 1;
                 } else if (opponentPlayer != null) {
-//                    System.out.println("opponentPlayer.clientSocket.getPort(): " + opponentPlayer.clientSocket.getPort());
-//                    System.out.println("opponentPlayer.clientSocket.getChannel(): " + opponentPlayer.clientSocket.getChannel());
-//                    System.out.println("I Entered opponentPlayer receiveMovement");
                     movement = opponentPlayer.in.readUTF();
                     board.whiteTurn = movement.charAt(4) == 1;
                 }
@@ -429,8 +405,6 @@ public class GUI extends Application {
         createBlankWindow();
         window.setOnCloseRequest(e -> {
             window.close();
-//            timer.cancel();
-//            timer.purge();
             endTime();
         });
     }
@@ -439,6 +413,5 @@ public class GUI extends Application {
     public void start(Stage primaryStage) {
         window = primaryStage;
         connectToPlayer();
-//        startGame();
     }
 }

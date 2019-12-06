@@ -14,25 +14,20 @@ public class ServerPlayer {
     private Socket clientSocket;
     DataOutputStream out;
     DataInputStream in;
-    private Label message;
 
     ServerPlayer(GUI gui) {
 
         Stage window = gui.window;
-        message = new Label("Waiting to connect to Opponent");
+        Label message = new Label("Waiting to connect to Opponent");
 
         Thread runServerSocket = new Thread(() -> {
             try {
                 serverSocket = new ServerSocket(9090);
                 clientSocket = serverSocket.accept();
                 out = new DataOutputStream(clientSocket.getOutputStream());
-                out.flush();
                 in = new DataInputStream(clientSocket.getInputStream());
                 if (clientSocket.isConnected()) {
-                    Platform.runLater(() -> {
-                        message.setText("Connected Successfully\n" + "clientSocket.getPort(): " + clientSocket.getPort());
-                        gui.startGame();
-                    });
+                    Platform.runLater(gui::startGame);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
