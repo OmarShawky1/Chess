@@ -9,11 +9,13 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServerPlayer {
+class ServerPlayer {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     DataOutputStream out;
+    //    PrintWriter out;
     DataInputStream in;
+//    BufferedReader in;
 
     ServerPlayer(GUI gui) {
 
@@ -25,7 +27,9 @@ public class ServerPlayer {
                 serverSocket = new ServerSocket(9090);
                 clientSocket = serverSocket.accept();
                 out = new DataOutputStream(clientSocket.getOutputStream());
+//                out = new PrintWriter(clientSocket.getOutputStream(), true);
                 in = new DataInputStream(clientSocket.getInputStream());
+//                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 if (clientSocket.isConnected()) {
                     Platform.runLater(gui::startGame);
                 }
@@ -38,16 +42,12 @@ public class ServerPlayer {
         GridPane gridPane = new GridPane();
         gridPane.add(message, 0, 0);
         gridPane.setAlignment(Pos.CENTER);
-        window.setScene(new Scene(gridPane, 400, 400));
-        window.show();
         window.setOnCloseRequest(e -> {
             window.close();
             System.exit(0);
         });
-    }
-
-    public static void main(String[] args)  {
-//        ServerPlayer server = new ServerPlayer();
-//        server.start();
+        window.setScene(new Scene(gridPane, 400, 400));
+        window.show();
+        System.out.println("I'm Server");
     }
 }

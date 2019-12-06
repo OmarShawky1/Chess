@@ -89,7 +89,9 @@ class Board {
         return board[coordinate.getY()][coordinate.getX()];
     }
 
-    void play(Tile sourceTile, Tile destinationTile) throws IOException {
+    void play(Tile sourceTile, Tile destinationTile, boolean receiveThread) throws IOException {
+        System.out.println("Play Was Called");
+        System.out.println("whiteTurn: " + whiteTurn);
         if (whiteKingAlive && blackKingAlive) {
             removeEnPassant();
 
@@ -100,15 +102,16 @@ class Board {
                     (pieceColor.equalsIgnoreCase("white") && whiteTurn) || (pieceColor.equalsIgnoreCase("black") && !whiteTurn);
             if (rightPlayersTurn) {
                 if (pieceToMove.canMove(destinationTile)) {
-
                     pieceToMove.move(destinationTile);
                     whiteTurn = !whiteTurn;
 
                     /** This is so new and i do not know the consequences**/
-                    gui.sendMovement();
-                    if (gui.firstMovement){
-                        gui.firstMovement = false;
+                    if (!receiveThread){
+                        gui.sendMovement();
                     }
+//                    if (gui.firstMovement){
+//                        gui.firstMovement = false;
+//                    }
 
                     whiteKingAlive = whiteKing.isAlive();
                     blackKingAlive = blackKing.isAlive();

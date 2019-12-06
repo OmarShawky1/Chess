@@ -2,12 +2,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
+import javafx.print.PageLayout;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.Timer;
@@ -27,8 +29,9 @@ public class GUI extends Application {
     private Timer timer;
     private ServerPlayer serverPlayer = null;
     private OpponentPlayer opponentPlayer = null;
-    boolean firstMovement = true;
+//    boolean firstMovement = true;
     private String movement = null; //this is only written here for the receive Thread
+    private Thread receiveThread;
 
 
     static void main(String[] args) {
@@ -108,6 +111,7 @@ public class GUI extends Application {
         Button rstButton = new Button("Reset Game");
         rstButton.setOnAction(e -> {
             endTime();
+            receiveThread.interrupt();
             sourceTile = null;
             board = new Board(this); //this is so new
             createBlankWindow();
@@ -182,6 +186,7 @@ public class GUI extends Application {
     }
 
     private void putPieces() {
+        System.out.println("putPieces was Called");
 
         //putting tile pieces on the GUI Board
         for (int row = 0; row < Board.BOARD_LENGTH; row++) {
@@ -220,6 +225,7 @@ public class GUI extends Application {
     }
 
     private void createBlankBoard() {
+        System.out.println("createBlankBoard was called");
         creatingBlankTiles();
         putPieces();
         constraintsAligning();
@@ -241,6 +247,7 @@ public class GUI extends Application {
 
         createUpperMenu();
         createBlankBoard();
+        receiveMovement();
     }
 
     private void highlightSourceTile(Tile tile) {
@@ -257,11 +264,12 @@ public class GUI extends Application {
         }
     }
 
-    private void boardPlay() throws IOException {
+    private void boardPlay(boolean received) throws IOException {
+        System.out.println("Board Was Called");
         gameStatusBar.setText("");
-        board.play(sourceTile, destinationTile);
+        board.play(sourceTile, destinationTile, received);
         createBlankBoard();
-        putPieces();
+
         //after playing, set sourceTile to null
         sourceTile = null;
         destinationTile = null;
@@ -297,7 +305,7 @@ public class GUI extends Application {
             boolean newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
             if (newTileDoesNotContainAlly) {
                 destinationTile = newTile;
-                boardPlay();
+                boardPlay(false);
             }
         }
         //End of getDestinationTile
@@ -309,14 +317,11 @@ public class GUI extends Application {
 
         if (board.whiteKingAlive && board.blackKingAlive) {
             if (serverPlayer != null) {
-                if (!firstMovement) { //do not receive any movement if this is the first movement in the game
-                    receiveMovement();
-                }
                 if (board.whiteTurn) {
                     guiPlay(newCoordinate);
                 }
             } else if (opponentPlayer != null) {
-                receiveMovement();
+//                receiveMovement();
                 if (!board.whiteTurn) {
                     guiPlay(newCoordinate);
                 }
@@ -370,41 +375,57 @@ public class GUI extends Application {
         //i changed it's logic to be in piece.move (commented to this is so new)
         String movement = sourceTile.getCoordinates().toString() + destinationTile.getCoordinates().toString();
         int turn = board.whiteTurn ? 1 : 0; //this is somehow wrong, because the check occurs before flipping turns
+        movement = movement + turn;
+
         if (serverPlayer != null) {
-            movement = movement + turn;
             serverPlayer.out.writeUTF(movement);
+//            serverPlayer.out.write(movement + "\n");
         } else if (opponentPlayer != null) {
-            movement = movement + turn;
             opponentPlayer.out.writeUTF(movement);
+//            opponentPlayer.out.write(movement + "\n");
         }
+        System.out.println("I Sent: " + movement);
     }
 
     private void receiveMovement() {
-        Thread receive = new Thread(() -> {
+        receiveThread = new Thread(() -> {
+            System.out.println("receiveThread Started");
             try {
                 if (serverPlayer != null) {
                     movement = serverPlayer.in.readUTF();
-                    board.whiteTurn = movement.charAt(4) == 1;
                 } else if (opponentPlayer != null) {
                     movement = opponentPlayer.in.readUTF();
-                    board.whiteTurn = movement.charAt(4) == 1;
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            assert movement != null;
-            Coordinate sourceCoordinate = new Coordinate(movement.charAt(0) + "" + movement.charAt(1));
-            Coordinate destinationCoordinate = new Coordinate(movement.charAt(2) + "" + movement.charAt(3));
-            sourceTile = board.getTile(sourceCoordinate);
-            destinationTile = board.getTile(destinationCoordinate);
+            if (movement != null) {
+                System.out.println("I Received: " + movement);
+                Coordinate sourceCoordinate = new Coordinate(movement.charAt(0) + "" + movement.charAt(1));
+                Coordinate destinationCoordinate = new Coordinate(movement.charAt(2) + "" + movement.charAt(3));
+                sourceTile = board.getTile(sourceCoordinate);
+                destinationTile = board.getTile(destinationCoordinate);
+                System.out.println("sourceCoordinate: " + sourceCoordinate);
+                System.out.println("destinationCoordinate: " + destinationCoordinate);
+                Platform.runLater(() -> {
+                    try {
+                        boardPlay(true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+            }
         });
-        receive.start();
+        receiveThread.start();
     }
 
     void startGame() {
         createBlankWindow();
         window.setOnCloseRequest(e -> {
             window.close();
+            receiveThread.interrupt();
             endTime();
         });
     }
@@ -415,3 +436,4 @@ public class GUI extends Application {
         connectToPlayer();
     }
 }
+//

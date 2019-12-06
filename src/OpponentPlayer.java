@@ -14,7 +14,9 @@ import java.net.Socket;
 
 class OpponentPlayer {
     DataOutputStream out;
+    //    PrintWriter out;
     DataInputStream in;
+    //    BufferedReader in;
     private Label message;
     private GUI gui;
 
@@ -54,6 +56,7 @@ class OpponentPlayer {
 
         window.setScene(new Scene(root, 500, 400));
         window.show();
+        System.out.println("I'm Opponent");
     }
 
     private void connect(TextField enteredIP) {
@@ -61,7 +64,9 @@ class OpponentPlayer {
         try {
             Socket clientSocket = new Socket(enteredIP.getText(), 9090);
             out = new DataOutputStream(clientSocket.getOutputStream());
+//            out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new DataInputStream(clientSocket.getInputStream());
+//            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             message.setText("Connected Successfully to Server");
             gui.startGame();
         } catch (IOException e) {
