@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class chessGUI extends Application {
+public class GUI extends Application {
 
     Stage window;
     private GridPane chessBoard;
@@ -395,7 +395,7 @@ public class chessGUI extends Application {
 //        System.out.println(movement);
     }
 
-    private void receiveMovement() throws IOException {
+    private void receiveMovement() {
 
 //        System.out.println("I Entered receiveMovement");
         Thread receive = new Thread(() -> {

@@ -11,14 +11,14 @@ import java.net.Socket;
 
 public class ServerPlayer {
     private ServerSocket serverSocket;
-    public Socket clientSocket;
+    private Socket clientSocket;
     DataOutputStream out;
     DataInputStream in;
     private Label message;
 
-    ServerPlayer(chessGUI chessGui) {
+    ServerPlayer(GUI gui) {
 
-        Stage window = chessGui.window;
+        Stage window = gui.window;
         message = new Label("Waiting to connect to Opponent");
 
         Thread runServerSocket = new Thread(() -> {
@@ -31,7 +31,7 @@ public class ServerPlayer {
                 if (clientSocket.isConnected()) {
                     Platform.runLater(() -> {
                         message.setText("Connected Successfully\n" + "clientSocket.getPort(): " + clientSocket.getPort());
-                        chessGui.startGame();
+                        gui.startGame();
                     });
                 }
             } catch (IOException e) {

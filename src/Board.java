@@ -13,11 +13,11 @@ class Board {
     private boolean whiteKingChecked, blackKingChecked;
     boolean whiteKingAlive, blackKingAlive;
     private Tile[][] board;
-    private chessGUI chessGui; //This is so new
+    private GUI gui; //This is so new
 
-    Board(chessGUI chessGui) {
+    Board(GUI gui) {
         //This is so new
-        this.chessGui = chessGui;
+        this.gui = gui;
 
 
         board = new Tile[BOARD_LENGTH][BOARD_WIDTH];
@@ -105,20 +105,20 @@ class Board {
                     whiteTurn = !whiteTurn;
 
                     /** This is so new and i do not know the consequences**/
-                    chessGui.sendMovement();
-                    if (chessGui.firstMovement){
-                        chessGui.firstMovement = false;
+                    gui.sendMovement();
+                    if (gui.firstMovement){
+                        gui.firstMovement = false;
                     }
 
                     whiteKingAlive = whiteKing.isAlive();
                     blackKingAlive = blackKing.isAlive();
                     //print who lost and exit the game
                     if (!whiteKingAlive) {
-                        chessGUI.gameStatusBar.setText("White Lost");
+                        GUI.gameStatusBar.setText("White Lost");
                         return;
                     }
                     if (!blackKingAlive) {
-                        chessGUI.gameStatusBar.setText("Black Lost");
+                        GUI.gameStatusBar.setText("Black Lost");
                         return;
                     }
 
@@ -126,19 +126,19 @@ class Board {
                     blackKingChecked = blackKing.isBeingChecked();
                     //Print who got checked
                     if (whiteKingChecked) {
-                        chessGUI.gameStatusBar.setText("White King Got Checked");
+                        GUI.gameStatusBar.setText("White King Got Checked");
                     }
                     if (blackKingChecked) {
-                        chessGUI.gameStatusBar.setText("Black King Got Checked");
+                        GUI.gameStatusBar.setText("Black King Got Checked");
                     }
 
                 } else {
 //                System.out.println("Invalid move for piece: " + pieceToMove.getClass().getName());
-                    chessGUI.gameStatusBar.setText("Invalid Move For Piece: " + pieceToMove.getClass().getName());
+                    GUI.gameStatusBar.setText("Invalid Move For Piece: " + pieceToMove.getClass().getName());
                 }
             } else {
                 boolean whosTurn = pieceColor.equalsIgnoreCase("black");
-                chessGUI.gameStatusBar.setText("This is " + (whosTurn ? "White's" : "Black's") + " Turn");
+                GUI.gameStatusBar.setText("This is " + (whosTurn ? "White's" : "Black's") + " Turn");
             }
         }
     }
