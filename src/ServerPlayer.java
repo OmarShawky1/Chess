@@ -13,7 +13,7 @@ class ServerPlayer {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     DataOutputStream out;
-    //    PrintWriter out;
+//        PrintWriter out;
     DataInputStream in;
 //    BufferedReader in;
 

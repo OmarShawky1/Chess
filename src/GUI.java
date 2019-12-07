@@ -29,9 +29,9 @@ public class GUI extends Application {
     private Timer timer;
     private ServerPlayer serverPlayer = null;
     private OpponentPlayer opponentPlayer = null;
-//    boolean firstMovement = true;
     private String movement = null; //this is only written here for the receive Thread
     private Thread receiveThread;
+    private boolean closing;
 
 
     static void main(String[] args) {
@@ -186,7 +186,7 @@ public class GUI extends Application {
     }
 
     private void putPieces() {
-        System.out.println("putPieces was Called");
+//        System.out.println("putPieces was Called");
 
         //putting tile pieces on the GUI Board
         for (int row = 0; row < Board.BOARD_LENGTH; row++) {
@@ -225,7 +225,7 @@ public class GUI extends Application {
     }
 
     private void createBlankBoard() {
-        System.out.println("createBlankBoard was called");
+//        System.out.println("createBlankBoard was called");
         creatingBlankTiles();
         putPieces();
         constraintsAligning();
@@ -265,7 +265,7 @@ public class GUI extends Application {
     }
 
     private void boardPlay(boolean received) throws IOException {
-        System.out.println("Board Was Called");
+//        System.out.println("Board Was Called");
         gameStatusBar.setText("");
         board.play(sourceTile, destinationTile, received);
         createBlankBoard();
@@ -384,38 +384,40 @@ public class GUI extends Application {
             opponentPlayer.out.writeUTF(movement);
 //            opponentPlayer.out.write(movement + "\n");
         }
-        System.out.println("I Sent: " + movement);
+//        System.out.println("I Sent: " + movement);
     }
 
     private void receiveMovement() {
         receiveThread = new Thread(() -> {
-            System.out.println("receiveThread Started");
-            try {
-                if (serverPlayer != null) {
-                    movement = serverPlayer.in.readUTF();
-                } else if (opponentPlayer != null) {
-                    movement = opponentPlayer.in.readUTF();
-
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (movement != null) {
-                System.out.println("I Received: " + movement);
-                Coordinate sourceCoordinate = new Coordinate(movement.charAt(0) + "" + movement.charAt(1));
-                Coordinate destinationCoordinate = new Coordinate(movement.charAt(2) + "" + movement.charAt(3));
-                sourceTile = board.getTile(sourceCoordinate);
-                destinationTile = board.getTile(destinationCoordinate);
-                System.out.println("sourceCoordinate: " + sourceCoordinate);
-                System.out.println("destinationCoordinate: " + destinationCoordinate);
-                Platform.runLater(() -> {
-                    try {
-                        boardPlay(true);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+//            System.out.println("receiveThread Started");
+            while (!closing) {
+                try {
+                    if (serverPlayer != null) {
+                        movement = serverPlayer.in.readUTF();
+//                    movement = serverPlayer.in.readLine();
+                    } else if (opponentPlayer != null) {
+                        movement = opponentPlayer.in.readUTF();
+//                    movement = opponentPlayer.in.readLine();
                     }
-                });
-
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (movement != null) {
+//                    System.out.println("I Received: " + movement);
+                    Coordinate sourceCoordinate = new Coordinate(movement.charAt(0) + "" + movement.charAt(1));
+                    Coordinate destinationCoordinate = new Coordinate(movement.charAt(2) + "" + movement.charAt(3));
+                    sourceTile = board.getTile(sourceCoordinate);
+                    destinationTile = board.getTile(destinationCoordinate);
+//                    System.out.println("sourceCoordinate: " + sourceCoordinate);
+//                    System.out.println("destinationCoordinate: " + destinationCoordinate);
+                    Platform.runLater(() -> {
+                        try {
+                            boardPlay(true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
             }
         });
         receiveThread.start();
@@ -425,8 +427,14 @@ public class GUI extends Application {
         createBlankWindow();
         window.setOnCloseRequest(e -> {
             window.close();
-            receiveThread.interrupt();
+            closing = true;
+//            receiveThread.interrupt();
             endTime();
+            for (Thread t : Thread.getAllStackTraces().keySet()) {
+                if (t.getState() == Thread.State.RUNNABLE) {
+                    t.interrupt();
+                }
+            }
         });
     }
 
@@ -436,4 +444,3 @@ public class GUI extends Application {
         connectToPlayer();
     }
 }
-//

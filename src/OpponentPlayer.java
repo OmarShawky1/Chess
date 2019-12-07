@@ -14,9 +14,9 @@ import java.net.Socket;
 
 class OpponentPlayer {
     DataOutputStream out;
-    //    PrintWriter out;
+//        PrintWriter out;
     DataInputStream in;
-    //    BufferedReader in;
+//        BufferedReader in;
     private Label message;
     private GUI gui;
 

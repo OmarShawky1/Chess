@@ -90,8 +90,8 @@ class Board {
     }
 
     void play(Tile sourceTile, Tile destinationTile, boolean receiveThread) throws IOException {
-        System.out.println("Play Was Called");
-        System.out.println("whiteTurn: " + whiteTurn);
+//        System.out.println("Play Was Called");
+//        System.out.println("whiteTurn: " + whiteTurn);
         if (whiteKingAlive && blackKingAlive) {
             removeEnPassant();
 
@@ -109,9 +109,6 @@ class Board {
                     if (!receiveThread){
                         gui.sendMovement();
                     }
-//                    if (gui.firstMovement){
-//                        gui.firstMovement = false;
-//                    }
 
                     whiteKingAlive = whiteKing.isAlive();
                     blackKingAlive = blackKing.isAlive();
@@ -136,7 +133,6 @@ class Board {
                     }
 
                 } else {
-//                System.out.println("Invalid move for piece: " + pieceToMove.getClass().getName());
                     GUI.gameStatusBar.setText("Invalid Move For Piece: " + pieceToMove.getClass().getName());
                 }
             } else {
