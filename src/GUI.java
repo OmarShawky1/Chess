@@ -2,14 +2,12 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
-import javafx.print.PageLayout;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.Timer;
@@ -186,8 +184,6 @@ public class GUI extends Application {
     }
 
     private void putPieces() {
-//        System.out.println("putPieces was Called");
-
         //putting tile pieces on the GUI Board
         for (int row = 0; row < Board.BOARD_LENGTH; row++) {
             for (int col = 0; col < Board.BOARD_WIDTH; col++) {
@@ -225,7 +221,6 @@ public class GUI extends Application {
     }
 
     private void createBlankBoard() {
-//        System.out.println("createBlankBoard was called");
         creatingBlankTiles();
         putPieces();
         constraintsAligning();
@@ -265,7 +260,6 @@ public class GUI extends Application {
     }
 
     private void boardPlay(boolean received) throws IOException {
-//        System.out.println("Board Was Called");
         gameStatusBar.setText("");
         board.play(sourceTile, destinationTile, received);
         createBlankBoard();
@@ -377,9 +371,6 @@ public class GUI extends Application {
     void sendMovement() throws IOException {
         //i changed it's logic to be in piece.move (commented to this is so new)
         String movement = sourceTile.getCoordinates().toString() + destinationTile.getCoordinates().toString();
-//        int turn = board.whiteTurn ? 1 : 0; //this is somehow wrong, because the check occurs before flipping turns
-//        movement = movement + turn;
-        System.out.println("I Sent " + movement);
 
         if (serverPlayer != null) {
             serverPlayer.out.writeUTF(movement);
@@ -388,12 +379,10 @@ public class GUI extends Application {
             opponentPlayer.out.writeUTF(movement);
 //            opponentPlayer.out.write(movement + "\n");
         }
-//        System.out.println("I Sent: " + movement);
     }
 
     private void receiveMovement() {
         receiveThread = new Thread(() -> {
-//            System.out.println("receiveThread Started");
             while (!closing) {
                 try {
                     if (serverPlayer != null) {
@@ -407,13 +396,10 @@ public class GUI extends Application {
                     e.printStackTrace();
                 }
                 if (movement != null) {
-                    System.out.println("I Received: " + movement);
                     Coordinate sourceCoordinate = new Coordinate(movement.charAt(0) + "" + movement.charAt(1));
                     Coordinate destinationCoordinate = new Coordinate(movement.charAt(2) + "" + movement.charAt(3));
                     sourceTile = board.getTile(sourceCoordinate);
                     destinationTile = board.getTile(destinationCoordinate);
-//                    System.out.println("sourceCoordinate: " + sourceCoordinate);
-//                    System.out.println("destinationCoordinate: " + destinationCoordinate);
                     Platform.runLater(() -> {
                         try {
                             boardPlay(true);
@@ -431,15 +417,16 @@ public class GUI extends Application {
         createBlankWindow();
         receiveMovement();
         window.setOnCloseRequest(e -> {
-            window.close();
-            closing = true;
-//            receiveThread.interrupt();
-            endTime();
-            for (Thread t : Thread.getAllStackTraces().keySet()) {
-                if (t.getState() == Thread.State.RUNNABLE) {
-                    t.interrupt();
-                }
-            }
+//            window.close();
+//            closing = true;
+////            receiveThread.interrupt();
+//            endTime();
+//            for (Thread t : Thread.getAllStackTraces().keySet()) {
+//                if (t.getState() == Thread.State.RUNNABLE) {
+//                    t.interrupt();
+//                }
+//            }
+            System.exit(0);
         });
     }
 

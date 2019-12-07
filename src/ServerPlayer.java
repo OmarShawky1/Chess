@@ -13,9 +13,7 @@ class ServerPlayer {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     DataOutputStream out;
-//        PrintWriter out;
     DataInputStream in;
-//    BufferedReader in;
 
     ServerPlayer(GUI gui) {
 
@@ -48,6 +46,5 @@ class ServerPlayer {
         });
         window.setScene(new Scene(gridPane, 400, 400));
         window.show();
-        System.out.println("I'm Server");
     }
 }
