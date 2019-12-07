@@ -111,9 +111,9 @@ public class GUI extends Application {
         Button rstButton = new Button("Reset Game");
         rstButton.setOnAction(e -> {
             endTime();
-            receiveThread.interrupt();
+//            receiveThread.interrupt();
             sourceTile = null;
-            board = new Board(this); //this is so new
+            board = new Board(this);
             createBlankWindow();
 
         });
@@ -247,7 +247,7 @@ public class GUI extends Application {
 
         createUpperMenu();
         createBlankBoard();
-        receiveMovement();
+//        receiveMovement();
     }
 
     private void highlightSourceTile(Tile tile) {
@@ -319,11 +319,14 @@ public class GUI extends Application {
             if (serverPlayer != null) {
                 if (board.whiteTurn) {
                     guiPlay(newCoordinate);
+                }else {
+                    gameStatusBar.setText("Not Your Turn");
                 }
             } else if (opponentPlayer != null) {
-//                receiveMovement();
                 if (!board.whiteTurn) {
                     guiPlay(newCoordinate);
+                }else {
+                    gameStatusBar.setText("Not Your Turn");
                 }
             }
         }
@@ -374,8 +377,9 @@ public class GUI extends Application {
     void sendMovement() throws IOException {
         //i changed it's logic to be in piece.move (commented to this is so new)
         String movement = sourceTile.getCoordinates().toString() + destinationTile.getCoordinates().toString();
-        int turn = board.whiteTurn ? 1 : 0; //this is somehow wrong, because the check occurs before flipping turns
-        movement = movement + turn;
+//        int turn = board.whiteTurn ? 1 : 0; //this is somehow wrong, because the check occurs before flipping turns
+//        movement = movement + turn;
+        System.out.println("I Sent " + movement);
 
         if (serverPlayer != null) {
             serverPlayer.out.writeUTF(movement);
@@ -403,7 +407,7 @@ public class GUI extends Application {
                     e.printStackTrace();
                 }
                 if (movement != null) {
-//                    System.out.println("I Received: " + movement);
+                    System.out.println("I Received: " + movement);
                     Coordinate sourceCoordinate = new Coordinate(movement.charAt(0) + "" + movement.charAt(1));
                     Coordinate destinationCoordinate = new Coordinate(movement.charAt(2) + "" + movement.charAt(3));
                     sourceTile = board.getTile(sourceCoordinate);
@@ -425,6 +429,7 @@ public class GUI extends Application {
 
     void startGame() {
         createBlankWindow();
+        receiveMovement();
         window.setOnCloseRequest(e -> {
             window.close();
             closing = true;
