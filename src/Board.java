@@ -13,7 +13,7 @@ class Board {
     private boolean whiteKingChecked, blackKingChecked;
     boolean whiteKingAlive, blackKingAlive;
     private Tile[][] board;
-    private GUI gui; //This is so new
+    private GUI gui;
 
     Board(GUI gui) {
         //This is so new
