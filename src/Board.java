@@ -81,8 +81,7 @@ class Board {
     }
 
     King getKing(String color) {
-//        return color == Color.WHITE ? whiteKing : blackKing;
-        return color.equalsIgnoreCase("white") ? whiteKing : blackKing;
+        return color.equals("white") ? whiteKing : blackKing;
     }
 
     Tile getTile(Coordinate coordinate) {
@@ -90,16 +89,14 @@ class Board {
     }
 
     void play(Tile sourceTile, Tile destinationTile, boolean receiveThread) throws IOException {
-//        System.out.println("Play Was Called");
-//        System.out.println("whiteTurn: " + whiteTurn);
+
         if (whiteKingAlive && blackKingAlive) {
             removeEnPassant();
 
             //getPiece to move, there is no need to check if the sourceTile is Empty because it is already checked in GUI
             Piece pieceToMove = sourceTile.getPiece();
             String pieceColor = pieceToMove.getColor();
-            boolean rightPlayersTurn =
-                    (pieceColor.equalsIgnoreCase("white") && whiteTurn) || (pieceColor.equalsIgnoreCase("black") && !whiteTurn);
+            boolean rightPlayersTurn = (pieceColor.equals("white") && whiteTurn) || (pieceColor.equals("black") && !whiteTurn);
             if (rightPlayersTurn) {
                 if (pieceToMove.canMove(destinationTile)) {
                     pieceToMove.move(destinationTile);
@@ -136,7 +133,7 @@ class Board {
                     GUI.gameStatusBar.setText("Invalid Move For Piece: " + pieceToMove.getClass().getName());
                 }
             } else {
-                boolean whosTurn = pieceColor.equalsIgnoreCase("black");
+                boolean whosTurn = pieceColor.equals("black");
                 GUI.gameStatusBar.setText("This is " + (whosTurn ? "White's" : "Black's") + " Turn");
             }
         }

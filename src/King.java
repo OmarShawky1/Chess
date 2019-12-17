@@ -5,6 +5,10 @@ import java.util.LinkedList;
 
 public class King extends Piece {
 
+    public boolean hasMoved = false;
+    public boolean isChecked = false;
+    public boolean isAlive = true;
+
     King(String color) {
         super(color);
 
@@ -16,7 +20,8 @@ public class King extends Piece {
     }
 
     boolean isBeingChecked() {
-        return pieceCanKillAKing();
+        isChecked = pieceCanKillAKing();
+        return isChecked;
     }
 
     boolean isAlive() {
@@ -27,9 +32,11 @@ public class King extends Piece {
         // 3- check for a place where any piece from the army can block the threat
         if (pieceCanKillAKing()) {
 
-            return kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat();
+            isAlive = kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat();
+            return isAlive;
         }
-        return true;
+        isAlive = true;
+        return isAlive;
     }
 
     public boolean canMove(Tile destinationTile) {
@@ -109,5 +116,10 @@ public class King extends Piece {
             }
         }
         return enemyPiecesThatThreats;
+    }
+
+    public void move(Tile destinationTile){
+        hasMoved = true;
+        super.move(destinationTile);
     }
 }

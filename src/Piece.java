@@ -43,18 +43,20 @@ public abstract class Piece {
         tile.setPiece(oldPiece);
 
         boolean willOwnPlayerKingBeChecked = king.isBeingChecked();
+        if (king.isBeingChecked()){
+            king.isChecked = false;
+        }
 
         tile = oldTile;
         tile.setPiece(oldPiece);
         destinationTile.setPiece(oldDestinationPiece);
 
-        return !willOwnPlayerKingBeChecked && cannotCheckWhenChecked(destinationTile);
+        return !willOwnPlayerKingBeChecked && cannotCheckWhenChecked();
     }
 
     public void move(Tile destinationTile) {
         tile.setPiece(null);
         destinationTile.setPiece(this);
-
     }
 
     boolean isPathClearTowards(Tile destinationTile) {
@@ -84,20 +86,9 @@ public abstract class Piece {
                 isPathClearTowards(destinationTile);
     }
 
-    boolean cannotCheckWhenChecked(Tile destinationTile){
-        System.out.println("I'm piece: " + this.getClass().getName() + " at: " + this.tile.getCoordinates());
-        System.out.println(" I'm at cannotCheckWhenChecked");
-        boolean cannotCheckWhenChecked = true;
-       King myKing = color.equals("white")? tile.getBoard().getKing("white"):tile.getBoard().getKing("black");
-
- //if ((destinationTile.getPiece() instanceof King) && myKing.isBeingChecked()){
-       if (myKing.isBeingChecked()){
-           cannotCheckWhenChecked = false;
-           System.out.println("I'm cannotCheckWhenChecked and i returned: " + cannotCheckWhenChecked);
-           return cannotCheckWhenChecked;
-       }
-        System.out.println("I'm cannotCheckWhenChecked and i returned: " + cannotCheckWhenChecked);
-        return cannotCheckWhenChecked;
+    boolean cannotCheckWhenChecked(){
+        King myKing = color.equals("white")? tile.getBoard().getKing("white"):tile.getBoard().getKing("black");
+        return !myKing.isChecked;
     }
 
     Image getImage() {
