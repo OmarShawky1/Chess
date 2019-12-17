@@ -260,7 +260,6 @@ public class GUI extends Application {
     }
 
     private void boardPlay(boolean received) throws IOException {
-//        System.out.println("Entered boardPlay");
         gameStatusBar.setText("");
         board.play(sourceTile, destinationTile, received);
         createBlankBoard();
@@ -271,21 +270,17 @@ public class GUI extends Application {
     }
 
     private void guiPlay(Coordinate newCoordinate) throws IOException {
-//        System.out.println("Entered guiPlay");
         Tile newTile = board.getTile(newCoordinate);
         //Start of getSourceTile
         //if sourceTile is not yet assigned, assign the newTile to sourceTile if the newTile contains a piece
 
         if (sourceTile == null) {
-//            System.out.println("Entered sourceTile == null");
             //if the newTile contains a piece
             if (!newTile.isEmpty()) {
-//                System.out.println("Entered !newTile.isEmpty");
                 boolean whiteTurn = newTile.getPiece().getColor().equalsIgnoreCase("white") && board.whiteTurn;
                 boolean blackTurn = newTile.getPiece().getColor().equalsIgnoreCase("black") && !board.whiteTurn;
                 boolean correctPlayerTurn = whiteTurn || blackTurn;
                 if (correctPlayerTurn) {
-//                    System.out.println("Entered correctPlayerTurn");
                     sourceTile = newTile;
                     highlightSourceTile(sourceTile);
                     highlightPossibleDestinations(sourceTile);
@@ -297,11 +292,9 @@ public class GUI extends Application {
             }
             //End of getSourceTile
         } else if (sourceTile.getCoordinates() == newTile.getCoordinates()) {
-//            System.out.println("Entered sourceTile == newTile");
             sourceTile = null;
             createBlankBoard();
         } else { //Start of getDestinationTile
-//            System.out.println("Entered getDestinationTile in guiPlay");
             boolean newTileIsEmpty = newTile.isEmpty();
             boolean newTileContainsEnemy = !newTile.isEmpty() && (!sourceTile.getPiece().getColor().equals(newTile.getPiece().getColor()));
             boolean newTileDoesNotContainAlly, newTileContainsMyKing;
@@ -314,7 +307,6 @@ public class GUI extends Application {
                 newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy || newTileContainsMyKing;
             }
             if (newTileDoesNotContainAlly) {
-//                System.out.println("Entered newTileDoesNotContainAlly");
                 destinationTile = newTile;
                 boardPlay(false);
             }

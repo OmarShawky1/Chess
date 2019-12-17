@@ -38,7 +38,6 @@ public class Rook extends Piece {
 
     boolean canCastle(Tile destinationTile) {
 
-        System.out.println("I Entered canCastle");
 
         Tile myKingTile = getMyKing().tile;
         Piece destinationTilePiece = destinationTile.getPiece();
@@ -51,12 +50,8 @@ public class Rook extends Piece {
             boolean rookAndKingOnSameRow = tile.getCoordinates().getY() == myKingCoordinate.getY();
             boolean kingIsNotChecked = !getMyKing().isChecked;
 
-//            System.out.println("!getMyKing().hasMoved: " + !getMyKing().hasMoved);
-//            System.out.println("rookAndKingOnSameRow: " + rookAndKingOnSameRow);
-//            System.out.println("kingIsNotChecked: " + kingIsNotChecked);
             if (!getMyKing().hasMoved && rookAndKingOnSameRow && kingIsNotChecked) {
 
-                System.out.println("canCastle: " + isCorrectStraightMoveTowards(tileBeforeKing()));
                 return isCorrectStraightMoveTowards(destinationTile);
             }
         }
@@ -65,12 +60,11 @@ public class Rook extends Piece {
 
     @Override
     public boolean canMove(Tile destinationTile) {
-        System.out.println("Rook at: " + tile.getCoordinates() + " trying to move to: " + destinationTile.getCoordinates());
         if (isCorrectStraightMoveTowards(destinationTile)) {
 
             if (canCastle(destinationTile)) {
-//            return canMoveCastleSpecial(destinationTile);
-                return true;
+                return canMoveCastleSpecial(destinationTile);
+//                return true;
             }
             return super.canMove(destinationTile);
         }
@@ -80,45 +74,51 @@ public class Rook extends Piece {
 
     boolean canMoveCastleSpecial(Tile destinationTile) {
 
-
         // Can move is the general steps that any piece should follow by. They are:
         // 1- Destination does not contain an Ally
         // 2- moving to Destination will not result in a check on his own myKing (the piece blocks a valid check from opponent)
         //this condition is important, this is used when doing internal functions such as isAlive or isBeingChecked
         /* Check if the player's own myKing will be checked if this piece were moved out of the way. */
-        Tile oldTile = tile;
-        King myKing = getMyKing();
-        Piece thisPiece = tile.getPiece();
+        Tile rookOldTile = tile;
+        King myKing = (!destinationTile.isEmpty() && destinationTile.getPiece() instanceof King) ? (King) destinationTile.getPiece() : null;
 
-        tile.setPiece(null);
-        tile = destinationTile;
-        tile.setPiece(thisPiece);
+        //move the rook
+        this.tile = destinationTile;
+        destinationTile.setPiece(this);
 
+        //move king
         int x = xCoordinateBeforeKing();
         int y = tile.getCoordinates().getY();
         Coordinate newCoordinateForKing = new Coordinate(x, y);
-        tile.getBoard().getTile(newCoordinateForKing).setPiece(myKing);
-        myKing.tile = tile.getBoard().getTile(newCoordinateForKing);
+        Tile newKingTile = tile.getBoard().getTile(newCoordinateForKing);
+        if (myKing != null) {
+            myKing.tile = newKingTile;
+            newKingTile.setPiece(myKing);
 
-        boolean willOwnPlayerKingBeChecked = myKing.isBeingChecked();
-        if (myKing.isBeingChecked()) {
-            myKing.isChecked = false;
+            boolean willOwnPlayerKingBeChecked = myKing.isBeingChecked();
+            //revert the isBeingChecked if it happened and it occurred only due to this canMove
+            if (myKing.isChecked) {
+                myKing.isChecked = false;
+            }
+
+            //return the rook
+            this.tile = rookOldTile;
+            rookOldTile.setPiece(this);
+
+            //return the king
+            myKing.tile.setPiece(null);
+            myKing.tile = destinationTile;
+            destinationTile.setPiece(myKing);
+
+            return !willOwnPlayerKingBeChecked;
         }
-
-        tile = oldTile;
-        tile.setPiece(thisPiece);
-        destinationTile.setPiece(myKing);
-        myKing.tile = destinationTile;
-
-        return !willOwnPlayerKingBeChecked && cannotCheckWhenChecked();
+        return false;
     }
 
     public void move(Tile destinationTile) {
 
-        System.out.println("I entered move in Rook");
         if (canCastle(destinationTile)) {
 
-            System.out.println("I Entered canCastle destinationTile");
             Tile tileBeforeKing = tileBeforeKing();
 
             getMyKing().move(tileBeforeKing);
