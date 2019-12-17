@@ -48,7 +48,7 @@ public abstract class Piece {
         tile.setPiece(oldPiece);
         destinationTile.setPiece(oldDestinationPiece);
 
-        return !willOwnPlayerKingBeChecked;
+        return !willOwnPlayerKingBeChecked && cannotCheckWhenChecked(destinationTile);
     }
 
     public void move(Tile destinationTile) {
@@ -57,14 +57,14 @@ public abstract class Piece {
 
     }
 
-    boolean isPathClearTowards(Tile destTile) {
-        int xDiff = tile.xDiffFrom(destTile);
-        int yDiff = tile.yDiffFrom(destTile);
+    boolean isPathClearTowards(Tile destinationTile) {
+        int xDiff = tile.xDiffFrom(destinationTile);
+        int yDiff = tile.yDiffFrom(destinationTile);
         int xDirection = xDiff == 0 ? 0 : xDiff / Math.abs(xDiff);
         int yDirection = yDiff == 0 ? 0 : yDiff / Math.abs(yDiff);
 
         Tile tileToCheck = tile.getNeighbourTile(xDirection, yDirection);
-        while (tileToCheck != destTile) {
+        while (tileToCheck != destinationTile) {
             if (!tileToCheck.isEmpty())
                 return false;
             tileToCheck = tileToCheck.getNeighbourTile(xDirection, yDirection);
@@ -72,16 +72,32 @@ public abstract class Piece {
         return true;
     }
 
-    boolean isCorrectCornerMoveTowards(Tile destTile) {
-        int xDist = Math.abs(tile.xDiffFrom(destTile));
-        int yDist = Math.abs(tile.yDiffFrom(destTile));
+    boolean isCorrectCornerMoveTowards(Tile destinationTile) {
+        int xDist = Math.abs(tile.xDiffFrom(destinationTile));
+        int yDist = Math.abs(tile.yDiffFrom(destinationTile));
 
-        return xDist == yDist && isPathClearTowards(destTile);
+        return xDist == yDist && isPathClearTowards(destinationTile);
     }
 
-    boolean isCorrectStraightMoveTowards(Tile destTile) {
-        return (tile.xDiffFrom(destTile) == 0 || tile.yDiffFrom(destTile) == 0) &&
-                isPathClearTowards(destTile);
+    boolean isCorrectStraightMoveTowards(Tile destinationTile) {
+        return (tile.xDiffFrom(destinationTile) == 0 || tile.yDiffFrom(destinationTile) == 0) &&
+                isPathClearTowards(destinationTile);
+    }
+
+    boolean cannotCheckWhenChecked(Tile destinationTile){
+        System.out.println("I'm piece: " + this.getClass().getName() + " at: " + this.tile.getCoordinates());
+        System.out.println(" I'm at cannotCheckWhenChecked");
+        boolean cannotCheckWhenChecked = true;
+       King myKing = color.equals("white")? tile.getBoard().getKing("white"):tile.getBoard().getKing("black");
+
+ //if ((destinationTile.getPiece() instanceof King) && myKing.isBeingChecked()){
+       if (myKing.isBeingChecked()){
+           cannotCheckWhenChecked = false;
+           System.out.println("I'm cannotCheckWhenChecked and i returned: " + cannotCheckWhenChecked);
+           return cannotCheckWhenChecked;
+       }
+        System.out.println("I'm cannotCheckWhenChecked and i returned: " + cannotCheckWhenChecked);
+        return cannotCheckWhenChecked;
     }
 
     Image getImage() {
