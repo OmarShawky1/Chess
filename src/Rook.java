@@ -41,10 +41,10 @@ public class Rook extends Piece {
         System.out.println("I Entered canCastle");
 
         Tile myKingTile = getMyKing().tile;
-        boolean thereIsAKingInDestination = !destinationTile.isEmpty() && destinationTile.getPiece() instanceof King;
-        boolean destinationContainsMyKing = getMyKing().getColor().equals(color);
+        Piece destinationTilePiece = destinationTile.getPiece();
+        boolean destinationContainsMyKing = !destinationTile.isEmpty() && destinationTilePiece instanceof King && destinationTilePiece.getColor().equals(color);
 
-        if (thereIsAKingInDestination && destinationContainsMyKing) {
+        if (destinationContainsMyKing) {
 
             Coordinate myKingCoordinate = myKingTile.getCoordinates();
 
@@ -56,11 +56,8 @@ public class Rook extends Piece {
 //            System.out.println("kingIsNotChecked: " + kingIsNotChecked);
             if (!getMyKing().hasMoved && rookAndKingOnSameRow && kingIsNotChecked) {
 
-                boolean destinationTileContainsMyKing = myKingCoordinate == destinationTile.getCoordinates();
-
-                System.out.println("canCastle: " + (isCorrectStraightMoveTowards(tileBeforeKing()) && destinationTileContainsMyKing));
-
-                return isCorrectStraightMoveTowards(tileBeforeKing()) && destinationTileContainsMyKing;
+                System.out.println("canCastle: " + isCorrectStraightMoveTowards(tileBeforeKing()));
+                return isCorrectStraightMoveTowards(destinationTile);
             }
         }
         return false;
@@ -69,13 +66,12 @@ public class Rook extends Piece {
     @Override
     public boolean canMove(Tile destinationTile) {
         System.out.println("Rook at: " + tile.getCoordinates() + " trying to move to: " + destinationTile.getCoordinates());
-//        System.out.println("isCorrectStraightMoveTowards(destinationTile): " + isCorrectStraightMoveTowards(destinationTile));
         if (isCorrectStraightMoveTowards(destinationTile)) {
 
-//            if (canCastle(destinationTile)) {
-////            return canMoveCastleSpecial(destinationTile);
-//                return true;
-//            }
+            if (canCastle(destinationTile)) {
+//            return canMoveCastleSpecial(destinationTile);
+                return true;
+            }
             return super.canMove(destinationTile);
         }
 
@@ -88,9 +84,7 @@ public class Rook extends Piece {
         // Can move is the general steps that any piece should follow by. They are:
         // 1- Destination does not contain an Ally
         // 2- moving to Destination will not result in a check on his own myKing (the piece blocks a valid check from opponent)
-
         //this condition is important, this is used when doing internal functions such as isAlive or isBeingChecked
-
         /* Check if the player's own myKing will be checked if this piece were moved out of the way. */
         Tile oldTile = tile;
         King myKing = getMyKing();
@@ -122,13 +116,13 @@ public class Rook extends Piece {
     public void move(Tile destinationTile) {
 
         System.out.println("I entered move in Rook");
-//        if (canCastle(destinationTile)) {
-//
-//            System.out.println("I Entered canCastle destinationTile");
-//            Tile tileBeforeKing = tileBeforeKing();
-//
-//            getMyKing().move(tileBeforeKing);
-//        }
+        if (canCastle(destinationTile)) {
+
+            System.out.println("I Entered canCastle destinationTile");
+            Tile tileBeforeKing = tileBeforeKing();
+
+            getMyKing().move(tileBeforeKing);
+        }
         super.move(destinationTile);
     }
 

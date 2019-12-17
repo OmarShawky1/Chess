@@ -310,8 +310,8 @@ public class GUI extends Application {
             }else{
                 boolean sameColor = !newTileIsEmpty && newTile.getPiece().getColor().equals(sourceTile.getPiece().color);
                 boolean king = newTile.getPiece() instanceof King;
-                boolean tileContainsMyKing = sameColor && king;
-                newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy || tileContainsMyKing;
+                newTileContainsMyKing = sameColor && king;
+                newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy || newTileContainsMyKing;
             }
             if (newTileDoesNotContainAlly) {
 //                System.out.println("Entered newTileDoesNotContainAlly");
