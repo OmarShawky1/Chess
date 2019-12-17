@@ -308,7 +308,7 @@ public class GUI extends Application {
             if (!(sourceTile.getPiece() instanceof Rook)){
                  newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy;
             }else{
-                boolean sameColor = newTile.getPiece().getColor().equals(sourceTile.getPiece().color);
+                boolean sameColor = !newTileIsEmpty && newTile.getPiece().getColor().equals(sourceTile.getPiece().color);
                 boolean king = newTile.getPiece() instanceof King;
                 boolean tileContainsMyKing = sameColor && king;
                 newTileDoesNotContainAlly = newTileIsEmpty || newTileContainsEnemy || tileContainsMyKing;

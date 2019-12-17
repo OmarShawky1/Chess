@@ -72,10 +72,10 @@ public class Rook extends Piece {
 //        System.out.println("isCorrectStraightMoveTowards(destinationTile): " + isCorrectStraightMoveTowards(destinationTile));
         if (isCorrectStraightMoveTowards(destinationTile)) {
 
-            if (canCastle(destinationTile)) {
-//            return canMoveCastleSpecial(destinationTile);
-                return true;
-            }
+//            if (canCastle(destinationTile)) {
+////            return canMoveCastleSpecial(destinationTile);
+//                return true;
+//            }
             return super.canMove(destinationTile);
         }
 
@@ -122,13 +122,13 @@ public class Rook extends Piece {
     public void move(Tile destinationTile) {
 
         System.out.println("I entered move in Rook");
-        if (canCastle(destinationTile)) {
-
-            System.out.println("I Entered canCastle destinationTile");
-            Tile tileBeforeKing = tileBeforeKing();
-
-            getMyKing().move(tileBeforeKing);
-        }
+//        if (canCastle(destinationTile)) {
+//
+//            System.out.println("I Entered canCastle destinationTile");
+//            Tile tileBeforeKing = tileBeforeKing();
+//
+//            getMyKing().move(tileBeforeKing);
+//        }
         super.move(destinationTile);
     }
 
