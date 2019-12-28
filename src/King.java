@@ -20,8 +20,8 @@ public class King extends Piece {
     }
 
     boolean isBeingChecked() {
-        isChecked = pieceCanKillAKing();
-        return isChecked;
+
+        return pieceCanKillAKing();
     }
 
     boolean isAlive() {
@@ -30,13 +30,21 @@ public class King extends Piece {
         // 1- check if he can move to another place or not
         // 2- check if there is a piece that can kill the enemy piece that threats the king
         // 3- check for a place where any piece from the army can block the threat
-        if (pieceCanKillAKing()) {
 
-            isAlive = kingCanMoveAround() || armyCanKillThreat() || armyCanBlockThreat();
+        if (pieceCanKillAKing()) {
+            System.out.println("pieceCanKillAKing(): true");
+            boolean kingCanMoveAround = kingCanMoveAround();
+            boolean armyCanKillThreat = armyCanKillThreat();
+            boolean armyCanBlockThreat = armyCanBlockThreat();
+
+            System.out.println("kingCanMoveAround: " + kingCanMoveAround);
+            System.out.println("armyCanKillThreat: " + armyCanKillThreat);
+            System.out.println("armyCanBlockThreat: " + armyCanBlockThreat);
+            isAlive = kingCanMoveAround || armyCanKillThreat || armyCanBlockThreat;
             return isAlive;
         }
         isAlive = true;
-        return isAlive;
+        return true;
     }
 
     public boolean canMove(Tile destinationTile) {
@@ -96,7 +104,7 @@ public class King extends Piece {
         return false;
     }
 
-    private boolean pieceCanKillAKing() {
+    public boolean pieceCanKillAKing() {
 
         String enemyColor = color.equalsIgnoreCase("white") ? "black" : "white";
         LinkedList<Piece> enemyPieces = getPiecesOfColor(enemyColor);

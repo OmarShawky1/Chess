@@ -42,17 +42,22 @@ public abstract class Piece {
         tile = destinationTile;
         tile.setPiece(oldPiece);
 
-        boolean willOwnPlayerKingBeChecked = king.isBeingChecked();
-        if (king.isBeingChecked()){
-            king.isChecked = false;
-        }
+        boolean selfCheck = king.isBeingChecked();
 
         tile = oldTile;
         tile.setPiece(oldPiece);
         destinationTile.setPiece(oldDestinationPiece);
+        
 
-        return !willOwnPlayerKingBeChecked && cannotCheckWhenChecked();
+        return !selfCheck && cannotCheckWhenChecked();
     }
+
+    protected  boolean cannotCheckWhenChecked(){
+
+        King myKing = tile.getBoard().getKing(color);
+        return !myKing.pieceCanKillAKing();
+    }
+
 
     public void move(Tile destinationTile) {
         tile.setPiece(null);
@@ -84,11 +89,6 @@ public abstract class Piece {
     boolean isCorrectStraightMoveTowards(Tile destinationTile) {
         return (tile.xDiffFrom(destinationTile) == 0 || tile.yDiffFrom(destinationTile) == 0) &&
                 isPathClearTowards(destinationTile);
-    }
-
-    boolean cannotCheckWhenChecked(){
-        King myKing = color.equals("white")? tile.getBoard().getKing("white"):tile.getBoard().getKing("black");
-        return !myKing.isChecked;
     }
 
     Image getImage() {

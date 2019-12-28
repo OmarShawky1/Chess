@@ -10,7 +10,7 @@ class Board {
 
     boolean whiteTurn;
     private King whiteKing, blackKing;
-    private boolean whiteKingChecked, blackKingChecked;
+    public boolean whiteKingChecked, blackKingChecked;
     boolean whiteKingAlive, blackKingAlive;
     private Tile[][] board;
     private GUI gui;
@@ -124,9 +124,15 @@ class Board {
                     //Print who got checked
                     if (whiteKingChecked) {
                         GUI.gameStatusBar.setText("White King Got Checked");
+                        whiteKing.isChecked = true;
+                    }else {
+                        whiteKing.isChecked = false;
                     }
                     if (blackKingChecked) {
                         GUI.gameStatusBar.setText("Black King Got Checked");
+                        blackKing.isChecked = true;
+                    }else {
+                        blackKing.isChecked = false;
                     }
 
                 } else {
