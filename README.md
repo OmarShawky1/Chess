@@ -11,17 +11,17 @@ GUI Multiplayer Chess over network with timer and check mate capabilities like r
 
 1. First, each player runs the game.
 
-![1](artifacts/1.png)
+![1](assets//1.png)
 
 2. One player should choose server and others should be client. The client must type the servers' IP. For now, server is local Host `127.0.0.1` and press `connect`.
-![2](artifacts/2.png)
-![3](artifacts/3.png)
+![2](assets/2.png)
+![3](assets/3.png)
 
 3. Then, play!
 
 
-![4](artifacts/4.png)
+![4](assets/4.png)
 
 4. Yay, Checkmate!
 
-![5](artifacts/5.png)
+![5](assets/5.png)
